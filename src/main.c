@@ -69,7 +69,8 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-
+void user_pwm_setValue_LeftMotors(uint16_t value);
+void user_pwm_setValue_RightMotors(uint16_t value);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -107,6 +108,12 @@ int main(void)
   MX_TIM4_Init();
 
   /* USER CODE BEGIN 2 */
+  HAL_TIM_Base_Start(&htim4);
+  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
+  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
+
   /* Set GPIO pins, GPIO_PIN_SET turns on pin while GPIO_PIN_RESET turns off */
   /* Can set LED pins to clear initially */
   /* Enable Emitter pins when mouse powers on */
@@ -440,6 +447,47 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+/* Pulse PWM value change for left motors (CH1/CH2) */
+void user_pwm_setValue_LeftMotors(uint16_t value)
+{
+	TIM_OC_InitTypeDef sConfigOC;
+	
+	sConfigOC.OCMode = TIM_OCMODE_PWM1;
+	sConfigOC.Pulse = value;
+	sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+	sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+	if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+	{
+	  _Error_Handler(__FILE__, __LINE__);
+	}
+	if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+	{
+	  _Error_Handler(__FILE__, __LINE__);
+	}
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
+}
+
+/* Pulse PWM value change for right motors (CH3/CH4) */
+void user_pwm_setValue_RightMotors(uint16_t value)
+{
+	TIM_OC_InitTypeDef sConfigOC;
+	
+	sConfigOC.OCMode = TIM_OCMODE_PWM1;
+	sConfigOC.Pulse = value;
+	sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+	sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+	if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
+	{
+	  _Error_Handler(__FILE__, __LINE__);
+	}
+	if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_4) != HAL_OK)
+	{
+	  _Error_Handler(__FILE__, __LINE__);
+	}
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
+}
 
 /* USER CODE END 4 */
 
