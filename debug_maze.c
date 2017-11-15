@@ -6,6 +6,7 @@
  */
 
 #include "debug_maze.h"
+#include <stdio.h>
 
 void init_distance_maze(dist_maze* m){
 	int i,j;
@@ -16,57 +17,34 @@ void init_distance_maze(dist_maze* m){
 	}
 }
 
-void fill_in_distances(dist_maze* m, coor* c, int i);
+int abs(int x);
 
-void fill_in_distances(dist_maze* m, coor* c, int i){
-	int x = c->x;
-	if(x > 15) return;
-	if(x < 0) return;
-	int y = c->y;
-	if(y > 15) return;
-	if(y > 15) return;
-	if(m->distance[c->x][c->y] == -1){
-		m->distance[c->x][c->y] = i + 1;
-	}
-	coor up;
-	init_coor(&up, x, y + 1);
-	coor down;
-	init_coor(&down, x, y - 1);
-	coor left;
-	init_coor(&left, x - 1, y);
-	coor right;
-	init_coor(&right, x + 1, y);
-
-	fill_in_distances(&m, &up, i + 1);
-	fill_in_distances(&m, &down, i + 1);
-	fill_in_distances(&m, &left, i + 1);
-	fill_in_distances(&m, &right, i + 1);
-
+int abs(int x){
+	if( x<0 ) return -1 * x;
+	else return x;
 }
 
 void fill_in_distance_maze(dist_maze* m, coor* c, int center){
+	int i,j;
 	if(center == 1){//Initializing a center array
-		m->distance[7][7] = 0;
-		m->distance[7][8] = 0;
-		m->distance[8][7] = 0;
-		m->distance[8][8] = 0;
-		coor left_bottom;
-		init_coor(&left_bottom, 7, 7);
-		coor right_bottom;
-		init_coor(&right_bottom, 8, 7);
-		coor left_top;
-		init_coor(&left_top, 7, 8);
-		coor right_top;
-		init_coor(&right_top, 8, 8);
-		fill_in_distances(&m, &left_bottom, 0);
-		fill_in_distances(&m, &right_bottom, 0);
-		fill_in_distances(&m, &left_top, 0);
-		fill_in_distances(&m, &right_top, 0);
+		for(i=15;i>-1;i--){
+			for(j=0;j<16;j++){
+				if(i<=7 && j>=8) m->distance[i][j] = abs(7-i) + abs(8-j);
+				else if(i<=7 && j<=7) m->distance[i][j] = abs(7-i) + abs(7-j);
+				else if(i>=8 && j>=8) m->distance[i][j] = abs(8-i) + abs(8-j);
+				else if(i>=8 && j<=7) m->distance[i][j] = abs(8-i) + abs(7-j);
+			}
+		}
 	}
 	else{
-		m->distance[c->x][c->y] = 0;
-		fill_in_distances(&m, c, 0);
-	}
+		int x = c->x;
+		int y = c->y;
+		for(i=0;i<16;i++){
+			for(j=0;j<16;j++){
+				m->distance[i][j] = abs(x-i) + abs(y-j);
+			}
+		}
+	}	
 }
 
 
