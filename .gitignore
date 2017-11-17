@@ -15,6 +15,7 @@ npm-debug.log
 _site
 .sass-cache
 .jekyll-metadata
+.settings/language.settings.xml
 
 logs
 *.log
