@@ -71,6 +71,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 /* Private function prototypes -----------------------------------------------*/
 void user_pwm_setValue_LeftMotors(uint16_t value);
 void user_pwm_setValue_RightMotors(uint16_t value);
+
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -107,6 +108,8 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM4_Init();
 
+  HAL_ADC_Start(&hadc1);
+
   /* USER CODE BEGIN 2 */
   /*
   HAL_TIM_Base_Start(&htim4);
@@ -118,38 +121,49 @@ int main(void)
   */
   /* Set GPIO pins, GPIO_PIN_SET turns on pin while GPIO_PIN_RESET turns off */
   /* Can set LED pins to clear initially */
-  /* Enable Emitter pins when mouse powers on */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);  //LED
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);  //LED
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);  //LED
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);  //LED
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);  //LED
 
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET); //LED
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);  //LED
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);  //L_EMITTER
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);  //R_EMITTER
+  /* Enable Emitter pins when mouse powers on */
+//  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);  //LED
+//  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);  //LED
+//  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);  //LED
+//  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);  //LED
+//  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);  //LED
+//
+//  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET); //LED
+//  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);  //LED
+//  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);  //L_EMITTER
+//  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);  //R_EMITTER
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);  //LF_EMITTER
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);  //RF_EMITTER
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET); //Buzzer
+//  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET); //Buzzer
 
-  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);  //CE
+//  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);  //CE
 
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_SET); //LED
+//  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_SET); //LED
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  __IO uint16_t ADCValue=0;
   while (1)
   {
-  /* USER CODE END WHILE */
-
-  /* USER CODE BEGIN 3 */
-
+	  if (HAL_ADC_PollForConversion(&hadc1, 1000000) == HAL_OK)
+	  {
+		  ADCValue = HAL_ADC_GetValue(&hadc1);
+		  if (ADCValue > 100)
+		  {
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET); //LED
+		  }
+		  else
+		  {
+			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //LED
+		  }
+	  }
   }
   /* USER CODE END 3 */
 
 }
+
 
 /** System Clock Configuration
 */
@@ -214,14 +228,15 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
   hadc1.Init.ScanConvMode = DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
-  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+//  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T1_CC1;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc1.Init.NbrOfConversion = 1;
-  hadc1.Init.DMAContinuousRequests = DISABLE;
-  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  hadc1.Init.DMAContinuousRequests = ENABLE;
+  hadc1.Init.EOCSelection = DISABLE;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
@@ -236,6 +251,20 @@ static void MX_ADC1_Init(void)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
+
+  sConfig.Channel = ADC_CHANNEL_8;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+
+
+
+
+
 
 }
 
