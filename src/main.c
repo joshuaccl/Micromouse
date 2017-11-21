@@ -51,6 +51,10 @@ ADC_HandleTypeDef hadc1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
+DMA_HandleTypeDef g_DmaHandle;
+enum { ADC_BUFFER_LENGTH = 8192 };
+uint32_t g_ADCBuffer[ADC_BUFFER_LENGTH];
+uint32_t IR_values[4];
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -66,6 +70,33 @@ static void MX_TIM2_Init(void);
 static void MX_TIM4_Init(void);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+void ConfigureDMA();
+static void ADC_LED_DEBUG(uint32_t value);
+
+static void ADC_LED_DEBUG(uint32_t value){
+	value = HAL_ADC_GetValue(&hadc1);
+	int ones = value % 10;
+	int tens = (value % 100)/10;
+	int hundreds = (value % 1000)/100;
+	int thousands = value/1000;
+	for(;;){
+		if(thousands>0) HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+		if(hundreds>0) HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
+		if(tens>0) HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
+		if(ones>0) HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+		HAL_Delay(250);
+		thousands--;
+		hundreds--;
+		tens--;
+		ones--;
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+		HAL_Delay(250);
+		if(thousands<0 && tens<0 && hundreds<0 && ones<0) break;
+	}
+}
 
 
 /* USER CODE BEGIN PFP */
@@ -140,36 +171,33 @@ int main(void)
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
-
-	HAL_ADC_Start(&hadc1);
 	uint32_t test;
+
+	ConfigureDMA();
+	HAL_ADC_Start_DMA(&hadc1, g_ADCBuffer, ADC_BUFFER_LENGTH);
+
 	for(;;)
 	{
-		if (HAL_ADC_PollForConversion(&hadc1, 1000000) == HAL_OK)
-		{
-			test = HAL_ADC_GetValue(&hadc1);
-			int ones = test % 10;
-			int tens = (test % 100)/10;
-			int hundreds = (test % 1000)/100;
-			int thousands = test/1000;
-			for(;;){
-				if(thousands>0) HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
-				if(hundreds>0) HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
-				if(tens>0) HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
-				if(ones>0) HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
-				HAL_Delay(500);
-				thousands--;
-				hundreds--;
-				tens--;
-				ones--;
-				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
-				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
-				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);
-				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
-				HAL_Delay(500);
-				if(thousands<0 && tens<0 && hundreds<0 && ones<0) break;
-			}
-		}
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);  //LED
+		HAL_Delay(500);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);  //LED
+		ADC_LED_DEBUG(IR_values[0]);
+
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);  //LED
+		HAL_Delay(500);
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET);  //LED
+		ADC_LED_DEBUG(IR_values[1]);
+
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_SET);  //LED
+		HAL_Delay(500);
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_RESET);  //LED
+		ADC_LED_DEBUG(IR_values[2]);
+
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);  //LED
+		HAL_Delay(500);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);  //LED
+		ADC_LED_DEBUG(IR_values[3]);
+
 	}
 	while (1)
 	{
@@ -180,6 +208,43 @@ int main(void)
 	}
 	/* USER CODE END 3 */
 
+}
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
+{
+	int i,j,l=0,lf=0,rf=0,r=0;
+	for( i = 0; i<ADC_BUFFER_LENGTH; i++){
+		j = i % 4;
+		switch(j){
+		case 0:
+			l += g_ADCBuffer[i];
+			break;
+		case 1:
+			lf += g_ADCBuffer[i];
+			break;
+		case 2:
+			rf += g_ADCBuffer[i];
+			break;
+		case 3:
+			r += g_ADCBuffer[i];
+			break;
+		}
+	}
+	IR_values[0] = l/2048;
+	IR_values[1] = lf/2048;
+	IR_values[2] = rf/2048;
+	IR_values[3] = r/2048;
+
+}
+
+void DMA2_Stream4_IRQHandler()
+{
+	HAL_DMA_IRQHandler(&g_DmaHandle);
+}
+
+void ADC_IRQHandler()
+{
+	HAL_ADC_IRQHandler(&hadc1);
 }
 
 /** System Clock Configuration
@@ -236,6 +301,8 @@ void SystemClock_Config(void)
 /* ADC1 init function */
 static void MX_ADC1_Init(void)
 {
+	HAL_NVIC_SetPriority(ADC_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(ADC_IRQn);
 
 	ADC_ChannelConfTypeDef sConfig;
 
@@ -244,13 +311,14 @@ static void MX_ADC1_Init(void)
 	hadc1.Instance = ADC1;
 	hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
 	hadc1.Init.Resolution = ADC_RESOLUTION_12B;
-	hadc1.Init.ScanConvMode = DISABLE;
+	hadc1.Init.ScanConvMode = ENABLE;
 	hadc1.Init.ContinuousConvMode = ENABLE;
 	hadc1.Init.DiscontinuousConvMode = DISABLE;
+	hadc1.Init.NbrOfDiscConversion = 0;
 	hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
 	hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T1_CC1;
 	hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-	hadc1.Init.NbrOfConversion = 1;
+	hadc1.Init.NbrOfConversion = 4;
 	hadc1.Init.DMAContinuousRequests = ENABLE;
 	hadc1.Init.EOCSelection = DISABLE;
 	if (HAL_ADC_Init(&hadc1) != HAL_OK)
@@ -260,13 +328,35 @@ static void MX_ADC1_Init(void)
 
 	/**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
 	 */
-	sConfig.Channel = ADC_CHANNEL_9;
+	sConfig.Channel = ADC_CHANNEL_8;
 	sConfig.Rank = 1;
-	sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+	sConfig.SamplingTime = ADC_SAMPLETIME_56CYCLES;
 	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
 	{
 		_Error_Handler(__FILE__, __LINE__);
 	}
+	sConfig.Channel = ADC_CHANNEL_9;
+	sConfig.Rank = 2;
+	sConfig.SamplingTime = ADC_SAMPLETIME_56CYCLES;
+	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+	{
+		_Error_Handler(__FILE__, __LINE__);
+	}
+	sConfig.Channel = ADC_CHANNEL_2;
+	sConfig.Rank = 3;
+	sConfig.SamplingTime = ADC_SAMPLETIME_56CYCLES;
+	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+	{
+		_Error_Handler(__FILE__, __LINE__);
+	}
+	sConfig.Channel = ADC_CHANNEL_3;
+	sConfig.Rank = 4;
+	sConfig.SamplingTime = ADC_SAMPLETIME_56CYCLES;
+	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+	{
+		_Error_Handler(__FILE__, __LINE__);
+	}
+
 
 }
 
@@ -555,6 +645,31 @@ void assert_failed(uint8_t* file, uint32_t line)
     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
 	/* USER CODE END 6 */
 
+}
+
+void ConfigureDMA(){
+	__DMA2_CLK_ENABLE();
+	g_DmaHandle.Instance = DMA2_Stream4;
+
+	g_DmaHandle.Init.Channel  = DMA_CHANNEL_0;
+	g_DmaHandle.Init.Direction = DMA_PERIPH_TO_MEMORY;
+	g_DmaHandle.Init.PeriphInc = DMA_PINC_DISABLE;
+	g_DmaHandle.Init.MemInc = DMA_MINC_ENABLE;
+	g_DmaHandle.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+	g_DmaHandle.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+	g_DmaHandle.Init.Mode = DMA_CIRCULAR;
+	g_DmaHandle.Init.Priority = DMA_PRIORITY_HIGH;
+	g_DmaHandle.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+	g_DmaHandle.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_HALFFULL;
+	g_DmaHandle.Init.MemBurst = DMA_MBURST_SINGLE;
+	g_DmaHandle.Init.PeriphBurst = DMA_PBURST_SINGLE;
+
+	HAL_DMA_Init(&g_DmaHandle);
+
+	__HAL_LINKDMA(&hadc1, DMA_Handle, g_DmaHandle);
+
+	HAL_NVIC_SetPriority(DMA2_Stream4_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(DMA2_Stream4_IRQn);
 }
 
 #endif
