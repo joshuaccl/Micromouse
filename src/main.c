@@ -41,25 +41,18 @@
 #include "defines.h"
 #include "stm32f4xx_hal.h"
 
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
-
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
+
+/* ADC DMA buffers */
 DMA_HandleTypeDef g_DmaHandle;
 enum { ADC_BUFFER_LENGTH = 8192 };
 uint32_t g_ADCBuffer[ADC_BUFFER_LENGTH];
 uint32_t IR_values[4];
-
-/* USER CODE BEGIN PV */
-/* Private variables ---------------------------------------------------------*/
-
-/* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -71,51 +64,15 @@ static void MX_TIM4_Init(void);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 void ConfigureDMA();
-static void ADC_LED_DEBUG(uint32_t value);
 
-static void ADC_LED_DEBUG(uint32_t value){
-	value = HAL_ADC_GetValue(&hadc1);
-	int ones = value % 10;
-	int tens = (value % 100)/10;
-	int hundreds = (value % 1000)/100;
-	int thousands = value/1000;
-	for(;;){
-		if(thousands>0) HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
-		if(hundreds>0) HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
-		if(tens>0) HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
-		if(ones>0) HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
-		HAL_Delay(250);
-		thousands--;
-		hundreds--;
-		tens--;
-		ones--;
-		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
-		HAL_Delay(250);
-		if(thousands<0 && tens<0 && hundreds<0 && ones<0) break;
-	}
-}
-
-
-/* USER CODE BEGIN PFP */
-/* Private function prototypes -----------------------------------------------*/
 void user_pwm_setValue_LeftMotors(uint16_t value);
 void user_pwm_setValue_RightMotors(uint16_t value);
-/* USER CODE END PFP */
 
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
+/* Function to print out ADC value reading to the LEDs */
+static void ADC_LED_DEBUG(uint32_t value);
 
 int main(void)
 {
-
-	/* USER CODE BEGIN 1 */
-
-	/* USER CODE END 1 */
-
 	/* MCU Configuration----------------------------------------------------------*/
 
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -151,71 +108,77 @@ int main(void)
 	/* Set GPIO pins, GPIO_PIN_SET turns on pin while GPIO_PIN_RESET turns off */
 	/* Can set LED pins to clear initially */
 	/* Enable Emitter pins when mouse powers on */
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);  //LED
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);  //LED
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);  //LED
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);  //LED
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);  //LED
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //LED
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET);  //LED
+//	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);  //LED
+//	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);  //LED
+//	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);  //LED
+//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);  //LED
+//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);  //LED
+//	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //LED
+//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET);  //LED
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);  //L_EMITTER
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);  //R_EMITTER
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);  //LF_EMITTER
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);  //RF_EMITTER
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET); //Buzzer
+//	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET); //Buzzer
 
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);  //CE
-
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_RESET); //LED
+//	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);  //CE
+//
+//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_RESET); //LED
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
-	uint32_t test;
 
 	ConfigureDMA();
 	HAL_ADC_Start_DMA(&hadc1, g_ADCBuffer, ADC_BUFFER_LENGTH);
 
-	for(;;)
-	{
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);  //LED
-		HAL_Delay(500);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);  //LED
-		ADC_LED_DEBUG(IR_values[0]);
-
-		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);  //LED
-		HAL_Delay(500);
-		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET);  //LED
-		ADC_LED_DEBUG(IR_values[1]);
-
-		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_SET);  //LED
-		HAL_Delay(500);
-		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_RESET);  //LED
-		ADC_LED_DEBUG(IR_values[2]);
-
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);  //LED
-		HAL_Delay(500);
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);  //LED
-		ADC_LED_DEBUG(IR_values[3]);
-
-	}
+#define READING 200
 	while (1)
 	{
-		/* USER CODE END WHILE */
+		if (IR_values[0] > READING)
+		{
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);  //LED
+		}
+		else
+		{
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);  //LED
+		}
 
-		/* USER CODE BEGIN 3 */
+		if (IR_values[1] > READING)
+		{
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);  //LED
+		}
+		else
+		{
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);  //LED
+		}
+		if (IR_values[2] > READING)
+		{
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);  //LED
+		}
+		else
+		{
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);  //LED
+		}
+		if (IR_values[3] > READING)
+		{
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);  //LED
+		}
+		else
+		{
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);  //LED
+		}
+//		ADC_LED_DEBUG(IR_values[3]);
 
 	}
-	/* USER CODE END 3 */
-
 }
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 {
 	int i,j,l=0,lf=0,rf=0,r=0;
-	for( i = 0; i<ADC_BUFFER_LENGTH; i++){
+	for(i = 0; i < ADC_BUFFER_LENGTH; i++){
 		j = i % 4;
-		switch(j){
+		switch(j) {
 		case 0:
 			l += g_ADCBuffer[i];
 			break;
@@ -234,7 +197,6 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 	IR_values[1] = lf/2048;
 	IR_values[2] = rf/2048;
 	IR_values[3] = r/2048;
-
 }
 
 void DMA2_Stream4_IRQHandler()
@@ -671,6 +633,33 @@ void ConfigureDMA(){
 	HAL_NVIC_SetPriority(DMA2_Stream4_IRQn, 0, 0);
 	HAL_NVIC_EnableIRQ(DMA2_Stream4_IRQn);
 }
+
+/* Function to print out ADC value reading to the LEDs */
+static void ADC_LED_DEBUG(uint32_t value) {
+	value = HAL_ADC_GetValue(&hadc1);
+	int ones = value % 10;
+	int tens = (value % 100)/10;
+	int hundreds = (value % 1000)/100;
+	int thousands = value/1000;
+	for(;;){
+		if(thousands>0) HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+		if(hundreds>0) HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
+		if(tens>0) HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
+		if(ones>0) HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+		HAL_Delay(250);
+		thousands--;
+		hundreds--;
+		tens--;
+		ones--;
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+		HAL_Delay(250);
+		if(thousands<0 && tens<0 && hundreds<0 && ones<0) break;
+	}
+}
+
 
 #endif
 
