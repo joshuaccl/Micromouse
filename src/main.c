@@ -41,6 +41,16 @@
 #include "defines.h"
 #include "stm32f4xx_hal.h"
 
+/* Calibration for the ADC sensors, lower value -> see further */
+/*                                  higher value -> see closer */
+/* R_ADC is +25 more then L_ADC
+ * LF_ADC is +8 more then RF_ADC   
+ */
+#define L_ADC 65       // 0   
+#define LF_ADC 68      // 1
+#define RF_ADC 60     // 2
+#define R_ADC  90      // 3
+
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 
@@ -132,10 +142,9 @@ int main(void)
 	ConfigureDMA();
 	HAL_ADC_Start_DMA(&hadc1, g_ADCBuffer, ADC_BUFFER_LENGTH);
 
-#define READING 200
 	while (1)
 	{
-		if (IR_values[0] > READING)
+		if (IR_values[0] >= L_ADC)
 		{
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);  //LED
 		}
@@ -144,7 +153,7 @@ int main(void)
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);  //LED
 		}
 
-		if (IR_values[1] > READING)
+		if (IR_values[1] >= LF_ADC)
 		{
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);  //LED
 		}
@@ -152,7 +161,7 @@ int main(void)
 		{
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);  //LED
 		}
-		if (IR_values[2] > READING)
+		if (IR_values[2] >= RF_ADC)
 		{
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);  //LED
 		}
@@ -160,7 +169,7 @@ int main(void)
 		{
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);  //LED
 		}
-		if (IR_values[3] > READING)
+		if (IR_values[3] >= R_ADC)
 		{
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);  //LED
 		}
