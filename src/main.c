@@ -40,6 +40,7 @@
 #include "main.h"
 #include "defines.h"
 #include "stm32f4xx_hal.h"
+#include "LED_Display.h"
 
 /* Calibration for the ADC sensors, lower value -> see further */
 /*                                  higher value -> see closer */
@@ -129,31 +130,24 @@ int main(void)
 //	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET); //Buzzer
 
 //	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_RESET); //LED
-	/* USER CODE END 2 */
 
-	/* Infinite loop */
-	/* USER CODE BEGIN WHILE */
 
-//	uint8_t data[] = {65,0x036,0x036,0x036};
-	uint8_t data[] = {85,85,85,85};
-
+	/* LCD display start */
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_RESET);  //RS
 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_RESET);  //CE LOW
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_SET);  //DATA_IN
-	//Transmit 1 byte and receive 3. Actually receive 4, but the first doesn't matter.
-//	HAL_SPI_TransmitReceive(&hspi3, cmd, data, 4, 0xFF);
-	HAL_SPI_Transmit(&hspi3, data, 4, 0xFF);
+
+	// EACH DIGIT IS 40 BITS
+	fillDotRegister('A', 1);
+
+	HAL_SPI_Transmit(&hspi3, dotRegister, 40, 0xFF);
 	while(HAL_SPI_GetState(&hspi3) == HAL_SPI_STATE_BUSY);
 
-
-	HAL_SPI_Transmit(&hspi3, data, 4, 0xFF);
-	while(HAL_SPI_GetState(&hspi3) == HAL_SPI_STATE_BUSY);
-//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);  //CLK
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);  //CLK
 
 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);  //CE
 
-
-
+	/* LCD display end */
 
 	/* ADC */
 
@@ -195,8 +189,6 @@ int main(void)
 		{
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);  //LED
 		}
-//		ADC_LED_DEBUG(IR_values[3]);
-
 	}
 }
 
