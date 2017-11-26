@@ -48,7 +48,7 @@
  */
 #define L_ADC 65       // 0   
 #define LF_ADC 68      // 1
-#define RF_ADC 60     // 2
+#define RF_ADC 60      // 2
 #define R_ADC  90      // 3
 
 /* Private variables ---------------------------------------------------------*/
@@ -57,6 +57,8 @@ ADC_HandleTypeDef hadc1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
+SPI_HandleTypeDef hspi3;
+
 
 /* ADC DMA buffers */
 DMA_HandleTypeDef g_DmaHandle;
@@ -72,6 +74,8 @@ static void MX_TIM5_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM4_Init(void);
 
+static void SPI3_Init(void);
+
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 void ConfigureDMA();
 
@@ -83,21 +87,11 @@ static void ADC_LED_DEBUG(uint32_t value);
 
 int main(void)
 {
-	/* MCU Configuration----------------------------------------------------------*/
-
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
 
-	/* USER CODE BEGIN Init */
-
-	/* USER CODE END Init */
-
 	/* Configure the system clock */
 	SystemClock_Config();
-
-	/* USER CODE BEGIN SysInit */
-
-	/* USER CODE END SysInit */
 
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
@@ -105,6 +99,7 @@ int main(void)
 	MX_TIM5_Init();
 	MX_TIM2_Init();
 	MX_TIM4_Init();
+	SPI3_Init();
 
 	/* USER CODE BEGIN 2 */
 	/*
@@ -113,6 +108,8 @@ int main(void)
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
+
+
 
 	 */
 	/* Set GPIO pins, GPIO_PIN_SET turns on pin while GPIO_PIN_RESET turns off */
@@ -131,13 +128,34 @@ int main(void)
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);  //RF_EMITTER
 //	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET); //Buzzer
 
-//	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);  //CE
-//
 //	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_RESET); //LED
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
+
+//	uint8_t data[] = {65,0x036,0x036,0x036};
+	uint8_t data[] = {85,85,85,85};
+
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_RESET);  //RS
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_RESET);  //CE LOW
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_SET);  //DATA_IN
+	//Transmit 1 byte and receive 3. Actually receive 4, but the first doesn't matter.
+//	HAL_SPI_TransmitReceive(&hspi3, cmd, data, 4, 0xFF);
+	HAL_SPI_Transmit(&hspi3, data, 4, 0xFF);
+	while(HAL_SPI_GetState(&hspi3) == HAL_SPI_STATE_BUSY);
+
+
+	HAL_SPI_Transmit(&hspi3, data, 4, 0xFF);
+	while(HAL_SPI_GetState(&hspi3) == HAL_SPI_STATE_BUSY);
+//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);  //CLK
+
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);  //CE
+
+
+
+
+	/* ADC */
 
 	ConfigureDMA();
 	HAL_ADC_Start_DMA(&hadc1, g_ADCBuffer, ADC_BUFFER_LENGTH);
@@ -216,6 +234,29 @@ void DMA2_Stream4_IRQHandler()
 void ADC_IRQHandler()
 {
 	HAL_ADC_IRQHandler(&hadc1);
+}
+
+/* Init SPI3 */
+static void SPI3_Init(void)
+{
+	hspi3.Instance = SPI3;
+	hspi3.Init.Mode = SPI_MODE_MASTER;
+	hspi3.Init.Direction = SPI_DIRECTION_2LINES;
+	hspi3.Init.DataSize = SPI_DATASIZE_8BIT;
+	hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
+	hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
+	hspi3.Init.NSS = SPI_NSS_SOFT;
+	hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
+	hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
+	hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
+	hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+	hspi3.Init.CRCPolynomial = 10;
+	if (HAL_SPI_Init(&hspi3) != HAL_OK)
+	{
+		Error_Handler();
+	}
+	__SPI3_CLK_ENABLE();
+	__HAL_SPI_ENABLE(&hspi3);
 }
 
 /** System Clock Configuration
@@ -523,21 +564,29 @@ static void MX_GPIO_Init(void)
 	GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-	/*Configure GPIO pins : PC10 PC11 PC12 */
-	GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12;
-	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-	GPIO_InitStruct.Alternate = GPIO_AF6_SPI3;
-	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+	/* SPI GPIO INIT START */
+    __HAL_RCC_SPI3_CLK_ENABLE();
+    /**SPI3 GPIO Configuration
+        PC10     ------> SPI3_SCK
+        PC11     ------> SPI3_MISO
+        PC12     ------> SPI3_MOSI
+        */
+    GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF6_SPI3;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
 	/*Configure GPIO pin : PD2 */
+    /* SPI LCD Display CE pin */
 	GPIO_InitStruct.Pin = GPIO_PIN_2;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
+	/* SPI GPIO INIT END */
 }
 
 /* USER CODE BEGIN 4 */
