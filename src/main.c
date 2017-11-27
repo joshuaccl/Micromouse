@@ -44,13 +44,13 @@
 
 /* Calibration for the ADC sensors, lower value -> see further */
 /*                                  higher value -> see closer */
-/* R_ADC is +25 more then L_ADC
- * LF_ADC is +8 more then RF_ADC   
+/* R_ADC is +10 more then L_ADC
+ * LF_ADC is +10 more then RF_ADC
  */
-#define L_ADC 65       // 0   
-#define LF_ADC 68      // 1
-#define RF_ADC 60      // 2
-#define R_ADC  90      // 3
+#define L_ADC 30       // 0
+#define LF_ADC 60      // 1
+#define RF_ADC 50      // 2
+#define R_ADC  40      // 3
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
@@ -132,20 +132,76 @@ int main(void)
 //	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_RESET); //LED
 
 
+//	uint8_t test[] = {65,66,67,68};
+
 	/* LCD display start */
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_RESET);  //RS
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_RESET);  //CE LOW
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_SET);  //DATA_IN
+//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_RESET);  //RS
+//	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_RESET);  //CE LOW
+//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_SET);  //DATA_IN
 
 	// EACH DIGIT IS 40 BITS
-	fillDotRegister('A', 1);
+//	fillDotRegister('A', 1);
+//	HAL_SPI_Transmit(&hspi3, dotRegister, 40, 0xFF);
+//	while(HAL_SPI_GetState(&hspi3) == HAL_SPI_STATE_BUSY);
 
-	HAL_SPI_Transmit(&hspi3, dotRegister, 40, 0xFF);
-	while(HAL_SPI_GetState(&hspi3) == HAL_SPI_STATE_BUSY);
+//	uint8_t test[] = {0x7F, 0x04, 0x08, 0x10, 0x7F};
+//	uint8_t test[] = {1, 1, 1, 1};
+//	uint8_t message[] = {"0x7F", "0x41", "0x41", "0x22", "0x1C"};
+//	uint8_t message[] = {0x7F, 0x41, 0x41, 0x22, 0x1C};
 
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);  //CLK
+//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_RESET);  //RS
+//	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_RESET);  //CE LOW
+//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_SET);  //DATA_IN
+//
+//
+//    clearDotRegister();
+//    fillDotRegister('A', 1);
 
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);  //CE
+////	HAL_SPI_Transmit(&hspi3, dotRegister, 160, 0xFF);
+//
+//
+//	HAL_SPI_Transmit(&hspi3, dotRegister, 1280, 0xFF);
+//	HAL_Delay(10);
+//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);  //CLK
+//
+//	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);  //CE
+
+
+
+
+
+//
+//		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_RESET);  //RS
+//		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_RESET);  //CE LOW
+//		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_SET);  //DATA_IN
+//
+//		HAL_SPI_Transmit(&hspi3, dotRegister, 1280, HAL_MAX_DELAY);
+//		while(HAL_SPI_GetState(&hspi3) == HAL_SPI_STATE_BUSY);
+//
+//		HAL_Delay(10);
+//		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);  //CLK
+//
+//		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);  //CE
+
+//	fillDotRegister('B', 2);
+//	HAL_SPI_Transmit(&hspi3, dotRegister, 40, 0xFF);
+//	while(HAL_SPI_GetState(&hspi3) == HAL_SPI_STATE_BUSY);
+//
+//	fillDotRegister('C', 3);
+//	HAL_SPI_Transmit(&hspi3, dotRegister, 40, 0xFF);
+//	while(HAL_SPI_GetState(&hspi3) == HAL_SPI_STATE_BUSY);
+//
+//	fillDotRegister('D', 4);
+//	HAL_SPI_Transmit(&hspi3, dotRegister, 40, 0xFF);
+//	while(HAL_SPI_GetState(&hspi3) == HAL_SPI_STATE_BUSY);
+//
+
+
+
+//
+//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);  //CLK
+//
+//	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);  //CE
 
 	/* LCD display end */
 
