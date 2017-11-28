@@ -21,6 +21,10 @@ void fillDotRegister(char whatCharacter, uint8_t whatPosition)
 	}
 }
 
-
-
-
+void clearDotRegister(void)
+{
+	for (int i = 0; i < 160; i++)
+	{
+		dotRegister[i] = 0x00;
+	}
+}
