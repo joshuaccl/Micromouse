@@ -72,13 +72,26 @@ int main(void)
 	/* Enable Emitter pins when mouse powers on */
 	emitter_Init();
 
-	/*
-  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
-  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
+	leftMotorStart();
+	rightMotorStart();
+	
+//	
+//	
+//  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
+//  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
+  /*
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
-	 */
-
+//	 */
+//	user_pwm_setValue_LeftMotors(20);
+//	HAL_Delay(3000);
+//
+//	user_pwm_setValue_LeftMotors(0);
+//	
+//	user_pwm_setValue_RightMotors(5);
+//	HAL_Delay(3000);
+//	user_pwm_setValue_RightMotors(0);
+	
 	while (1)
 	{
 		ADC_LED_Distance_Tester();
