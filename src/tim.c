@@ -54,9 +54,9 @@ void MX_TIM4_Init(void)
 	TIM_OC_InitTypeDef sConfigOC;
 
 	htim4.Instance = TIM4;
-	htim4.Init.Prescaler = 0;
+	htim4.Init.Prescaler = PWM_TIMER_PRESCALE;
 	htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim4.Init.Period = 0;
+	htim4.Init.Period = 40;
 	htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	if (HAL_TIM_PWM_Init(&htim4) != HAL_OK)
 	{
@@ -129,51 +129,47 @@ void MX_TIM5_Init(void)
 		_Error_Handler(__FILE__, __LINE__);
 	}
 }
-void leftMotorStart(void)
+
+void leftMotorStart()
 {
-    TIM_OC_InitTypeDef sConfigOC;
+	TIM_OC_InitTypeDef sConfigOC;
 
 	htim4.Init.Prescaler = PWM_TIMER_PRESCALE;
 	htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim4.Init.Period = 40;
-    htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    sConfigOC.OCMode = TIM_OCMODE_PWM1;
-    sConfigOC.Pulse = 20;
-    sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-    sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
-    sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-    sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
-    sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
-    HAL_TIM_PWM_Init(&htim4);
-    HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_1);
-    HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_2);
-    HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
-    HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
+	htim4.Init.Period = 40;
+	htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+	sConfigOC.OCMode = TIM_OCMODE_PWM1;
+	sConfigOC.Pulse = 20;
+	sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+	sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+	sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+	sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+	sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+	HAL_TIM_PWM_Init(&htim4);
+	HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_1);
+	HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
 }
 
-void rightMotorStart(void)
+void rightMotorStart()
 {
-    TIM_OC_InitTypeDef sConfigOC;
+	TIM_OC_InitTypeDef sConfigOC;
 
 	htim4.Init.Prescaler = PWM_TIMER_PRESCALE;
 	htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim4.Init.Period = 40;
-    htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    sConfigOC.OCMode = TIM_OCMODE_PWM1;
-    sConfigOC.Pulse = 20;
-    sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-    sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
-    sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-    sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
-    sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
-    HAL_TIM_PWM_Init(&htim4);
-    HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_3);
-    HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_4);
-    HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
-    HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
+	htim4.Init.Period = 40;
+	htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+	sConfigOC.OCMode = TIM_OCMODE_PWM1;
+	sConfigOC.Pulse = 20;
+	sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+	sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+	sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+	sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+	sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+	HAL_TIM_PWM_Init(&htim4);
+	HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_3);
+	HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_4);
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
 }
-//
-//void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim)
-//{
-//	//Unused
-//}

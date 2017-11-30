@@ -34,6 +34,7 @@
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx.h"
 #include "stm32f4xx_it.h"
+#include "tim.h"
 
 /* USER CODE BEGIN 0 */
 
@@ -174,6 +175,10 @@ void SysTick_Handler(void)
   /* USER CODE BEGIN SysTick_IRQn 1 */
 
   /* USER CODE END SysTick_IRQn 1 */
+}
+
+void TIM4_IRQHandler(void){
+	HAL_TIM_IRQHandler(&htim4);
 }
 
 /******************************************************************************/
