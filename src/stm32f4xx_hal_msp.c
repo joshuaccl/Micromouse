@@ -282,6 +282,16 @@ void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef* htim_encoder)
 
 }
 
+void HAL_TIM_PWM_MmspInit(TIM_HandleTypeDef* htim_pwm)
+{
+	if(htim_pwm->Instance==TIM4)
+	{
+		__HAL_RCC_TIM4_CLK_ENABLE();
+		HAL_NVIC_SetPriority(TIM4_IRQn, 0, 0);
+		HAL_NVIC_EnableIRQ(TIM4_IRQn);
+	}
+}
+
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
 {
 
@@ -309,7 +319,6 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
   if(htim->Instance==TIM4)
   {
   /* USER CODE BEGIN TIM4_MspPostInit 0 */
-
   /* USER CODE END TIM4_MspPostInit 0 */
   
     /**TIM4 GPIO Configuration    
