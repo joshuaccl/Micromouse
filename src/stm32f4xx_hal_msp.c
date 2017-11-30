@@ -282,7 +282,7 @@ void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef* htim_encoder)
 
 }
 
-void HAL_TIM_PWM_MmspInit(TIM_HandleTypeDef* htim_pwm)
+void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef* htim_pwm)
 {
 	if(htim_pwm->Instance==TIM4)
 	{
