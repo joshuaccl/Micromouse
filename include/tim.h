@@ -8,6 +8,9 @@
 #ifndef __tim_H
 #define __tim_H
 
+#define TIMER_CLOCK_SPEED 84000000
+#define PWM_TIMER_PRESCALE 0
+
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 

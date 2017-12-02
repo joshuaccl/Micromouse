@@ -50,7 +50,10 @@
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
+
+void HAL_TIM_PeriodElaspedCallback(TIM_HandleTypeDef *htim);
 /* Main program */
 int main(void)
 {
@@ -70,19 +73,19 @@ int main(void)
 	MX_DMA_Init();
 
 	/* Enable Emitter pins when mouse powers on */
-	emitter_Init();
-
-	leftMotorStart();
-	rightMotorStart();
-	
+//	emitter_Init();
+//
+//	leftMotorStart();
+//	rightMotorStart();
+//	
 //	
 //	
 //  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
 //  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
-  /*
-  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
-  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
-//	 */
+//
+//  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
+//  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
+
 //	user_pwm_setValue_LeftMotors(20);
 //	HAL_Delay(3000);
 //
@@ -91,13 +94,24 @@ int main(void)
 //	user_pwm_setValue_RightMotors(5);
 //	HAL_Delay(3000);
 //	user_pwm_setValue_RightMotors(0);
-	
+	leftMotorStart();
+	rightMotorStart();	
 	while (1)
 	{
-		ADC_LED_Distance_Tester();
+//		ADC_LED_Distance_Tester();
 	}
 }
-
+void HAL_TIM_PeriodElaspedCallback(TIM_HandleTypeDef *htim)
+{
+	if (htim->Instance ==TIM4)
+	{
+		HAL_IncTick();
+	}
+	else
+	{
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);
+	}
+}
 /** System Clock Configuration
  */
 void SystemClock_Config(void)
