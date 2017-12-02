@@ -52,6 +52,8 @@
 void SystemClock_Config(void);
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
+
+void HAL_TIM_PeriodElaspedCallback(TIM_HandleTypeDef *htim);
 /* Main program */
 int main(void)
 {
@@ -71,7 +73,7 @@ int main(void)
 	MX_DMA_Init();
 
 	/* Enable Emitter pins when mouse powers on */
-	emitter_Init();
+//	emitter_Init();
 //
 //	leftMotorStart();
 //	rightMotorStart();
@@ -96,11 +98,20 @@ int main(void)
 	rightMotorStart();	
 	while (1)
 	{
-
 //		ADC_LED_Distance_Tester();
 	}
 }
-
+void HAL_TIM_PeriodElaspedCallback(TIM_HandleTypeDef *htim)
+{
+	if (htim->Instance ==TIM4)
+	{
+		HAL_IncTick();
+	}
+	else
+	{
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);
+	}
+}
 /** System Clock Configuration
  */
 void SystemClock_Config(void)
