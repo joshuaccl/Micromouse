@@ -73,8 +73,8 @@ int main(void)
 	/* Enable Emitter pins when mouse powers on */
 	emitter_Init();
 //
-	leftMotorStart();
-	rightMotorStart();
+//	leftMotorStart();
+//	rightMotorStart();
 //	
 //	
 //	
@@ -92,7 +92,8 @@ int main(void)
 //	user_pwm_setValue_RightMotors(5);
 //	HAL_Delay(3000);
 //	user_pwm_setValue_RightMotors(0);
-	
+	leftMotorStart();
+	rightMotorStart();	
 	while (1)
 	{
 

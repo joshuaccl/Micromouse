@@ -7,8 +7,6 @@
 
 #include "tim.h"
 
-#define PWM_TIMER_PRESCALE 83
-
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
@@ -151,7 +149,7 @@ void leftMotorStart(void)
     htim4.Init.Period = 40;
     htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     sConfigOC.OCMode = TIM_OCMODE_PWM1;
-    sConfigOC.Pulse = 40;
+    sConfigOC.Pulse = 30;
     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
     sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
@@ -173,7 +171,7 @@ void rightMotorStart(void)
     htim4.Init.Period = 40;
     htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     sConfigOC.OCMode = TIM_OCMODE_PWM1;
-    sConfigOC.Pulse = 40;
+    sConfigOC.Pulse = 30;
     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
     sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;

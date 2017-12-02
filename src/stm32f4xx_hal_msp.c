@@ -287,14 +287,24 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef* htim_pwm)
 	if(htim_pwm->Instance==TIM4)
 	{
 		__HAL_RCC_TIM4_CLK_ENABLE();
-		HAL_NVIC_SetPriority(TIM4_IRQn, 0, 0);
+		HAL_NVIC_SetPriority(TIM4_IRQn, 5, 0);
 		HAL_NVIC_EnableIRQ(TIM4_IRQn);
+	}
+}
+
+
+void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef* htim_pwm)
+{
+	if(htim_pwm->Instance ==TIM4)
+	{
+		__HAL_RCC_TIM4_CLK_DISABLE();
+		HAL_NVIC_DisableIRQ(TIM4_IRQn);
 	}
 }
 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
 {
-
+/* DIFFERENCE HERE */
   if(htim_base->Instance==TIM4)
   {
   /* USER CODE BEGIN TIM4_MspInit 0 */
@@ -303,7 +313,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
     /* Peripheral clock enable */
     __HAL_RCC_TIM4_CLK_ENABLE();
     /* TIM4 interrupt Init */
-    HAL_NVIC_SetPriority(TIM4_IRQn, 1, 0);
+    HAL_NVIC_SetPriority(TIM4_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(TIM4_IRQn);
   /* USER CODE BEGIN TIM4_MspInit 1 */
 
@@ -391,7 +401,7 @@ void HAL_TIM_Encoder_MspDeInit(TIM_HandleTypeDef* htim_encoder)
 
 void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
 {
-
+/* DIFFERENCE HERE */
   if(htim_base->Instance==TIM4)
   {
   /* USER CODE BEGIN TIM4_MspDeInit 0 */
