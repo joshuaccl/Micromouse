@@ -13,6 +13,11 @@
 #include "stm32f4xx_hal.h"
 #include "tim.h"
 
+extern uint32_t leftTicks;
+extern uint32_t rightTicks;
+extern uint32_t prevLeft;
+extern uint32_t prevRight;
+
 void encoderStart(void);
 
 #endif

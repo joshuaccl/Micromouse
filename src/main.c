@@ -54,8 +54,10 @@ void SystemClock_Config(void);
 
 void HAL_TIM_PeriodElaspedCallback(TIM_HandleTypeDef *htim);
 
-int leftTicks=0;
-int rightTicks=0;
+uint32_t prevLeft;
+uint32_t prevRight;
+uint32_t leftTicks;
+uint32_t rightTicks;
 
 /* Main program */
 int main(void)
@@ -70,6 +72,7 @@ int main(void)
 	MX_GPIO_Init();
 	MX_ADC1_Init();  // Init ADC
 	MX_TIM2_Init();
+	MX_TIM3_Init();
 	MX_TIM4_Init();  // Init motors
 	MX_TIM5_Init();
 	MX_SPI3_Init();  // Init display
@@ -86,9 +89,6 @@ int main(void)
 	while (1)
 	{
 //		ADC_LED_Distance_Tester();
-		leftTicks = TIM2->CNT;
-		rightTicks = TIM5->CNT;
-
 	}
 }
 void HAL_TIM_PeriodElaspedCallback(TIM_HandleTypeDef *htim)
