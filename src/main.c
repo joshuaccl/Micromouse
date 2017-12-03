@@ -47,6 +47,7 @@
 #include "motors.h"
 #include "spi.h"
 #include "tim.h"
+#include "encoder.h"
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -80,9 +81,7 @@ int main(void)
 	leftMotorStart();
 	rightMotorStart();
 
-	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
-	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
-
+	encoderStart();
 
 	while (1)
 	{
