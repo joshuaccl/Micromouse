@@ -9,7 +9,7 @@
 #define __tim_H
 
 #define TIMER_CLOCK_SPEED 84000000
-#define PWM_TIMER_PRESCALE 0
+#define PWM_TIMER_PRESCALE 83
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
@@ -23,7 +23,5 @@ void MX_TIM4_Init(void);
 void MX_TIM5_Init(void);
 void leftMotorStart(void);
 void rightMotorStart(void);
-
-//void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
 #endif /*__ tim_H */

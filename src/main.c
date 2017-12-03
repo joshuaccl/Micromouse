@@ -50,10 +50,9 @@
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
-
 
 void HAL_TIM_PeriodElaspedCallback(TIM_HandleTypeDef *htim);
+
 /* Main program */
 int main(void)
 {
@@ -65,40 +64,22 @@ int main(void)
 
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
-	MX_ADC1_Init();
+	MX_ADC1_Init();  // Init ADC
 	MX_TIM2_Init();
-	MX_TIM4_Init();
+	MX_TIM4_Init();  // Init motors
 	MX_TIM5_Init();
-	MX_SPI3_Init();
-	MX_DMA_Init();
+	MX_SPI3_Init();  // Init display
+	MX_DMA_Init();   // Init ADC DMA
 
-	/* Enable Emitter pins when mouse powers on */
-//	emitter_Init();
-//
+	/* Enable IR Emitter pins when mouse powers on */
+	emitter_Init();
+
 //	leftMotorStart();
-//	rightMotorStart();
-//	
-//	
-//	
-//  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
-//  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
-//
-//  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
-//  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
+	rightMotorStart();
 
-//	user_pwm_setValue_LeftMotors(20);
-//	HAL_Delay(3000);
-//
-//	user_pwm_setValue_LeftMotors(0);
-//	
-//	user_pwm_setValue_RightMotors(5);
-//	HAL_Delay(3000);
-//	user_pwm_setValue_RightMotors(0);
-	leftMotorStart();
-	rightMotorStart();	
 	while (1)
 	{
-//		ADC_LED_Distance_Tester();
+		ADC_LED_Distance_Tester();
 	}
 }
 void HAL_TIM_PeriodElaspedCallback(TIM_HandleTypeDef *htim)

@@ -8,8 +8,19 @@
 #include "motors.h"
 #include "tim.h"
 
+/* Motors initialized through rightMotorStart and leftMotorStart functions
+ * To change PWM values on the fly, call leftMotorPWMChange or rightMotorPWMChange
+ *
+ * System clock for stm32f405 is 84 MHz
+ *
+ * Period = ((system clock/(prescalar +1))/ desired frequency) -1
+ *
+ * Duty Cycle = Pulse / Period
+ *
+ */
+
 /* Pulse PWM value change for left motors (CH1/CH2) */
-void user_pwm_setValue_LeftMotors(uint16_t value)
+void leftMotorPWMChange(float value)
 {
 	TIM_OC_InitTypeDef sConfigOC;
 
@@ -25,6 +36,8 @@ void user_pwm_setValue_LeftMotors(uint16_t value)
 	{
 		_Error_Handler(__FILE__, __LINE__);
 	}
+	// PWM is relative based on the two channels so set 2nd channel to 0
+	sConfigOC.Pulse = 0;
 	if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
 	{
 		_Error_Handler(__FILE__, __LINE__);
@@ -34,7 +47,7 @@ void user_pwm_setValue_LeftMotors(uint16_t value)
 }
 
 /* Pulse PWM value change for right motors (CH3/CH4) */
-void user_pwm_setValue_RightMotors(uint16_t value)
+void rightMotorPWMChange(float value)
 {
 	TIM_OC_InitTypeDef sConfigOC;
 
@@ -50,6 +63,8 @@ void user_pwm_setValue_RightMotors(uint16_t value)
 	{
 		_Error_Handler(__FILE__, __LINE__);
 	}
+	// PWM is relative based on the two channels so set 2nd channel to 0
+	sConfigOC.Pulse = 0;
 	if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_4) != HAL_OK)
 	{
 		_Error_Handler(__FILE__, __LINE__);

@@ -12,7 +12,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
-void user_pwm_setValue_LeftMotors(uint16_t value);
-void user_pwm_setValue_RightMotors(uint16_t value);
+void leftMotorPWMChange(float value);
+void rightMotorPWMChange(float value);
 
 #endif /*__motors_H */

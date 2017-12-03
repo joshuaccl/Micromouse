@@ -11,6 +11,19 @@ TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
 
+/* Motors on TIM4
+ *
+ * Motors initialized through rightMotorStart and leftMotorStart functions
+ * To change PWM values on the fly, call leftMotorPWMChange or rightMotorPWMChange
+ *
+ * System clock for stm32f405 is 84 MHz
+ *
+ * Period = ((system clock/(prescalar +1))/desired frequency) -1
+ *
+ * Duty Cycle = Pulse / Period
+ *
+ */
+
 /* TIM2 init function */
 void MX_TIM2_Init(void)
 {
@@ -72,7 +85,6 @@ void MX_TIM4_Init(void)
 	{
 		_Error_Handler(__FILE__, __LINE__);
 	}
-
 
 	sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
 	sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
@@ -142,14 +154,16 @@ void MX_TIM5_Init(void)
 }
 void leftMotorStart(void)
 {
+	// PWM duty cycle percentage = Pulse / Period
     TIM_OC_InitTypeDef sConfigOC;
 
 	htim4.Init.Prescaler = PWM_TIMER_PRESCALE;
 	htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim4.Init.Period = 7000;
+	// Desired frequency of 9.9 KHz desired so set period to 100
+    htim4.Init.Period = 100;
     htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     sConfigOC.OCMode = TIM_OCMODE_PWM1;
-    sConfigOC.Pulse = 6000;
+    sConfigOC.Pulse = 0;
     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
     sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
@@ -157,6 +171,7 @@ void leftMotorStart(void)
     sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
     HAL_TIM_PWM_Init(&htim4);
     HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_1);
+    // PWM is relative based on the two channels so set 2nd channel to 0
     sConfigOC.Pulse = 0;
     HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_2);
     HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
@@ -165,14 +180,16 @@ void leftMotorStart(void)
 
 void rightMotorStart(void)
 {
+	// PWM duty cycle percentage = Pulse / Period
     TIM_OC_InitTypeDef sConfigOC;
 
 	htim4.Init.Prescaler = PWM_TIMER_PRESCALE;
 	htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim4.Init.Period = 7000;
+	// Desired frequency of 9.9 KHz desired so set period to 100
+    htim4.Init.Period = 100;
     htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     sConfigOC.OCMode = TIM_OCMODE_PWM1;
-    sConfigOC.Pulse = 6000;
+    sConfigOC.Pulse = 0;
     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
     sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
@@ -180,13 +197,10 @@ void rightMotorStart(void)
     sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
     HAL_TIM_PWM_Init(&htim4);
     HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_3);
+    // PWM is relative based on the two channels so set 2nd channel to 0
     sConfigOC.Pulse = 0;
     HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_4);
     HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
     HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
 }
-//
-//void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim)
-//{
-//	//Unused
-//}
+
