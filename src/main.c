@@ -53,6 +53,9 @@ void SystemClock_Config(void);
 
 void HAL_TIM_PeriodElaspedCallback(TIM_HandleTypeDef *htim);
 
+int leftTicks=0;
+int rightTicks=0;
+
 /* Main program */
 int main(void)
 {
@@ -74,12 +77,19 @@ int main(void)
 	/* Enable IR Emitter pins when mouse powers on */
 	emitter_Init();
 
-//	leftMotorStart();
+	leftMotorStart();
 	rightMotorStart();
+
+	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
+
 
 	while (1)
 	{
-		ADC_LED_Distance_Tester();
+//		ADC_LED_Distance_Tester();
+		leftTicks = TIM2->CNT;
+		rightTicks = TIM5->CNT;
+
 	}
 }
 void HAL_TIM_PeriodElaspedCallback(TIM_HandleTypeDef *htim)
