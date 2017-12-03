@@ -65,9 +65,9 @@ void MX_TIM3_Init(void)
 	TIM_OC_InitTypeDef sConfigOC;
 
 	htim3.Instance = TIM3;
-	htim3.Init.Prescaler = 0;
+	htim3.Init.Prescaler = 8400;
 	htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim3.Init.Period = 0;
+	htim3.Init.Period = 10000;
 	htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
 	{
