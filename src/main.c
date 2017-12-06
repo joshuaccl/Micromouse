@@ -53,6 +53,8 @@
 void SystemClock_Config(void);
 
 void HAL_TIM_PeriodElaspedCallback(TIM_HandleTypeDef *htim);
+uint32_t leftTicks=0;
+uint32_t rightTicks=0;
 
 int leftTicks=0;
 int rightTicks=0;
@@ -80,11 +82,16 @@ int main(void)
 
 	leftMotorStart();
 	rightMotorStart();
+	leftMotorPWMChange(100);
+	rightMotorPWMChange(100);
+	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
 
 	encoderStart();
 
 	while (1)
 	{
+
 //		ADC_LED_Distance_Tester();
 		leftTicks = TIM2->CNT;
 		rightTicks = TIM5->CNT;

@@ -160,7 +160,7 @@ void leftMotorStart(void)
 	htim4.Init.Prescaler = PWM_TIMER_PRESCALE;
 	htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
 	// Desired frequency of 9.9 KHz desired so set period to 100
-    htim4.Init.Period = 100;
+    htim4.Init.Period = 2000;
     htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     sConfigOC.OCMode = TIM_OCMODE_PWM1;
     sConfigOC.Pulse = 0;
@@ -186,7 +186,7 @@ void rightMotorStart(void)
 	htim4.Init.Prescaler = PWM_TIMER_PRESCALE;
 	htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
 	// Desired frequency of 9.9 KHz desired so set period to 100
-    htim4.Init.Period = 100;
+    htim4.Init.Period = 2000;
     htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     sConfigOC.OCMode = TIM_OCMODE_PWM1;
     sConfigOC.Pulse = 0;
