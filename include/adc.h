@@ -18,7 +18,7 @@
  * LF_ADC is +10 more then RF_ADC
  */
 #define L_ADC 30       // 0
-#define LF_ADC 60      // 1
+#define LF_ADC 64      // 1
 #define RF_ADC 50      // 2
 #define R_ADC  40      // 3
 

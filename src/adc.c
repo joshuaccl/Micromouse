@@ -13,6 +13,11 @@ ADC_HandleTypeDef hadc1;
 uint32_t g_ADCBuffer[ADC_BUFFER_LENGTH];
 uint32_t IR_values[4];
 
+uint32_t ADC_L;
+uint32_t ADC_LF;
+uint32_t ADC_RF;
+uint32_t ADC_R;
+
 /* ADC1 init function */
 void MX_ADC1_Init(void)
 {
@@ -102,6 +107,11 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 	IR_values[1] = lf/2048;
 	IR_values[2] = rf/2048;
 	IR_values[3] = r/2048;
+
+	ADC_L = IR_values[0];
+	ADC_LF = IR_values[1];
+	ADC_RF = IR_values[2];
+	ADC_R = IR_values[3];
 }
 
 /* Turns on LEDs based on the distance freom the sensor. Used for calibration */
