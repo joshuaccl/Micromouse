@@ -11,6 +11,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
+#include "dma.h"
 
 /* Calibration for the ADC sensors, lower value -> see further */
 /*                                  higher value -> see closer */
@@ -23,6 +24,8 @@
 #define R_ADC  40      // 3
 
 extern ADC_HandleTypeDef hadc1;
+extern uint32_t g_ADCBuffer[];
+extern uint32_t IR_values[4];
 
 void MX_ADC1_Init(void);
 void ADC_IRQHandler(void);

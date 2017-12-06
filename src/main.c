@@ -55,9 +55,7 @@ void SystemClock_Config(void);
 void HAL_TIM_PeriodElaspedCallback(TIM_HandleTypeDef *htim);
 uint32_t leftTicks=0;
 uint32_t rightTicks=0;
-
-int leftTicks=0;
-int rightTicks=0;
+uint32_t IR_values[4];
 
 /* Main program */
 int main(void)
@@ -76,6 +74,11 @@ int main(void)
 	MX_TIM5_Init();
 	MX_SPI3_Init();  // Init display
 	MX_DMA_Init();   // Init ADC DMA
+
+	while(IR_values[1] < 100)
+	{
+		// do nothing
+	}
 
 	/* Enable IR Emitter pins when mouse powers on */
 	emitter_Init();
