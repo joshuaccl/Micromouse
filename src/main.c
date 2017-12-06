@@ -48,6 +48,7 @@
 #include "spi.h"
 #include "tim.h"
 #include "encoder.h"
+#include "pdT.h"
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -75,7 +76,7 @@ int main(void)
 	MX_SPI3_Init();  // Init display
 	MX_DMA_Init();   // Init ADC DMA
 
-	while(IR_values[1] < 100)
+	while(getLeftFrontADCValue() < 50)
 	{
 		// do nothing
 	}
@@ -87,6 +88,7 @@ int main(void)
 	rightMotorStart();
 	leftMotorPWMChange(100);
 	rightMotorPWMChange(100);
+
 	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
 
@@ -96,8 +98,8 @@ int main(void)
 	{
 
 //		ADC_LED_Distance_Tester();
-		leftTicks = TIM2->CNT;
-		rightTicks = TIM5->CNT;
+//		leftTicks = TIM2->CNT;
+//		rightTicks = TIM5->CNT;
 
 	}
 }

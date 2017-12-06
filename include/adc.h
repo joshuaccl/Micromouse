@@ -36,4 +36,9 @@ void ADC_LED_Distance_Tester(void);
 /* Function to print out ADC value reading to the LEDs using blinking to get sensor value */
 void ADC_LED_DEBUG(uint32_t value);
 
+uint32_t getLeftADCValue(void);
+uint32_t getLeftFrontADCValue(void);
+uint32_t getRightFrontADCValue(void);
+uint32_t getRightADCValue(void);
+
 #endif /*__ adc_H */

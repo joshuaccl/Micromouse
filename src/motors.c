@@ -7,6 +7,8 @@
 
 #include "motors.h"
 #include "tim.h"
+int leftDutyCycle;
+int rightDutyCycle;
 
 /* Motors initialized through rightMotorStart and leftMotorStart functions
  * To change PWM values on the fly, call leftMotorPWMChange or rightMotorPWMChange
@@ -23,6 +25,7 @@
 void leftMotorPWMChange(float value)
 {
 	TIM_OC_InitTypeDef sConfigOC;
+	leftDutyCycle = value;
 
 	sConfigOC.OCMode = TIM_OCMODE_PWM1;
 	sConfigOC.Pulse = value;
@@ -50,6 +53,7 @@ void leftMotorPWMChange(float value)
 void rightMotorPWMChange(float value)
 {
 	TIM_OC_InitTypeDef sConfigOC;
+	rightDutyCycle = value;
 
 	sConfigOC.OCMode = TIM_OCMODE_PWM1;
 	sConfigOC.Pulse = 0;
@@ -73,3 +77,12 @@ void rightMotorPWMChange(float value)
 	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
 }
 
+uint32_t getLeftDutyCycle(void)
+{
+	return leftDutyCycle;
+}
+
+uint32_t getRightDutyCycle(void)
+{
+	return rightDutyCycle;
+}

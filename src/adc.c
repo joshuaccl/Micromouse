@@ -7,6 +7,7 @@
 
 #include "adc.h"
 #include "dma.h"
+#include "pdT.h"
 
 ADC_HandleTypeDef hadc1;
 
@@ -173,4 +174,24 @@ void ADC_LED_DEBUG(uint32_t value)
 		HAL_Delay(250);
 		if(thousands<0 && tens<0 && hundreds<0 && ones<0) break;
 	}
+}
+
+uint32_t getLeftADCValue()
+{
+	return IR_values[0];
+}
+
+uint32_t getLeftFrontADCValue()
+{
+	return IR_values[1];
+}
+
+uint32_t getRightFrontADCValue()
+{
+	return IR_values[2];
+}
+
+uint32_t getRightADCValue()
+{
+	return IR_values[3];
 }
