@@ -52,7 +52,7 @@ void rightMotorPWMChange(float value)
 	TIM_OC_InitTypeDef sConfigOC;
 
 	sConfigOC.OCMode = TIM_OCMODE_PWM1;
-	sConfigOC.Pulse = value;
+	sConfigOC.Pulse = 0;
 	sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
     sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
 	sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
@@ -64,7 +64,7 @@ void rightMotorPWMChange(float value)
 		_Error_Handler(__FILE__, __LINE__);
 	}
 	// PWM is relative based on the two channels so set 2nd channel to 0
-	sConfigOC.Pulse = 0;
+	sConfigOC.Pulse = value;
 	if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_4) != HAL_OK)
 	{
 		_Error_Handler(__FILE__, __LINE__);
