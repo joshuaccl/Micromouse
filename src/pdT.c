@@ -10,7 +10,7 @@
 void trackingStart()
 {
 	// Change these constants to calibrate the controller Kp and Kd
-	float Kp=1;
+	float Kp=2;
 	float Kd=1;
 	int error;
 	float correction;

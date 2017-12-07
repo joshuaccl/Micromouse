@@ -81,6 +81,7 @@ int main(void)
 
 	/* Enable IR Emitter pins when mouse powers on */
 	emitter_Init();
+	mouseStartSensorWave();
 
 	leftMotorStart();
 	rightMotorStart();
@@ -89,7 +90,6 @@ int main(void)
 	MX_TIM3_Init();
 	encoderStart();
 	/* Start mouse by waving hand next to left ADC sensor */
-	mouseStartSensorWave();
 
 }
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
