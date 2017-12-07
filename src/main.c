@@ -77,6 +77,7 @@ int main(void)
 	/* Enable IR Emitter pins when mouse powers on */
 	emitter_Init();
 
+
 	while (1)
 	{
 
