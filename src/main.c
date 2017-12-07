@@ -77,23 +77,14 @@ int main(void)
 	/* Enable IR Emitter pins when mouse powers on */
 	emitter_Init();
 
+	/* Start mouse by waving hand next to left ADC sensor */
+	mouseStartSensorWave();
 
-	while (1)
-	{
 
-
-	}
 }
 void HAL_TIM_PeriodElaspedCallback(TIM_HandleTypeDef *htim)
 {
-	if (htim->Instance ==TIM4)
-	{
-		HAL_IncTick();
-	}
-	else
-	{
-		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);
-	}
+
 }
 /** System Clock Configuration
  */
