@@ -77,21 +77,10 @@ int main(void)
 	/* Enable IR Emitter pins when mouse powers on */
 	emitter_Init();
 
-//	leftMotorStart();
-//	rightMotorStart();
-//	leftMotorPWMChange(100);
-//	rightMotorPWMChange(100);
-//	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
-//	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
-//
-//	encoderStart();
 
 	while (1)
 	{
 
-		ADC_LED_Distance_Tester();
-//		leftTicks = TIM2->CNT;
-//		rightTicks = TIM5->CNT;
 
 	}
 }
