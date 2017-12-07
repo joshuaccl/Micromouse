@@ -22,4 +22,6 @@ void rightTurn(void);
 void leftTurn(void);
 void backward180Turn(void);
 void leftSTurn(void);
+void cornerStop(void);
+
 #endif /*__motors_H */

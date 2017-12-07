@@ -106,7 +106,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		//		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_5);
 		if(getLeftADCValue() > 47 && getRightADCValue() > 56) // 65 and 80
 		{
-			backward180Turn();
+			cornerStop();
+//			HAL_Delay(500);
+//			backward180Turn();
 		}
 		else
 		{

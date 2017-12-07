@@ -150,7 +150,8 @@ void backward180Turn(void)
 {
 	leftMotorPWMChangeForward(350);
 	rightMotorPWMChangeBackward(350);
-	HAL_Delay(375);
+
+	HAL_Delay(350);
 	leftMotorPWMChangeForward(0);
 	rightMotorPWMChangeBackward(0);
 }
@@ -161,5 +162,10 @@ void leftSTurn(void)
 	HAL_Delay(200);
 	rightMotorPWMChangeForward(0);
 	leftMotorPWMChangeBackward(0);
+}
 
+void cornerStop(void)
+{
+	rightMotorPWMChangeForward(0);
+	leftMotorPWMChangeForward(0);
 }

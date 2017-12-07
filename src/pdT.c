@@ -34,7 +34,7 @@ void trackingLeft()
 {
 	// Change these constants to calibrate the controller Kp and Kd
 	float Kp=2;
-	float Kd=20;
+	float Kd=17.5;
 	int error;
 	float correctionP;
 	float correctionD;
@@ -52,7 +52,7 @@ void trackingLeft()
 void trackingRight()
 {
 	float Kp=2;
-	float Kd=20;
+	float Kd=17.5;
 	int error;
 	float correctionP;
 	float correctionD;
