@@ -10,8 +10,6 @@
 #define __encoder_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx_hal.h"
-#include "tim.h"
 
 void encoderStart(void);
 

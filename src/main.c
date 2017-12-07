@@ -48,11 +48,11 @@
 #include "spi.h"
 #include "tim.h"
 #include "encoder.h"
+#include "pdT.h"
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
-void HAL_TIM_PeriodElaspedCallback(TIM_HandleTypeDef *htim);
 uint32_t leftTicks=0;
 uint32_t rightTicks=0;
 
@@ -74,16 +74,31 @@ int main(void)
 	MX_SPI3_Init();  // Init display
 	MX_DMA_Init();   // Init ADC DMA
 
+	//	while(getLeftFrontADCValue() < 50)
+	//	{
+	//		// do nothing
+	//	}
+
 	/* Enable IR Emitter pins when mouse powers on */
 	emitter_Init();
 
+	leftMotorStart();
+	rightMotorStart();
+  
+  // Have to start Timer3 interrupts after initializing motors
+	MX_TIM3_Init();
+	encoderStart();
 	/* Start mouse by waving hand next to left ADC sensor */
 	mouseStartSensorWave();
 
-
 }
-void HAL_TIM_PeriodElaspedCallback(TIM_HandleTypeDef *htim)
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
+
+	if(htim->Instance==TIM3){
+		//		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_5);
+		trackingStart();
+	}
 
 }
 /** System Clock Configuration

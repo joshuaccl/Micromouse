@@ -11,6 +11,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
+#include "dma.h"
 
 /* Calibration for the ADC sensors, lower value -> see further */
 /*                                  higher value -> see closer */
@@ -23,6 +24,8 @@
 #define R_ADC  40      // 3
 
 extern ADC_HandleTypeDef hadc1;
+extern uint32_t g_ADCBuffer[];
+extern uint32_t IR_values[4];
 extern uint32_t startupSensor;
 
 void MX_ADC1_Init(void);
@@ -39,5 +42,10 @@ void mouseStartSensorWave(void);
 
 /* Function to print out ADC value reading to the LEDs using blinking to get sensor value */
 void ADC_LED_DEBUG(uint32_t value);
+
+uint32_t getLeftADCValue(void);
+uint32_t getLeftFrontADCValue(void);
+uint32_t getRightFrontADCValue(void);
+uint32_t getRightADCValue(void);
 
 #endif /*__ adc_H */
