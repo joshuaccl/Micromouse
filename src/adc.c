@@ -8,6 +8,7 @@
 #include "adc.h"
 #include "dma.h"
 #include "pdT.h"
+#include "motors.h"
 
 ADC_HandleTypeDef hadc1;
 

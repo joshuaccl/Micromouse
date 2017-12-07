@@ -88,19 +88,31 @@ int main(void)
 
 	leftMotorStart();
 	rightMotorStart();
-  
-  // Have to start Timer3 interrupts after initializing motors
+
+	// Have to start Timer3 interrupts after initializing motors
 	MX_TIM3_Init();
 	encoderStart();
 	/* Start mouse by waving hand next to left ADC sensor */
 
+	while(1)
+	{
+
+	}
 }
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance==TIM3){
 		//		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_5);
-		trackingLeft();
-		trackingRight();
+		if(getLeftADCValue() > 47 && getRightADCValue() > 56) // 65 and 80
+		{
+			backward180Turn();
+		}
+		else
+		{
+			trackingLeft();
+			trackingRight();
+		}
 	}
 
 }
