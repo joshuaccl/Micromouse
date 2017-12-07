@@ -7,20 +7,39 @@
 
 #include "pdT.h"
 
-void trackingStart()
+int trackingLeft(leftOldError)
 {
 	// Change these constants to calibrate the controller Kp and Kd
 	float Kp=2;
 	float Kd=1;
 	int error;
-	float correction;
+	float correctionP;
+	float correctionD;
+	int derivative;
 	error = getLeftFrontADCValue() - LEFT_BASELINE;
-	correction = error * Kp;
-	leftMotorPWMChangeForward(correction + 100);
-	rightMotorPWMChangeForward(100 - correction);
+	derivative = error - leftOldError;
+	correctionP = error * Kp;
+	correctionD = derivative * Kd;
+	correctionP += correctionD;
+	leftMotorPWMChangeForward(correctionP + BASE_SPEED);
+	rightMotorPWMChangeForward(BASE_SPEED - correctionP);
+	return error;
+}
 
+int trackingRight(rightOldError)
+{
+	float Kp=2;
+	float Kd=1;
+	int error;
+	float correctionP;
+	float correctionD;
+	int derivative;
 	error = getRightFrontADCValue() - RIGHT_BASELINE;
-	correction = error * Kp;
-	rightMotorPWMChangeForward(correction + 100);
-	leftMotorPWMChangeForward(100 - correction);
+	derivative = error - rightOldError;
+	correctionP = error * Kp;
+	correctionD = derivative * Kd;
+	correctionP += correctionD;
+	rightMotorPWMChangeForward(correctionP + BASE_SPEED);
+	leftMotorPWMChangeForward(BASE_SPEED - correctionP);
+	return error;
 }

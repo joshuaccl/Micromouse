@@ -55,6 +55,8 @@ void SystemClock_Config(void);
 
 uint32_t leftTicks=0;
 uint32_t rightTicks=0;
+int leftOldError;
+int rightOldError;
 
 /* Main program */
 int main(void)
@@ -94,10 +96,10 @@ int main(void)
 }
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-
 	if(htim->Instance==TIM3){
 		//		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_5);
-		trackingStart();
+		leftOldError = trackingLeft(leftOldError);
+		rightOldError = trackingRight(rightOldError);
 	}
 
 }
