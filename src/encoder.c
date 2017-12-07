@@ -6,6 +6,9 @@
  ****************************************************************************** */
 
 #include "encoder.h"
+#include "stm32f4xx_hal.h"
+#include "tim.h"
+#include "stm32f4xx_hal_tim.h"
 
 void encoderStart(void)
 {

@@ -8,6 +8,7 @@
 #include "tim.h"
 
 TIM_HandleTypeDef htim2;
+TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
 
@@ -57,6 +58,37 @@ void MX_TIM2_Init(void)
 	}
 }
 
+void MX_TIM3_Init(void)
+{
+	TIM_ClockConfigTypeDef sClockSourceConfig;
+	TIM_MasterConfigTypeDef sMasterConfig;
+
+	htim3.Instance = TIM3;
+	htim3.Init.Prescaler = 839;
+	htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+	htim3.Init.Period = 100;
+	htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+	if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+	{
+		_Error_Handler(__FILE__, __LINE__);
+	}
+	sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+	if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK) {
+		Error_Handler();
+	}
+
+	sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+	sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+	if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig)
+			!= HAL_OK) {
+		Error_Handler();
+	}
+	HAL_TIM_Base_Start(&htim3);
+	HAL_TIM_Base_Start_IT(&htim3);
+	HAL_NVIC_SetPriority(TIM3_IRQn, 4, 0);
+	HAL_NVIC_ClearPendingIRQ(TIM3_IRQn);
+	HAL_NVIC_EnableIRQ(TIM3_IRQn);
+}
 
 /* TIM4 init function */
 void MX_TIM4_Init(void)
@@ -72,13 +104,13 @@ void MX_TIM4_Init(void)
 	htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
 	{
-	    _Error_Handler(__FILE__, __LINE__);
+		_Error_Handler(__FILE__, __LINE__);
 	}
 
 	sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
 	if (HAL_TIM_ConfigClockSource(&htim4, &sClockSourceConfig) != HAL_OK)
 	{
-	    _Error_Handler(__FILE__, __LINE__);
+		_Error_Handler(__FILE__, __LINE__);
 	}
 
 	if (HAL_TIM_PWM_Init(&htim4) != HAL_OK)
@@ -155,52 +187,52 @@ void MX_TIM5_Init(void)
 void leftMotorStart(void)
 {
 	// PWM duty cycle percentage = Pulse / Period
-    TIM_OC_InitTypeDef sConfigOC;
+	TIM_OC_InitTypeDef sConfigOC;
 
 	htim4.Init.Prescaler = PWM_TIMER_PRESCALE;
 	htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
 	// Desired frequency of 9.9 KHz desired so set period to 100
-    htim4.Init.Period = 2000;
-    htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    sConfigOC.OCMode = TIM_OCMODE_PWM1;
-    sConfigOC.Pulse = 0;
-    sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-    sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
-    sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-    sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
-    sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
-    HAL_TIM_PWM_Init(&htim4);
-    HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_1);
-    // PWM is relative based on the two channels so set 2nd channel to 0
-    sConfigOC.Pulse = 0;
-    HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_2);
-    HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
-    HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
+	htim4.Init.Period = 2000;
+	htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+	sConfigOC.OCMode = TIM_OCMODE_PWM1;
+	sConfigOC.Pulse = 0;
+	sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+	sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+	sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+	sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+	sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+	HAL_TIM_PWM_Init(&htim4);
+	HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_1);
+	// PWM is relative based on the two channels so set 2nd channel to 0
+	sConfigOC.Pulse = 0;
+	HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
 }
 
 void rightMotorStart(void)
 {
 	// PWM duty cycle percentage = Pulse / Period
-    TIM_OC_InitTypeDef sConfigOC;
+	TIM_OC_InitTypeDef sConfigOC;
 
 	htim4.Init.Prescaler = PWM_TIMER_PRESCALE;
 	htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
 	// Desired frequency of 9.9 KHz desired so set period to 100
-    htim4.Init.Period = 2000;
-    htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    sConfigOC.OCMode = TIM_OCMODE_PWM1;
-    sConfigOC.Pulse = 0;
-    sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-    sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
-    sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-    sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
-    sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
-    HAL_TIM_PWM_Init(&htim4);
-    HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_3);
-    // PWM is relative based on the two channels so set 2nd channel to 0
-    sConfigOC.Pulse = 0;
-    HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_4);
-    HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
-    HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
+	htim4.Init.Period = 2000;
+	htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+	sConfigOC.OCMode = TIM_OCMODE_PWM1;
+	sConfigOC.Pulse = 0;
+	sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+	sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+	sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+	sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+	sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+	HAL_TIM_PWM_Init(&htim4);
+	HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_3);
+	// PWM is relative based on the two channels so set 2nd channel to 0
+	sConfigOC.Pulse = 0;
+	HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_4);
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
 }
 

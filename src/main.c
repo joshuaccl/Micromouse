@@ -53,7 +53,6 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
-void HAL_TIM_PeriodElaspedCallback(TIM_HandleTypeDef *htim);
 uint32_t leftTicks=0;
 uint32_t rightTicks=0;
 uint32_t IR_values[4];
@@ -71,15 +70,16 @@ int main(void)
 	MX_GPIO_Init();
 	MX_ADC1_Init();  // Init ADC
 	MX_TIM2_Init();
+	MX_TIM3_Init();
 	MX_TIM4_Init();  // Init motors
 	MX_TIM5_Init();
 	MX_SPI3_Init();  // Init display
 	MX_DMA_Init();   // Init ADC DMA
 
-	while(getLeftFrontADCValue() < 50)
-	{
-		// do nothing
-	}
+//	while(getLeftFrontADCValue() < 50)
+//	{
+//		// do nothing
+//	}
 
 	/* Enable IR Emitter pins when mouse powers on */
 	emitter_Init();
@@ -88,9 +88,6 @@ int main(void)
 	rightMotorStart();
 	leftMotorPWMChange(100);
 	rightMotorPWMChange(100);
-
-	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
-	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
 
 	encoderStart();
 
@@ -105,14 +102,7 @@ int main(void)
 }
 void HAL_TIM_PeriodElaspedCallback(TIM_HandleTypeDef *htim)
 {
-	if (htim->Instance ==TIM4)
-	{
-		HAL_IncTick();
-	}
-	else
-	{
-		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);
-	}
+	trackingStart();
 }
 /** System Clock Configuration
  */

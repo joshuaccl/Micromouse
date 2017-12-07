@@ -14,17 +14,25 @@ void trackingStart()
 	int error;
 	float correction;
 	error = getLeftFrontADCValue() - LEFT_BASELINE;
-	if(error > CENTER_THRESHOLD || error < -CENTER_THRESHOLD){
-		correction = Kp * error;
-		correction /= 2;
-		correction += getLeftDutyCycle();
-		leftMotorPWMChange(correction);
+	if(error > CENTER_THRESHOLD){
+//		correction = Kp * error;
+//		correction += getLeftDutyCycle();
+//		leftMotorPWMChange(correction);
+//		correction = getRightDutyCycle() - correction;
+//		rightMotorPWMChange(correction);
+		rightMotorPWMChange(0);
+		leftMotorPWMChange(100);
 	}
-	error = getRightFrontADCValue() - RIGHT_BASELINE;
-	if(error > CENTER_THRESHOLD || error < -CENTER_THRESHOLD){
-		correction = Kp * error;
-		correction /= 2;
-		correction += getRightDutyCycle();
-		rightMotorPWMChange(correction);
+	else{
+		error = getRightFrontADCValue() - RIGHT_BASELINE;
+		if(error > CENTER_THRESHOLD){
+//			correction = Kp * error;
+//			correction += getRightDutyCycle();
+//			rightMotorPWMChange(correction);
+//			correction = getLeftDutyCycle() - correction;
+//			rightMotorPWMChange(correction);
+			rightMotorPWMChange(100);
+			leftMotorPWMChange(0);
+		}
 	}
 }
