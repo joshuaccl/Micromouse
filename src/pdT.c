@@ -16,11 +16,11 @@ void trackingStart()
 	float correction;
 	error = getLeftFrontADCValue() - LEFT_BASELINE;
 	correction = error * Kp;
-	leftMotorPWMChange(correction + 100);
-	rightMotorPWMChange(100 - correction);
+	leftMotorPWMChangeForward(correction + 100);
+	rightMotorPWMChangeForward(100 - correction);
 
 	error = getRightFrontADCValue() - RIGHT_BASELINE;
 	correction = error * Kp;
-	rightMotorPWMChange(correction + 100);
-	leftMotorPWMChange(100 - correction);
+	rightMotorPWMChangeForward(correction + 100);
+	leftMotorPWMChangeForward(100 - correction);
 }
