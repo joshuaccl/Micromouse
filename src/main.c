@@ -55,8 +55,6 @@ void SystemClock_Config(void);
 
 uint32_t leftTicks=0;
 uint32_t rightTicks=0;
-int leftOldError;
-int rightOldError;
 
 /* Main program */
 int main(void)
@@ -85,6 +83,9 @@ int main(void)
 	emitter_Init();
 	mouseStartSensorWave();
 
+	setL(0);
+	setR(0);
+
 	leftMotorStart();
 	rightMotorStart();
   
@@ -98,8 +99,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance==TIM3){
 		//		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_5);
-		leftOldError = trackingLeft(leftOldError);
-		rightOldError = trackingRight(rightOldError);
+		trackingLeft();
+		trackingRight();
 	}
 
 }

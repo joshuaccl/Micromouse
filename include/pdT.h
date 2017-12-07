@@ -15,10 +15,18 @@
 #define LEFT_BASELINE 40
 #define RIGHT_BASELINE 33
 #define BASE_SPEED 100
+
+extern int leftOldError;
+extern int rightOldError;
+
 // How sensitive the controller is
 
-int trackingLeft(int leftOldError);
-int trackingRight(int rightOldError);
+void trackingLeft(void);
+void trackingRight(void);
+int getL(void);
+int getR(void);
+void setL(int value);
+void setR(int value);
 
 #endif
 
