@@ -55,7 +55,6 @@ void SystemClock_Config(void);
 
 uint32_t leftTicks=0;
 uint32_t rightTicks=0;
-uint32_t IR_values[4];
 
 /* Main program */
 int main(void)
@@ -85,25 +84,22 @@ int main(void)
 
 	leftMotorStart();
 	rightMotorStart();
+  
+  // Have to start Timer3 interrupts after initializing motors
 	MX_TIM3_Init();
-
 	encoderStart();
+	/* Start mouse by waving hand next to left ADC sensor */
+	mouseStartSensorWave();
 
-	while (1)
-	{
-
-		//		ADC_LED_Distance_Tester();
-		//		leftTicks = TIM2->CNT;
-		//		rightTicks = TIM5->CNT;
-
-	}
 }
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
+
 	if(htim->Instance==TIM3){
 		//		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_5);
 		trackingStart();
 	}
+
 }
 /** System Clock Configuration
  */

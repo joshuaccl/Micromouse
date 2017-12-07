@@ -12,13 +12,14 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
-extern float leftDutyCycle;
-extern float rightDutyCycle;
 
-void leftMotorPWMChange(float value);
-void rightMotorPWMChange(float value);
+void leftMotorPWMChangeForward(float value);
+void rightMotorPWMChangeForward(float value);
+void leftMotorPWMChangeBackward(float value);
+void rightMotorPWMChangeBackward(float value);
 
-uint32_t getLeftDutyCycle(void);
-uint32_t getRightDutyCycle(void);
-
+void rightTurn(void);
+void leftTurn(void);
+void backward180Turn(void);
+void leftSTurn(void);
 #endif /*__motors_H */
