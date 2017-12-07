@@ -70,39 +70,40 @@ int main(void)
 	MX_GPIO_Init();
 	MX_ADC1_Init();  // Init ADC
 	MX_TIM2_Init();
-	MX_TIM3_Init();
 	MX_TIM4_Init();  // Init motors
 	MX_TIM5_Init();
 	MX_SPI3_Init();  // Init display
 	MX_DMA_Init();   // Init ADC DMA
 
-//	while(getLeftFrontADCValue() < 50)
-//	{
-//		// do nothing
-//	}
+	//	while(getLeftFrontADCValue() < 50)
+	//	{
+	//		// do nothing
+	//	}
 
 	/* Enable IR Emitter pins when mouse powers on */
 	emitter_Init();
 
 	leftMotorStart();
 	rightMotorStart();
-	leftMotorPWMChange(100);
-	rightMotorPWMChange(100);
+	MX_TIM3_Init();
 
 	encoderStart();
 
 	while (1)
 	{
 
-//		ADC_LED_Distance_Tester();
-//		leftTicks = TIM2->CNT;
-//		rightTicks = TIM5->CNT;
+		//		ADC_LED_Distance_Tester();
+		//		leftTicks = TIM2->CNT;
+		//		rightTicks = TIM5->CNT;
 
 	}
 }
-void HAL_TIM_PeriodElaspedCallback(TIM_HandleTypeDef *htim)
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-	trackingStart();
+	if(htim->Instance==TIM3){
+		//		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_5);
+		trackingStart();
+	}
 }
 /** System Clock Configuration
  */

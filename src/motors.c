@@ -7,8 +7,8 @@
 
 #include "motors.h"
 #include "tim.h"
-int leftDutyCycle;
-int rightDutyCycle;
+float leftDutyCycle;
+float rightDutyCycle;
 
 /* Motors initialized through rightMotorStart and leftMotorStart functions
  * To change PWM values on the fly, call leftMotorPWMChange or rightMotorPWMChange

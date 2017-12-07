@@ -12,8 +12,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
-extern int leftDutyCycle;
-extern int rightDutyCycle;
+extern float leftDutyCycle;
+extern float rightDutyCycle;
 
 void leftMotorPWMChange(float value);
 void rightMotorPWMChange(float value);

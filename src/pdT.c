@@ -9,30 +9,18 @@
 
 void trackingStart()
 {
+	// Change these constants to calibrate the controller Kp and Kd
 	float Kp=1;
 	float Kd=1;
 	int error;
 	float correction;
 	error = getLeftFrontADCValue() - LEFT_BASELINE;
-	if(error > CENTER_THRESHOLD){
-//		correction = Kp * error;
-//		correction += getLeftDutyCycle();
-//		leftMotorPWMChange(correction);
-//		correction = getRightDutyCycle() - correction;
-//		rightMotorPWMChange(correction);
-		rightMotorPWMChange(0);
-		leftMotorPWMChange(100);
-	}
-	else{
-		error = getRightFrontADCValue() - RIGHT_BASELINE;
-		if(error > CENTER_THRESHOLD){
-//			correction = Kp * error;
-//			correction += getRightDutyCycle();
-//			rightMotorPWMChange(correction);
-//			correction = getLeftDutyCycle() - correction;
-//			rightMotorPWMChange(correction);
-			rightMotorPWMChange(100);
-			leftMotorPWMChange(0);
-		}
-	}
+	correction = error * Kp;
+	leftMotorPWMChange(correction + 100);
+	rightMotorPWMChange(100 - correction);
+
+	error = getRightFrontADCValue() - RIGHT_BASELINE;
+	correction = error * Kp;
+	rightMotorPWMChange(correction + 100);
+	leftMotorPWMChange(100 - correction);
 }

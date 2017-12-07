@@ -15,7 +15,6 @@
 #define LEFT_BASELINE 40
 #define RIGHT_BASELINE 33
 // How sensitive the controller is
-#define CENTER_THRESHOLD 2
 
 void trackingStart(void);
 
