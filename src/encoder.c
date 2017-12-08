@@ -10,8 +10,8 @@
 #include "tim.h"
 #include "stm32f4xx_hal_tim.h"
 
-long leftEncoderValue;
-long rightEncoderValue;
+double leftEncoderValue;
+double rightEncoderValue;
 
 void encoderStart(void)
 {
@@ -28,11 +28,11 @@ long getRightEncoderValue()
 {
 	return rightEncoderValue;
 }
-void setLeftEncoderValue(long value)
+void setLeftEncoderValue(double value)
 {
 	leftEncoderValue = value;
 }
-void setRightEncoderValue(long value)
+void setRightEncoderValue(double value)
 {
 	rightEncoderValue = value;
 }

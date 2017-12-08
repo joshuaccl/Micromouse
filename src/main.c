@@ -84,8 +84,8 @@ int main(void)
 	mouseStartSensorWave();
 	HAL_Delay(1000);
 
-	setL(0);
-	setR(0);
+	setPositionL(0);
+	setPositionR(0);
 
 	leftMotorStart();
 	rightMotorStart();

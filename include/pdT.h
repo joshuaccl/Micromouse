@@ -18,17 +18,17 @@
 // Change this macro to affect the travel speed
 #define BASE_SPEED 100
 
-extern int leftOldError;
-extern int rightOldError;
+extern int leftPositionOldError;
+extern int rightPositionOldError;
 
 // How sensitive the controller is
 
-void trackingLeft(void);
-void trackingRight(void);
-int getL(void);
-int getR(void);
-void setL(int value);
-void setR(int value);
+float trackingLeft(void);
+float trackingRight(void);
+int getPositionL(void);
+int getPositionR(void);
+void setPositionL(int value);
+void setPositionR(int value);
 
 #endif
 
