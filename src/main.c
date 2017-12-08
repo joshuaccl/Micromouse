@@ -82,6 +82,7 @@ int main(void)
 	/* Enable IR Emitter pins when mouse powers on */
 	emitter_Init();
 	mouseStartSensorWave();
+	HAL_Delay(1000);
 
 	setL(0);
 	setR(0);
@@ -106,15 +107,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		//		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_5);
 		if(getLeftADCValue() > 47 && getRightADCValue() > 56) // 65 and 80
 		{
+
 			cornerStop();
-//			HAL_Delay(500);
-//			backward180Turn();
+			//			HAL_Delay(500);
+			backward180Turn();
 		}
 		else
 		{
 			trackingLeft();
 			trackingRight();
 		}
+		// Update encoder value stored, every 1 ms
+		setLeftEncoderValue(TIM2->CNT);
+		setRightEncoderValue(TIM5->CNT);
 	}
 
 }
