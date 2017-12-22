@@ -23,6 +23,10 @@
 #define RF_ADC 50      // 2
 #define R_ADC  40      // 3
 
+// Values when right and left sensors detect wall
+#define ADC_LEFT_WALL_DETECT 47
+#define ADC_RIGHT_WALL_DETECT 56
+
 extern ADC_HandleTypeDef hadc1;
 extern uint32_t g_ADCBuffer[];
 extern uint32_t IR_values[4];
