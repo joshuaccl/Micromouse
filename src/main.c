@@ -49,6 +49,7 @@
 #include "tim.h"
 #include "encoder.h"
 #include "pdT.h"
+#include "algorithm.h"
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -81,23 +82,43 @@ int main(void)
 
 	/* Enable IR Emitter pins when mouse powers on */
 	emitter_Init();
-	mouseStartSensorWave();
+
+//
+//	mouseStartSensorWave();
+
+
+//	HAL_Delay(1000);
+
+	setPositionL(0);
+	setPositionR(0);
 
 	leftMotorStart();
 	rightMotorStart();
-  
-  // Have to start Timer3 interrupts after initializing motors
+
+	// Have to start Timer3 interrupts after initializing motors
 	MX_TIM3_Init();
-	encoderStart();
+//	encoderStart();
+	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
 	/* Start mouse by waving hand next to left ADC sensor */
 
+	rightMotorPWMChangeForward(100);
+	leftMotorPWMChangeForward(100);
+
+
+	while(1)
+	{
+		setLeftEncoderValue(TIM2->CNT);
+		setRightEncoderValue(TIM5->CNT);
+	}
 }
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-
 	if(htim->Instance==TIM3){
-		//		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_5);
-		trackingStart();
+
+//		rightWallHugger();
+
 	}
 
 }

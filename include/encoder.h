@@ -12,5 +12,13 @@
 /* Includes ------------------------------------------------------------------*/
 
 void encoderStart(void);
+long getLeftEncoderValue(void);
+long getRightEncoderValue(void);
+void setLeftEncoderValue(double value);
+void setRightEncoderValue(double value);
+
+// left and right encoder values
+extern double leftEncoderValue;
+extern double rightEncoderValue;
 
 #endif

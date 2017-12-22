@@ -7,20 +7,65 @@
 
 #include "pdT.h"
 
-void trackingStart()
+int leftPositionOldError;
+int rightPositionOldError;
+
+int getPositionL()
+{
+	return leftPositionOldError;
+}
+
+int getPositionR()
+{
+	return rightPositionOldError;
+}
+
+void setPositionL( int value )
+{
+	leftPositionOldError = value;
+}
+
+void setPositionR( int value )
+{
+	rightPositionOldError = value;
+}
+
+float trackingLeft()
 {
 	// Change these constants to calibrate the controller Kp and Kd
 	float Kp=2;
-	float Kd=1;
+	float Kd=17.5;
 	int error;
-	float correction;
+	float correctionP;
+	float correctionD;
+	int derivative;
 	error = getLeftFrontADCValue() - LEFT_BASELINE;
-	correction = error * Kp;
-	leftMotorPWMChangeForward(correction + 100);
-	rightMotorPWMChangeForward(100 - correction);
+	derivative = error - getPositionL();
+	correctionP = error * Kp;
+	correctionD = derivative * Kd;
+	correctionP += correctionD;
+	leftMotorPWMChangeForward(correctionP + BASE_SPEED);
+	rightMotorPWMChangeForward(BASE_SPEED - correctionP);
+	setPositionL(error);
+	return correctionP;
 
+}
+
+float trackingRight()
+{
+	float Kp=2;
+	float Kd=17.5;
+	int error;
+	float correctionP;
+	float correctionD;
+	int derivative;
 	error = getRightFrontADCValue() - RIGHT_BASELINE;
-	correction = error * Kp;
-	rightMotorPWMChangeForward(correction + 100);
-	leftMotorPWMChangeForward(100 - correction);
+	derivative = error - getPositionR();
+	correctionP = error * Kp;
+	correctionD = derivative * Kd;
+	correctionP += correctionD;
+	rightMotorPWMChangeForward(correctionP + BASE_SPEED);
+	leftMotorPWMChangeForward(BASE_SPEED - correctionP);
+	setPositionR(error);
+	return correctionP;
 }

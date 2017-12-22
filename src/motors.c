@@ -133,24 +133,21 @@ void rightTurn(void)
 {
 	leftMotorPWMChangeForward(350);
 	rightMotorPWMChangeBackward(350);
-	HAL_Delay(175);
-	leftMotorPWMChangeForward(0);
-	rightMotorPWMChangeBackward(0);
+	HAL_Delay(120);
 }
 
 void leftTurn(void)
 {
 	rightMotorPWMChangeForward(350);
 	leftMotorPWMChangeBackward(350);
-	HAL_Delay(175);
-	rightMotorPWMChangeForward(0);
-	leftMotorPWMChangeBackward(0);
+	HAL_Delay(120);
 }
 void backward180Turn(void)
 {
 	leftMotorPWMChangeForward(350);
 	rightMotorPWMChangeBackward(350);
-	HAL_Delay(350);
+
+	HAL_Delay(325);
 	leftMotorPWMChangeForward(0);
 	rightMotorPWMChangeBackward(0);
 }
@@ -161,5 +158,21 @@ void leftSTurn(void)
 	HAL_Delay(200);
 	rightMotorPWMChangeForward(0);
 	leftMotorPWMChangeBackward(0);
+}
 
+void cornerStop(void)
+{
+	rightMotorPWMChangeBackward(500);
+	leftMotorPWMChangeBackward(500);
+	HAL_Delay(100);
+	rightMotorPWMChangeForward(0);
+	leftMotorPWMChangeForward(0);
+}
+
+void motorStop(void)
+{
+	rightMotorPWMChangeBackward(0);
+	leftMotorPWMChangeBackward(0);
+	rightMotorPWMChangeForward(0);
+	leftMotorPWMChangeForward(0);
 }

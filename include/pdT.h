@@ -14,9 +14,21 @@
 
 #define LEFT_BASELINE 40
 #define RIGHT_BASELINE 33
+
+// Change this macro to affect the travel speed
+#define BASE_SPEED 50
+
+extern int leftPositionOldError;
+extern int rightPositionOldError;
+
 // How sensitive the controller is
 
-void trackingStart(void);
+float trackingLeft(void);
+float trackingRight(void);
+int getPositionL(void);
+int getPositionR(void);
+void setPositionL(int value);
+void setPositionR(int value);
 
 #endif
 
