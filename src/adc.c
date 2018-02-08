@@ -116,7 +116,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 	ADC_LF = IR_values[1];
 	ADC_RF = IR_values[2];
 	ADC_R = IR_values[3];
-	startupSensor = IR_values[1];
+	startupSensor = IR_values[3];
 }
 
 /* Turns on LEDs based on the distance freom the sensor. Used for calibration */
