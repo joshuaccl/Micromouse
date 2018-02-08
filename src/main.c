@@ -76,44 +76,32 @@ int main(void)
 	SystemClock_Config();
 
 	/* Initialize all configured peripherals */
-	MX_GPIO_Init();
+	MX_GPIO_Init();  // Init GPIO
 	MX_ADC1_Init();  // Init ADC
-	MX_TIM2_Init();
+	MX_TIM2_Init();  // Init L encoder
 	MX_TIM4_Init();  // Init motors
-	MX_TIM5_Init();
+	MX_TIM5_Init();  // Init R encoder
 
 	MX_DMA_Init();   // Init ADC DMA
 
-
-	//	while(getLeftFrontADCValue() < 50)
-	//	{
-	//		// do nothing
-	//	}
-
 	/* Enable IR Emitter pins when mouse powers on */
-//	emitter_Init();
-//
-//	mouseStartSensorWave();
+	emitter_Init();
 
-//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+	/* Start mouse by waving hand across L emitter */
+	mouseStartSensorWave();
 
-//	HAL_Delay(3000);
-//	emitter_Off();
+	/* Initially set error for positional PD controller */
+	setPositionL(0);
+	setPositionR(0);
 
-
-
-//	setPositionL(0);
-//	setPositionR(0);
-//
 	leftMotorStart();
 	rightMotorStart();
 
 	// Have to start Timer3 interrupts after initializing motors
-	MX_TIM3_Init();
-	MX_TIM11_Init();
-	MX_SPI2_Init();
-	Init_IMU();
-
+	MX_TIM3_Init();  // Software timer for algorithims
+	MX_TIM11_Init(); // Software timer for gyro
+	MX_SPI2_Init();  // SPI for gyro
+	Init_IMU();      // Initialize gyro
 
 //	encoderStart();
 	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
