@@ -9,7 +9,7 @@
   * inserted by the user or by software development tools
   * are owned by their respective copyright owners.
   *
-  * COPYRIGHT(c) 2017 STMicroelectronics
+  * COPYRIGHT(c) 2018 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -46,6 +46,11 @@
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/
+
+#define GYRO_INT2_Pin GPIO_PIN_6
+#define GYRO_INT2_GPIO_Port GPIOC
+#define GYRO_INT1_Pin GPIO_PIN_7
+#define GYRO_INT1_GPIO_Port GPIOC
 
 /* ########################## Assert Selection ############################## */
 /**
