@@ -66,8 +66,6 @@ int right_counts = 0;
 int right_last_counts = 0;
 float inst_yaw = 0;
 
-float timer_check = 0;
-
 /* Main program */
 int main(void)
 {
@@ -83,9 +81,9 @@ int main(void)
 	MX_TIM2_Init();
 	MX_TIM4_Init();  // Init motors
 	MX_TIM5_Init();
-	MX_TIM11_Init();
+
 	MX_DMA_Init();   // Init ADC DMA
-	MX_SPI2_Init();
+
 
 	//	while(getLeftFrontADCValue() < 50)
 	//	{
@@ -112,6 +110,11 @@ int main(void)
 
 	// Have to start Timer3 interrupts after initializing motors
 	MX_TIM3_Init();
+	MX_TIM11_Init();
+	MX_SPI2_Init();
+	Init_IMU();
+
+
 //	encoderStart();
 	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
@@ -131,7 +134,7 @@ int main(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance==TIM3){
-		timer_check++;
+
 		//		rightWallHugger();
 	}
 //	else if (htim->Instance == TIM14) {
@@ -148,10 +151,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 //		right_velocity = (((float) (right_counts - right_last_counts))/ENCODERCPR) * ENCSAMPLEHZ * DISTPERREV * CMTOM; // m/s
 //	}
 	//tim 11
-	else if (htim->Instance == IMU_TIM_LABEL)
+	if (htim->Instance == TIM11)
 	{
 		CheckID();
-
 //		inst_yaw = GetAngle();
 //		if(inst_yaw > 5.5)
 //		{

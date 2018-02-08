@@ -53,8 +53,8 @@
 
 #include "spi.h"
 
-#define QEI_VELOCITY_TIM_LABEL TIM10
-#define IMU_TIM_LABEL TIM11
+//#define QEI_VELOCITY_TIM_LABEL TIM10
+//#define IMU_TIM_LABEL TIM11
 
 extern int left_counts;
 extern int right_counts;
