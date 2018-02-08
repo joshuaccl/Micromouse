@@ -9,7 +9,7 @@
   * inserted by the user or by software development tools
   * are owned by their respective copyright owners.
   *
-  * COPYRIGHT(c) 2018 STMicroelectronics
+  * COPYRIGHT(c) 2017 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -46,11 +46,32 @@
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/
-
 #define GYRO_INT2_Pin GPIO_PIN_6
 #define GYRO_INT2_GPIO_Port GPIOC
 #define GYRO_INT1_Pin GPIO_PIN_7
 #define GYRO_INT1_GPIO_Port GPIOC
+
+#include "spi.h"
+
+#define QEI_VELOCITY_TIM_LABEL TIM10
+#define IMU_TIM_LABEL TIM11
+
+extern int left_counts;
+extern int right_counts;
+extern float left_velocity;
+extern float right_velocity;
+extern float angle;
+
+// QEI
+#define LEFTQEI			TIM5
+#define RIGHTQEI		TIM2
+#define ENCODERCPR		1024
+#define ENCSAMPLEHZ		1000
+#define DISTPERREV		2.309
+#define CMTOM			0.01
+#define CELLTOTICKS 	7982.68*2
+
+
 
 /* ########################## Assert Selection ############################## */
 /**

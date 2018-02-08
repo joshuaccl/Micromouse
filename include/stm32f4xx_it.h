@@ -61,6 +61,8 @@ void TIM2_IRQHandler(void);
 void TIM4_IRQHandler(void);
 void TIM8_TRG_COM_TIM14_IRQHandler(void);
 void TIM5_IRQHandler(void);
+void TIM1_TRG_COM_TIM11_IRQHandler(void);
+void SPI2_IRQHandler(void);
 
 #ifdef __cplusplus
 }
