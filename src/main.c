@@ -72,7 +72,6 @@ int main(void)
 	MX_TIM2_Init();
 	MX_TIM4_Init();  // Init motors
 	MX_TIM5_Init();
-	MX_SPI3_Init();  // Init display
 	MX_DMA_Init();   // Init ADC DMA
 
 	//	while(getLeftFrontADCValue() < 50)

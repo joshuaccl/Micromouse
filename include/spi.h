@@ -12,9 +12,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
-extern SPI_HandleTypeDef hspi3;
-
-void MX_SPI3_Init(void);
 void writeDisplay(char character, uint8_t position);
 
 #endif /* __spi_H */
