@@ -12,6 +12,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
+extern SPI_HandleTypeDef hspi2;
+
+void MX_SPI2_Init(void);
 void writeDisplay(char character, uint8_t position);
 
 #endif /* __spi_H */

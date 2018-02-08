@@ -46,6 +46,10 @@
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/
+#define GYRO_INT2_Pin GPIO_PIN_6
+#define GYRO_INT2_GPIO_Port GPIOC
+#define GYRO_INT1_Pin GPIO_PIN_7
+#define GYRO_INT1_GPIO_Port GPIOC
 
 /* ########################## Assert Selection ############################## */
 /**

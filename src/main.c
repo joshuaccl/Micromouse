@@ -73,6 +73,7 @@ int main(void)
 	MX_TIM4_Init();  // Init motors
 	MX_TIM5_Init();
 	MX_DMA_Init();   // Init ADC DMA
+	MX_SPI2_Init();
 
 	//	while(getLeftFrontADCValue() < 50)
 	//	{
@@ -116,11 +117,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance==TIM3){
 
-//		rightWallHugger();
-
+		//		rightWallHugger();
+	}
+	if (htim->Instance == TIM14) {
+		HAL_IncTick();
 	}
 
 }
+
 /** System Clock Configuration
  */
 void SystemClock_Config(void)

@@ -31,7 +31,7 @@ void MX_GPIO_Init(void)
 
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_4|GPIO_PIN_5
-			|GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12, GPIO_PIN_RESET);
+			|GPIO_PIN_8|GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12, GPIO_PIN_RESET);
 
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7, GPIO_PIN_RESET);
@@ -43,18 +43,16 @@ void MX_GPIO_Init(void)
 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_RESET);
 
 	/*Configure GPIO pins : PC14 PC15 PC4 PC5
-                           PC10 PC11 PC12 */
+                           PC8 PC10 PC11 PC12 */
 	GPIO_InitStruct.Pin = GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_4|GPIO_PIN_5
-			|GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12;
+			|GPIO_PIN_8|GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-	/*Configure GPIO pins : PA4 PA5 PA7 PA8
-                           PA11 */
-	GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_7|GPIO_PIN_8
-			|GPIO_PIN_11;
+	/*Configure GPIO pins : PA4 PA5 PA6 PA7 */
+	GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -67,6 +65,12 @@ void MX_GPIO_Init(void)
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+	/*Configure GPIO pins : GYRO_INT2_Pin GYRO_INT1_Pin */
+	GPIO_InitStruct.Pin = GYRO_INT2_Pin|GYRO_INT1_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
 	/*Configure GPIO pins : PA9 PA10 */
 	GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_10;
 	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -78,21 +82,20 @@ void MX_GPIO_Init(void)
 	/* ======================================= */
 	/* SPI GPIO INIT START */
 	/* ======================================= */
-    __HAL_RCC_SPI3_CLK_ENABLE();
+//    __HAL_RCC_SPI3_CLK_ENABLE();
     /**SPI3 GPIO Configuration
         PC10     ------> SPI3_SCK
         PC11     ------> SPI3_MISO
         PC12     ------> SPI3_MOSI
         */
-    GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF6_SPI3;
-    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+//    GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12;
+//    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+//    GPIO_InitStruct.Pull = GPIO_NOPULL;
+//    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+//    GPIO_InitStruct.Alternate = GPIO_AF6_SPI3;
+//    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
 	/*Configure GPIO pin : PD2 */
-    /* SPI LCD Display CE pin */
 	GPIO_InitStruct.Pin = GPIO_PIN_2;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
