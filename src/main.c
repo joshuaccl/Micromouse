@@ -90,9 +90,17 @@ int main(void)
 	leftMotorStart();
 	rightMotorStart();
 
+	rightMotorPWMChangeForward(200);
+	leftMotorPWMChangeForward(200);
+
+	HAL_Delay(5000);
+
+	rightMotorPWMChangeForward(0);
+	leftMotorPWMChangeForward(0);
+
 	// Have to start Timer3 interrupts after initializing motors
-	MX_TIM3_Init();
-	encoderStart();
+	//	MX_TIM3_Init();
+	//	encoderStart();
 	/* Start mouse by waving hand next to left ADC sensor */
 
 	while(1)

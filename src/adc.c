@@ -116,7 +116,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 	ADC_LF = IR_values[1];
 	ADC_RF = IR_values[2];
 	ADC_R = IR_values[3];
-	startupSensor = IR_values[0];
+	startupSensor = IR_values[1];
 }
 
 /* Turns on LEDs based on the distance freom the sensor. Used for calibration */
@@ -216,7 +216,7 @@ void mouseStartSensorWave(void)
 	//Constantly spin until hand is waved
 	while (1)
 	{
-		if (startMouseSensor() > 100)
+		if (startMouseSensor() > 2000)
 		{
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);  //LED
 			break;
