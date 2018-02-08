@@ -49,6 +49,7 @@
 #include "tim.h"
 #include "encoder.h"
 #include "pdT.h"
+#include "algorithm.h"
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -81,11 +82,15 @@ int main(void)
 
 	/* Enable IR Emitter pins when mouse powers on */
 	emitter_Init();
-	mouseStartSensorWave();
-	HAL_Delay(1000);
 
-	setL(0);
-	setR(0);
+//
+	mouseStartSensorWave();
+
+
+//	HAL_Delay(1000);
+
+	setPositionL(0);
+	setPositionR(0);
 
 	leftMotorStart();
 	rightMotorStart();
@@ -99,35 +104,26 @@ int main(void)
 	leftMotorPWMChangeForward(0);
 
 	// Have to start Timer3 interrupts after initializing motors
-	//	MX_TIM3_Init();
-	//	encoderStart();
+//	MX_TIM3_Init();
+//	encoderStart();
+	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
 	/* Start mouse by waving hand next to left ADC sensor */
+
 
 	while(1)
 	{
-
+		setLeftEncoderValue(TIM2->CNT);
+		setRightEncoderValue(TIM5->CNT);
 	}
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance==TIM3){
-		//		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_5);
-		if(getLeftADCValue() > 47 && getRightADCValue() > 56) // 65 and 80
-		{
 
-			cornerStop();
-			//			HAL_Delay(500);
-			backward180Turn();
-		}
-		else
-		{
-			trackingLeft();
-			trackingRight();
-		}
-		// Update encoder value stored, every 1 ms
-		setLeftEncoderValue(TIM2->CNT);
-		setRightEncoderValue(TIM5->CNT);
+//		rightWallHugger();
+
 	}
 
 }
