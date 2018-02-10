@@ -59,6 +59,7 @@ void MX_TIM2_Init(void)
 	}
 }
 
+// THIS IS A SOFTWARE TIMER
 void MX_TIM3_Init(void)
 {
 	TIM_ClockConfigTypeDef sClockSourceConfig;
@@ -185,6 +186,7 @@ void MX_TIM5_Init(void)
 	}
 }
 
+// THIS IS A SOFTWARE TIMER
 void MX_TIM11_Init(void)
 {
     htim11.Instance = TIM11;
