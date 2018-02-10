@@ -12,11 +12,11 @@
 #include "adc.h"
 #include "motors.h"
 
-#define LEFT_BASELINE 40
-#define RIGHT_BASELINE 33
+#define LEFT_BASELINE 1000
+#define RIGHT_BASELINE 1000
 
 // Change this macro to affect the travel speed
-#define BASE_SPEED 50
+#define BASE_SPEED 25
 
 extern int leftPositionOldError;
 extern int rightPositionOldError;

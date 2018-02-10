@@ -48,6 +48,7 @@
 #include "tim.h"
 #include "encoder.h"
 #include "pdT.h"
+#include "pdV.h"
 #include "algorithm.h"
 
 /* Private function prototypes -----------------------------------------------*/
@@ -91,20 +92,19 @@ int main(void)
 	//	}
 
 	/* Enable IR Emitter pins when mouse powers on */
-//	emitter_Init();
-//
-//	mouseStartSensorWave();
+	emitter_Init();
+	mouseStartSensorWave();
 
-//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+	//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
 
-//	HAL_Delay(3000);
-//	emitter_Off();
-
+	//	HAL_Delay(3000);
+	//	emitter_Off();
 
 
-//	setPositionL(0);
-//	setPositionR(0);
-//
+
+	//	setPositionL(0);
+	//	setPositionR(0);
+	//
 	leftMotorStart();
 	rightMotorStart();
 
@@ -115,14 +115,19 @@ int main(void)
 	Init_IMU();
 
 
-//	encoderStart();
+	//	encoderStart();
 	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
 	/* Start mouse by waving hand next to left ADC sensor */
 
-	rightMotorPWMChangeForward(100);
-	leftMotorPWMChangeForward(100);
-
+//	rightMotorPWMChangeForward(100);
+//	leftMotorPWMChangeForward(100);
+//	HAL_Delay(3000);
+//	rightMotorPWMChangeForward(50);
+//	leftMotorPWMChangeForward(50);
+//	HAL_Delay(3000);
+//	rightMotorPWMChangeForward(0);
+//	leftMotorPWMChangeForward(0);
 
 	while(1)
 	{
@@ -134,35 +139,37 @@ int main(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance==TIM3){
-
-		//		rightWallHugger();
+//		trackingLeft();
+//		trackingRight();
+		velocityLeft();
+		velocityRight();
 	}
-//	else if (htim->Instance == TIM14) {
-//		HAL_IncTick();
-//	}
-//	//tim 10
-//	else if (htim->Instance == QEI_VELOCITY_TIM_LABEL)
-//	{
-//		left_last_counts = left_counts;
-//		left_counts = QEI_Left_Read();
-//		left_velocity = (((float) (left_counts - left_last_counts))/ENCODERCPR) * ENCSAMPLEHZ * DISTPERREV * CMTOM; // m/s
-//		right_last_counts = right_counts;
-//		right_counts = QEI_Right_Read();
-//		right_velocity = (((float) (right_counts - right_last_counts))/ENCODERCPR) * ENCSAMPLEHZ * DISTPERREV * CMTOM; // m/s
-//	}
+	//	else if (htim->Instance == TIM14) {
+	//		HAL_IncTick();
+	//	}
+	//	//tim 10
+	//	else if (htim->Instance == QEI_VELOCITY_TIM_LABEL)
+	//	{
+	//		left_last_counts = left_counts;
+	//		left_counts = QEI_Left_Read();
+	//		left_velocity = (((float) (left_counts - left_last_counts))/ENCODERCPR) * ENCSAMPLEHZ * DISTPERREV * CMTOM; // m/s
+	//		right_last_counts = right_counts;
+	//		right_counts = QEI_Right_Read();
+	//		right_velocity = (((float) (right_counts - right_last_counts))/ENCODERCPR) * ENCSAMPLEHZ * DISTPERREV * CMTOM; // m/s
+	//	}
 	//tim 11
 	if (htim->Instance == TIM11)
 	{
-		CheckID();
-//		inst_yaw = GetAngle();
-//		if(inst_yaw > 5.5)
-//		{
-//			angle += (inst_yaw/100*.7);
-//		}
-//		else if(inst_yaw < -9)
-//		{
-//			angle += (inst_yaw/100*0.64);
-//		}
+		//		CheckID();
+		//		inst_yaw = GetAngle();
+		//		if(inst_yaw > 5.5)
+		//		{
+		//			angle += (inst_yaw/100*.7);
+		//		}
+		//		else if(inst_yaw < -9)
+		//		{
+		//			angle += (inst_yaw/100*0.64);
+		//		}
 	}
 
 

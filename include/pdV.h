@@ -12,15 +12,13 @@
 #include "stm32f4xx_hal.h"
 #include "adc.h"
 #include "motors.h"
-
-// Change this macro to affect the travel speed
-#define BASE_SPEED 100
+#include "pdT.h"
 
 extern float leftVelocityOldError;
 extern float rightVelocityOldError;
 
-void velocityLeft(float correction);
-void velocityRight(float correction);
+void velocityLeft();
+void velocityRight();
 float getVelocityL(void);
 float getVelocityR(void);
 void setVelocityL(float value);
