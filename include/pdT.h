@@ -14,6 +14,8 @@
 
 #define LEFT_BASELINE 370
 #define RIGHT_BASELINE 414
+#define LW_THRESHOLD 260
+#define RW_THRESHOLD 270
 
 // Change this macro to affect the travel speed
 #define BASE_SPEED 40

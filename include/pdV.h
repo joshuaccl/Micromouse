@@ -13,6 +13,7 @@
 #include "adc.h"
 #include "motors.h"
 #include "pdT.h"
+#include "gpio.h"
 
 extern float leftVelocityOldError;
 extern float rightVelocityOldError;
@@ -23,6 +24,7 @@ float getVelocityL(void);
 float getVelocityR(void);
 void setVelocityL(float value);
 void setVelocityR(float value);
+void wallTracking(void);
 
 #endif
 

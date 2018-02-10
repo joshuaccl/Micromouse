@@ -82,3 +82,40 @@ void setVelocityR(float value)
 {
 	rightVelocityOldError = value;
 }
+
+void wallTracking()
+{
+	int leftWall = getLeftFrontADCValue();
+	int rightWall = getRightFrontADCValue();
+	// Turn off leds
+	turnOffLEDS();
+	// If there is two walls
+	if(leftWall > LW_THRESHOLD && rightWall > RW_THRESHOLD)
+	{
+		velocityLeft();
+		velocityRight();
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+	}
+	// If there is only a right wall
+	else if(leftWall < LW_THRESHOLD && rightWall > RW_THRESHOLD)
+	{
+		velocityRight();
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+	}
+	// If there is only a left wall
+	else if(leftWall > LW_THRESHOLD && rightWall < RW_THRESHOLD)
+	{
+		velocityLeft();
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+	}
+	// No walls
+	else
+	{
+		leftMotorPWMChangeForward(BASE_SPEED);
+		rightMotorPWMChangeForward(BASE_SPEED);
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+	}
+}
