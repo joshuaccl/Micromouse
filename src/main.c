@@ -102,8 +102,8 @@ int main(void)
 
 
 
-	//	setPositionL(0);
-	//	setPositionR(0);
+	setPositionL(0);
+	setPositionR(0);
 	//
 	leftMotorStart();
 	rightMotorStart();
@@ -120,14 +120,14 @@ int main(void)
 	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
 	/* Start mouse by waving hand next to left ADC sensor */
 
-//	rightMotorPWMChangeForward(100);
-//	leftMotorPWMChangeForward(100);
-//	HAL_Delay(3000);
-//	rightMotorPWMChangeForward(50);
-//	leftMotorPWMChangeForward(50);
-//	HAL_Delay(3000);
-//	rightMotorPWMChangeForward(0);
-//	leftMotorPWMChangeForward(0);
+	//	rightMotorPWMChangeForward(100);
+	//	leftMotorPWMChangeForward(100);
+	//	HAL_Delay(3000);
+	//	rightMotorPWMChangeForward(50);
+	//	leftMotorPWMChangeForward(50);
+	//	HAL_Delay(3000);
+	//	rightMotorPWMChangeForward(0);
+	//	leftMotorPWMChangeForward(0);
 
 	while(1)
 	{
@@ -139,8 +139,8 @@ int main(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance==TIM3){
-//		trackingLeft();
-//		trackingRight();
+		//		trackingLeft();
+		//		trackingRight();
 		velocityLeft();
 		velocityRight();
 	}

@@ -17,8 +17,8 @@ void velocityLeft()
 {
 	// Kp and Kd are both constants for the proportional and derivative
 	// control of the pd controller
-	float Kp=6;
-	float Kd=1;
+	float Kp=10;
+	float Kd=0.5;
 	int error; // current error
 	float correctionP; // correction due to P
 	float correctionD; // correction due to D
@@ -44,8 +44,8 @@ void velocityRight()
 {
 	// Kp and Kd are both constants for the proportional and derivative
 	// control of the pd controller
-	float Kp=6;
-	float Kd=1;
+	float Kp=10;
+	float Kd=0.5;
 	int error; // current error
 	float correctionP; // correction due to P
 	float correctionD; // correction due to D
