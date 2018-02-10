@@ -6,46 +6,81 @@
  ****************************************************************************** */
 
 #include "spi.h"
+#include "tim.h"
 
-SPI_HandleTypeDef hspi3;
+SPI_HandleTypeDef hspi2;
 
-/* Init SPI3 */
-void MX_SPI3_Init(void)
+uint8_t gyro_id_0;
+uint8_t gyro_id_1;
+
+/* SPI2 init function */
+void MX_SPI2_Init(void)
 {
-	hspi3.Instance = SPI3;
-	hspi3.Init.Mode = SPI_MODE_MASTER;
-	hspi3.Init.Direction = SPI_DIRECTION_2LINES;
-	hspi3.Init.DataSize = SPI_DATASIZE_8BIT;
-	hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
-	hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
-	hspi3.Init.NSS = SPI_NSS_SOFT;
-	hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
-	hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
-	hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
-	hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-	hspi3.Init.CRCPolynomial = 10;
-	if (HAL_SPI_Init(&hspi3) != HAL_OK)
+
+  /* SPI2 parameter configuration*/
+  hspi2.Instance = SPI2;
+  hspi2.Init.Mode = SPI_MODE_MASTER;
+  hspi2.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi2.Init.NSS = SPI_NSS_SOFT;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi2.Init.CRCPolynomial = 10;
+  HAL_SPI_Init(&hspi2);
+}
+
+void Init_IMU(void)
+{
+	uint8_t ctrl[2] = {0x11 & 0x7F, 0x44};
+	HAL_GPIO_WritePin(GPIOC, IMU_CS_Pin, GPIO_PIN_RESET);
+	HAL_SPI_Transmit(&hspi2, &ctrl, 2, 1000);
+	HAL_GPIO_WritePin(GPIOC, IMU_CS_Pin, GPIO_PIN_SET);
+	HAL_TIM_Base_Init(&htim11);
+	HAL_TIM_Base_Start_IT(&htim11);
+}
+
+void CheckID(void)
+{
+	//who_am_i
+	uint8_t id[2];
+	uint8_t who_am_i = 0x0F | 0x80;
+	HAL_GPIO_WritePin(GPIOC, IMU_CS_Pin, GPIO_PIN_RESET);
+	HAL_SPI_TransmitReceive(&hspi2, &who_am_i, (uint8_t *) &id, 2, 1000);
+	gyro_id_0 = id[0];
+	gyro_id_1 = id[1];
+	HAL_GPIO_WritePin(GPIOC, IMU_CS_Pin, GPIO_PIN_SET);
+}
+
+float GetAngle(void)
+{
+	//Yaw
+	uint8_t yaw_H[2];
+	uint8_t OUTZ_H_G = 0x27 | 0x80;
+
+	uint8_t yaw_L[2];
+	uint8_t OUTZ_L_G = 0x26 | 0x80;
+
+	int16_t yaw;
+
+	//Get Angular rate
+	HAL_GPIO_WritePin(GPIOC, IMU_CS_Pin, GPIO_PIN_RESET);
+	HAL_SPI_TransmitReceive(&hspi2, &OUTZ_H_G, (uint8_t *) &yaw_H, 2, 1000);
+	HAL_GPIO_WritePin(GPIOC, IMU_CS_Pin, GPIO_PIN_SET);
+
+	HAL_GPIO_WritePin(GPIOC, IMU_CS_Pin, GPIO_PIN_RESET);
+	HAL_SPI_TransmitReceive(&hspi2, &OUTZ_L_G, (uint8_t *) &yaw_L, 2, 1000);
+	HAL_GPIO_WritePin(GPIOC, IMU_CS_Pin, GPIO_PIN_SET);
+
+	yaw = (yaw_H[1] << 8) | (yaw_L[1]);
+	if(yaw_H[1] & 0x80 == 0x80)
 	{
-		Error_Handler();
+		yaw = -(~yaw + 1);
 	}
-	__SPI3_CLK_ENABLE();
-	__HAL_SPI_ENABLE(&hspi3);
+	return (yaw*0.01);
 }
 
-/* Load dot register and write into display */
-void writeDisplay(char character, uint8_t position)
-{
-	//
-	//		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_RESET);  //RS
-	//		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_RESET);  //CE LOW
-	//		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_SET);  //DATA_IN
-	//
-	//		HAL_SPI_Transmit(&hspi3, dotRegister, 1280, HAL_MAX_DELAY);
-	//		while(HAL_SPI_GetState(&hspi3) == HAL_SPI_STATE_BUSY);
-	//
-	//		HAL_Delay(10);
-	//		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);  //CLK
-	//
-	//		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);  //CE
 
-}

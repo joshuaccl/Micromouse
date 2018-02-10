@@ -40,7 +40,6 @@
 #include "main.h"
 #include "stm32f4xx_hal.h"
 #include "gpio.h"
-#include "defines.h"
 #include "adc.h"
 #include "dma.h"
 #include "LED_Display.h"
@@ -57,6 +56,16 @@ void SystemClock_Config(void);
 uint32_t leftTicks=0;
 uint32_t rightTicks=0;
 
+float left_velocity = 0;
+float right_velocity = 0;
+float angle = 0;
+
+int left_counts = 0;
+int left_last_counts = 0;
+int right_counts = 0;
+int right_last_counts = 0;
+float inst_yaw = 0;
+
 /* Main program */
 int main(void)
 {
@@ -67,28 +76,21 @@ int main(void)
 	SystemClock_Config();
 
 	/* Initialize all configured peripherals */
-	MX_GPIO_Init();
+	MX_GPIO_Init();  // Init GPIO
 	MX_ADC1_Init();  // Init ADC
-	MX_TIM2_Init();
+	MX_TIM2_Init();  // Init L encoder
 	MX_TIM4_Init();  // Init motors
-	MX_TIM5_Init();
-	MX_SPI3_Init();  // Init display
-	MX_DMA_Init();   // Init ADC DMA
+	MX_TIM5_Init();  // Init R encoder
 
-	//	while(getLeftFrontADCValue() < 50)
-	//	{
-	//		// do nothing
-	//	}
+	MX_DMA_Init();   // Init ADC DMA
 
 	/* Enable IR Emitter pins when mouse powers on */
 	emitter_Init();
 
-//
-//	mouseStartSensorWave();
+	/* Start mouse by waving hand across L emitter */
+	mouseStartSensorWave();
 
-
-//	HAL_Delay(1000);
-
+	/* Initially set error for positional PD controller */
 	setPositionL(0);
 	setPositionR(0);
 
@@ -96,7 +98,11 @@ int main(void)
 	rightMotorStart();
 
 	// Have to start Timer3 interrupts after initializing motors
-	MX_TIM3_Init();
+	MX_TIM3_Init();  // Software timer for algorithims
+	MX_TIM11_Init(); // Software timer for gyro
+	MX_SPI2_Init();  // SPI for gyro
+	Init_IMU();      // Initialize gyro
+
 //	encoderStart();
 	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
@@ -117,11 +123,39 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance==TIM3){
 
-//		rightWallHugger();
-
+		//		rightWallHugger();
+	}
+//	else if (htim->Instance == TIM14) {
+//		HAL_IncTick();
+//	}
+//	//tim 10
+//	else if (htim->Instance == QEI_VELOCITY_TIM_LABEL)
+//	{
+//		left_last_counts = left_counts;
+//		left_counts = QEI_Left_Read();
+//		left_velocity = (((float) (left_counts - left_last_counts))/ENCODERCPR) * ENCSAMPLEHZ * DISTPERREV * CMTOM; // m/s
+//		right_last_counts = right_counts;
+//		right_counts = QEI_Right_Read();
+//		right_velocity = (((float) (right_counts - right_last_counts))/ENCODERCPR) * ENCSAMPLEHZ * DISTPERREV * CMTOM; // m/s
+//	}
+	//tim 11
+	if (htim->Instance == TIM11)
+	{
+		CheckID();
+//		inst_yaw = GetAngle();
+//		if(inst_yaw > 5.5)
+//		{
+//			angle += (inst_yaw/100*.7);
+//		}
+//		else if(inst_yaw < -9)
+//		{
+//			angle += (inst_yaw/100*0.64);
+//		}
 	}
 
+
 }
+
 /** System Clock Configuration
  */
 void SystemClock_Config(void)

@@ -12,9 +12,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
-extern SPI_HandleTypeDef hspi3;
+//extern SPI_HandleTypeDef hspi2;
 
-void MX_SPI3_Init(void);
-void writeDisplay(char character, uint8_t position);
+#define IMU_CS_Pin GPIO_PIN_8
+
+void MX_SPI2_Init(void);
+void Init_IMU(void);
+void CheckID(void);
+float GetAngle(void);
 
 #endif /* __spi_H */

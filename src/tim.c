@@ -11,6 +11,7 @@ TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
+TIM_HandleTypeDef htim11;
 
 /* Motors on TIM4
  *
@@ -58,6 +59,7 @@ void MX_TIM2_Init(void)
 	}
 }
 
+// THIS IS A SOFTWARE TIMER
 void MX_TIM3_Init(void)
 {
 	TIM_ClockConfigTypeDef sClockSourceConfig;
@@ -182,6 +184,22 @@ void MX_TIM5_Init(void)
 	{
 		_Error_Handler(__FILE__, __LINE__);
 	}
+}
+
+// THIS IS A SOFTWARE TIMER
+void MX_TIM11_Init(void)
+{
+    htim11.Instance = TIM11;
+    htim11.Init.Prescaler = 83;
+    htim11.Init.CounterMode = TIM_COUNTERMODE_UP;
+    //sample at 1 kHz
+    htim11.Init.Period = 100000;
+    htim11.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+
+    if (HAL_TIM_Base_Init(&htim11) != HAL_OK)
+    {
+        Error_Handler();
+    }
 }
 void leftMotorStart(void)
 {

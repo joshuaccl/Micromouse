@@ -20,6 +20,7 @@ int getPositionR()
 	return rightPositionOldError;
 }
 
+// Used for positional controller, saves the error
 void setPositionL( int value )
 {
 	leftPositionOldError = value;
