@@ -11,7 +11,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
-#define NO_RIGHT_WALL 21
+#define NO_RIGHT_WALL 270
 
 void rightWallHugger(void);
 

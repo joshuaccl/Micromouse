@@ -8,34 +8,35 @@
 #include "motors.h"
 #include "adc.h"
 #include "pdT.h"
+#include "encoder.h"
 
 void rightWallHugger(void)
 {
 	//No right wall -> turn right
-	if (getRightFrontADCValue() <= NO_RIGHT_WALL)
+	if (getRightFrontADCValue() < NO_RIGHT_WALL)
 	{
-		leftMotorPWMChangeForward(125);
-		rightMotorPWMChangeForward(125);
-		HAL_Delay(500);
+		resetRightEncoder();
+		while(getRightEncoderValue()<3000) {
+			setLeftEncoderValue(TIM2->CNT);
+			setRightEncoderValue(TIM5->CNT);
+		}
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_SET);
 		rightTurn();
-		motorStop();
 	}
 	//Wall on right and no front wall -> go straight
-	else if (getRightFrontADCValue() > NO_RIGHT_WALL && (getLeftADCValue() < 35 && getRightADCValue() < 45))
+	else if (getRightFrontADCValue() > (NO_RIGHT_WALL-20) && (getLeftADCValue() < 1360 && getRightADCValue() < 1178))
 	{
-		trackingLeft();
-		trackingRight();
+		wallTracking();
 	}
 	//Wall on right and wall in front -> Turn left
-	else if (getRightFrontADCValue() > NO_RIGHT_WALL && (getLeftADCValue() > 60 && getRightADCValue() > 85))
+	else if (getRightFrontADCValue() > (NO_RIGHT_WALL-20) && (getLeftADCValue() > 1360 && getRightADCValue() > 1178))
 	{
 		leftTurn();
 		motorStop();
 
 	}
 	else{
-		trackingLeft();
-		trackingRight();
+		wallTracking();
 	}
 
 

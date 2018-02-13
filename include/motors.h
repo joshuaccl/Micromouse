@@ -12,6 +12,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
+#define RIGHT_TURN_TICKS 3300
+#define LEFT_TURN_TICKS 3300
+
 
 void leftMotorPWMChangeForward(float value);
 void rightMotorPWMChangeForward(float value);

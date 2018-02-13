@@ -8,6 +8,9 @@
 #include "motors.h"
 #include "pdT.h"
 #include "tim.h"
+#include "encoder.h"
+#include "main.h"
+
 float leftDutyCycle;
 float rightDutyCycle;
 
@@ -132,15 +135,24 @@ void rightMotorPWMChangeBackward(float value)
 
 void rightTurn(void)
 {
-	leftMotorPWMChangeForward(BASE_SPEED + 50);
-	rightMotorPWMChangeBackward(BASE_SPEED - 25);
+	resetGyroAngle();
+	leftMotorPWMChangeForward(450);
+	rightMotorPWMChangeBackward(450);
+	while(angle > -28) {
+
+	}
+	motorStop();
 }
 
 void leftTurn(void)
 {
-	rightMotorPWMChangeForward(350);
-	leftMotorPWMChangeBackward(350);
-	HAL_Delay(120);
+	resetLeftEncoder();
+	rightMotorPWMChangeForward(450);
+	leftMotorPWMChangeBackward(450);
+	while(getLeftEncoderValue() < LEFT_TURN_TICKS){
+
+	}
+	motorStop();
 }
 void backward180Turn(void)
 {

@@ -86,4 +86,6 @@ float GetAngle(void)
 	return (yaw*0.01);
 }
 
-
+void resetGyroAngle(void) {
+	angle = 0;
+}

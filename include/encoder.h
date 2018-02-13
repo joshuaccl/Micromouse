@@ -16,7 +16,8 @@ long getLeftEncoderValue(void);
 long getRightEncoderValue(void);
 void setLeftEncoderValue(double value);
 void setRightEncoderValue(double value);
-
+void resetLeftEncoder(void);
+void resetRightEncoder(void);
 // left and right encoder values
 extern double leftEncoderValue;
 extern double rightEncoderValue;

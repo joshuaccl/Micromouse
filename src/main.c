@@ -112,22 +112,18 @@ int main(void)
 
 
 
-	//	encoderStart();
-	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
-	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
+	encoderStart();
+
 	/* Start mouse by waving hand next to left ADC sensor */
 
-	//	rightMotorPWMChangeForward(100);
-	//	leftMotorPWMChangeForward(100);
-	//	HAL_Delay(3000);
-	//	rightMotorPWMChangeForward(50);
-	//	leftMotorPWMChangeForward(50);
-	//	HAL_Delay(3000);
-	//	rightMotorPWMChangeForward(0);
-	//		leftMotorPWMChangeForward(0);
-	rightTurn();
-	HAL_Delay(1000);
-	motorStop();
+//	resetLeftEncoder();
+//	resetRightEncoder();
+//
+//	rightTurn();
+//	while(getRightEncoderValue() < 3600) {
+//
+//	}
+//	motorStop();
 
 
 	//			motorStop();
@@ -135,28 +131,23 @@ int main(void)
 	//			setRightEncoderValue(TIM5->CNT);
 	//			HAL_Delay(10000);
 
-	//	while(1)
-	//	{
-	//		setLeftEncoderValue(TIM2->CNT);
-	//		setRightEncoderValue(TIM5->CNT);
-	//	}
+	rightTurn();
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance==TIM3){
-//		//		trackingLeft();
-//		//		trackingRight();
-//		//		wallTracking(); // used to track in the maze
-//
-//
-//		//
-//		//		rightTurn();
-//		//		motorStop();
-//		//		HAL_Delay(1000);
-				setLeftEncoderValue(TIM2->CNT);
-				setRightEncoderValue(TIM5->CNT);
-//		//		HAL_Delay(10000);
+		//		//		trackingLeft();
+		//		//		trackingRight();
+		//		//		wallTracking(); // used to track in the maze
+		//
+		//
+		//		//
+		//		//		rightTurn();
+		//		//		motorStop();
+		//		//		HAL_Delay(1000);
+		//		//		HAL_Delay(10000);
+//		rightWallHugger();
 	}
 
 	//	//tim 10
@@ -170,18 +161,18 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	//		right_velocity = (((float) (right_counts - right_last_counts))/ENCODERCPR) * ENCSAMPLEHZ * DISTPERREV * CMTOM; // m/s
 	//	}
 	// Interrupt timer for gyroscope
-	//	if (htim->Instance == TIM11)
-	//	{
-	//		inst_yaw = GetAngle();
-	//		if(inst_yaw > 5.5)
-	//		{
-	//			angle += (inst_yaw/100*.7);
-	//		}
-	//		else if(inst_yaw < -9)
-	//		{
-	//			angle += (inst_yaw/100*0.64);
-	//		}
-	//	}
+		if (htim->Instance == TIM11)
+		{
+			inst_yaw = GetAngle();
+			if(inst_yaw > 5.5)
+			{
+				angle += (inst_yaw/100*.7);
+			}
+			else if(inst_yaw < -9)
+			{
+				angle += (inst_yaw/100*0.64);
+			}
+		}
 
 
 }

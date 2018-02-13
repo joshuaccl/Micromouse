@@ -20,5 +20,6 @@ void MX_SPI2_Init(void);
 void Init_IMU(void);
 void CheckID(void);
 float GetAngle(void);
+void resetGyroAngle(void);
 
 #endif /* __spi_H */
