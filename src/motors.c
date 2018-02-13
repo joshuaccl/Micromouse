@@ -6,6 +6,7 @@
  ****************************************************************************** */
 
 #include "motors.h"
+#include "pdT.h"
 #include "tim.h"
 float leftDutyCycle;
 float rightDutyCycle;
@@ -131,9 +132,8 @@ void rightMotorPWMChangeBackward(float value)
 
 void rightTurn(void)
 {
-	leftMotorPWMChangeForward(350);
-	rightMotorPWMChangeBackward(350);
-	HAL_Delay(120);
+	leftMotorPWMChangeForward(BASE_SPEED + 50);
+	rightMotorPWMChangeBackward(BASE_SPEED - 25);
 }
 
 void leftTurn(void)

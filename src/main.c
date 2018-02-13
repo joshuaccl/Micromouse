@@ -91,17 +91,26 @@ int main(void)
 	/* Start mouse by waving hand across L emitter */
 	mouseStartSensorWave();
 
+
+
 	/* Initially set error for positional PD controller */
+
 	setPositionL(0);
 	setPositionR(0);
 	leftMotorStart();
 	rightMotorStart();
+
+
+
+
 
 	// Have to start Timer3 interrupts after initializing motors
 	MX_TIM3_Init();  // Software timer for algorithims
 	MX_TIM11_Init(); // Software timer for gyro
 	MX_SPI2_Init();  // SPI for gyro
 	Init_IMU();      // Initialize gyro
+
+
 
 	//	encoderStart();
 	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
@@ -115,25 +124,41 @@ int main(void)
 	//	leftMotorPWMChangeForward(50);
 	//	HAL_Delay(3000);
 	//	rightMotorPWMChangeForward(0);
-	//	leftMotorPWMChangeForward(0);
+	//		leftMotorPWMChangeForward(0);
+	rightTurn();
+	HAL_Delay(1000);
+	motorStop();
 
-	while(1)
-	{
-		setLeftEncoderValue(TIM2->CNT);
-		setRightEncoderValue(TIM5->CNT);
-	}
+
+	//			motorStop();
+	//			setLeftEncoderValue(TIM2->CNT);
+	//			setRightEncoderValue(TIM5->CNT);
+	//			HAL_Delay(10000);
+
+	//	while(1)
+	//	{
+	//		setLeftEncoderValue(TIM2->CNT);
+	//		setRightEncoderValue(TIM5->CNT);
+	//	}
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance==TIM3){
-		//		trackingLeft();
-		//		trackingRight();
-		wallTracking(); // used to track in the maze
+//		//		trackingLeft();
+//		//		trackingRight();
+//		//		wallTracking(); // used to track in the maze
+//
+//
+//		//
+//		//		rightTurn();
+//		//		motorStop();
+//		//		HAL_Delay(1000);
+				setLeftEncoderValue(TIM2->CNT);
+				setRightEncoderValue(TIM5->CNT);
+//		//		HAL_Delay(10000);
 	}
-	//	else if (htim->Instance == TIM14) {
-	//		HAL_IncTick();
-	//	}
+
 	//	//tim 10
 	//	else if (htim->Instance == QEI_VELOCITY_TIM_LABEL)
 	//	{
@@ -144,20 +169,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	//		right_counts = QEI_Right_Read();
 	//		right_velocity = (((float) (right_counts - right_last_counts))/ENCODERCPR) * ENCSAMPLEHZ * DISTPERREV * CMTOM; // m/s
 	//	}
-	//tim 11
-	if (htim->Instance == TIM11)
-	{
-		//		CheckID();
-		//		inst_yaw = GetAngle();
-		//		if(inst_yaw > 5.5)
-		//		{
-		//			angle += (inst_yaw/100*.7);
-		//		}
-		//		else if(inst_yaw < -9)
-		//		{
-		//			angle += (inst_yaw/100*0.64);
-		//		}
-	}
+	// Interrupt timer for gyroscope
+	//	if (htim->Instance == TIM11)
+	//	{
+	//		inst_yaw = GetAngle();
+	//		if(inst_yaw > 5.5)
+	//		{
+	//			angle += (inst_yaw/100*.7);
+	//		}
+	//		else if(inst_yaw < -9)
+	//		{
+	//			angle += (inst_yaw/100*0.64);
+	//		}
+	//	}
 
 
 }
