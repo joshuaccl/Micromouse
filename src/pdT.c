@@ -33,9 +33,10 @@ void setPositionR( int value )
 
 float trackingLeft()
 {
+	// kp = .0625, kd=1.4
 	// Change these constants to calibrate the controller Kp and Kd
-	float Kp=0.008;
-	float Kd=0.175;
+	float Kp=0.0625;
+	float Kd=1.4;
 	int error;
 	float correctionP;
 	float correctionD;
@@ -49,13 +50,12 @@ float trackingLeft()
 //	leftMotorPWMChangeForward(correctionP + BASE_SPEED);
 //	rightMotorPWMChangeForward(BASE_SPEED - correctionP);
 	return correctionP;
-
 }
 
 float trackingRight()
 {
-	float Kp=0.008;
-	float Kd=0.175;
+	float Kp=0.0625;
+	float Kd=1.4;
 	int error;
 	float correctionP;
 	float correctionD;

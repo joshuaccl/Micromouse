@@ -12,15 +12,22 @@
 
 void rightWallHugger(void)
 {
+	double i,j;
 	//No right wall -> turn right
 	if (getRightFrontADCValue() < NO_RIGHT_WALL)
 	{
-		resetRightEncoder();
-		while(getRightEncoderValue()<3000) {
-			setLeftEncoderValue(TIM2->CNT);
-			setRightEncoderValue(TIM5->CNT);
+		i = getRightEncoderValue();
+		if( i > 25000)
+		{
+			j = i - 25000;
+			while(getRightEncoderValue() > j) {
+				setLeftEncoderValue(TIM2->CNT);
+				setRightEncoderValue(TIM5->CNT);
+			}
 		}
-		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_SET);
+		else{
+			HAL_Delay(500);
+		}
 		rightTurn();
 	}
 	//Wall on right and no front wall -> go straight

@@ -146,10 +146,10 @@ void rightTurn(void)
 
 void leftTurn(void)
 {
-	resetLeftEncoder();
+	resetGyroAngle();
 	rightMotorPWMChangeForward(450);
 	leftMotorPWMChangeBackward(450);
-	while(getLeftEncoderValue() < LEFT_TURN_TICKS){
+	while(angle < 28) {
 
 	}
 	motorStop();

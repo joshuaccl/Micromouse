@@ -91,18 +91,11 @@ int main(void)
 	/* Start mouse by waving hand across L emitter */
 	mouseStartSensorWave();
 
-
-
 	/* Initially set error for positional PD controller */
-
 	setPositionL(0);
 	setPositionR(0);
 	leftMotorStart();
 	rightMotorStart();
-
-
-
-
 
 	// Have to start Timer3 interrupts after initializing motors
 	MX_TIM3_Init();  // Software timer for algorithims
@@ -110,36 +103,28 @@ int main(void)
 	MX_SPI2_Init();  // SPI for gyro
 	Init_IMU();      // Initialize gyro
 
-
-
 	encoderStart();
+	resetLeftEncoder();
+	resetRightEncoder();
 
-	/* Start mouse by waving hand next to left ADC sensor */
-
-//	resetLeftEncoder();
-//	resetRightEncoder();
-//
-//	rightTurn();
-//	while(getRightEncoderValue() < 3600) {
-//
-//	}
-//	motorStop();
-
-
+//while(1){
+//				setLeftEncoderValue(TIM2->CNT);
+//				setRightEncoderValue(TIM5->CNT);
+//}
 	//			motorStop();
 	//			setLeftEncoderValue(TIM2->CNT);
 	//			setRightEncoderValue(TIM5->CNT);
 	//			HAL_Delay(10000);
 
-	rightTurn();
+//	rightTurn();
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance==TIM3){
-		//		//		trackingLeft();
-		//		//		trackingRight();
-		//		//		wallTracking(); // used to track in the maze
+//		trackingLeft();
+//		trackingRight();
+		wallTracking(); // used to track in the maze
 		//
 		//
 		//		//
@@ -173,8 +158,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 				angle += (inst_yaw/100*0.64);
 			}
 		}
-
-
 }
 
 /** System Clock Configuration
