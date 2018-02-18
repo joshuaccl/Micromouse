@@ -216,7 +216,7 @@ void mouseStartSensorWave(void)
 	//Constantly spin until hand is waved
 	while (1)
 	{
-		if (startMouseSensor() > 2000)
+		if (startMouseSensor() > 1200)
 		{
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);  //LED
 			break;

@@ -6,12 +6,9 @@
  ****************************************************************************** */
 
 #include "encoder.h"
-#include "stm32f4xx_hal.h"
-#include "tim.h"
-#include "stm32f4xx_hal_tim.h"
 
-double leftEncoderValue;
-double rightEncoderValue;
+uint32_t leftEncoderValue;
+uint32_t rightEncoderValue;
 
 void encoderStart(void)
 {
@@ -19,20 +16,40 @@ void encoderStart(void)
 	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
 }
 
-long getLeftEncoderValue()
+uint32_t getLeftEncoderValue()
 {
 	return leftEncoderValue;
 }
 
-long getRightEncoderValue()
+uint32_t getRightEncoderValue()
 {
 	return rightEncoderValue;
 }
-void setLeftEncoderValue(double value)
+void setLeftEncoderValue(uint32_t value)
 {
 	leftEncoderValue = value;
 }
-void setRightEncoderValue(double value)
+void setRightEncoderValue(uint32_t value)
 {
 	rightEncoderValue = value;
 }
+void resetLeftEncoder(void) {
+	HAL_TIM_Encoder_Stop(&htim2, TIM_CHANNEL_ALL);
+	TIM2->CNT = MAX_ENCODER_VALUE;
+	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+}
+void resetRightEncoder(void) {
+	HAL_TIM_Encoder_Stop(&htim5, TIM_CHANNEL_ALL);
+	TIM5->CNT = MAX_ENCODER_VALUE;
+	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
+}
+void advanceTicks(uint32_t ticks) {
+	uint32_t encoder_val = MAX_ENCODER_VALUE;
+	resetLeftEncoder();
+	while(encoder_val > (MAX_ENCODER_VALUE - ticks) ) {
+		setLeftEncoderValue(TIM2->CNT);
+		encoder_val = getLeftEncoderValue();
+	}
+}
+
+

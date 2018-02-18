@@ -6,7 +6,11 @@
  ****************************************************************************** */
 
 #include "motors.h"
+#include "pdT.h"
 #include "tim.h"
+#include "encoder.h"
+#include "main.h"
+
 float leftDutyCycle;
 float rightDutyCycle;
 
@@ -131,16 +135,26 @@ void rightMotorPWMChangeBackward(float value)
 
 void rightTurn(void)
 {
-	leftMotorPWMChangeForward(350);
-	rightMotorPWMChangeBackward(350);
-	HAL_Delay(120);
+	resetGyroAngle();
+	leftMotorPWMChangeForward(450);
+	rightMotorPWMChangeBackward(450);
+	// Decrease absolute value of angle to turn less
+	while(angle > -20) {
+
+	}
+	motorStop();
 }
 
 void leftTurn(void)
 {
-	rightMotorPWMChangeForward(350);
-	leftMotorPWMChangeBackward(350);
-	HAL_Delay(120);
+	resetGyroAngle();
+	rightMotorPWMChangeForward(450);
+	leftMotorPWMChangeBackward(450);
+	// Increase value of angle to turn more
+	while(angle < 5) {
+
+	}
+	motorStop();
 }
 void backward180Turn(void)
 {

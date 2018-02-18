@@ -25,6 +25,7 @@ float getVelocityR(void);
 void setVelocityL(float value);
 void setVelocityR(float value);
 void wallTracking(void);
+void velocityBothSides();
 
 #endif
 

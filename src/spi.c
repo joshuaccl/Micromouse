@@ -33,6 +33,7 @@ void MX_SPI2_Init(void)
   HAL_SPI_Init(&hspi2);
 }
 
+// Initialize IMU
 void Init_IMU(void)
 {
 	uint8_t ctrl[2] = {0x11 & 0x7F, 0x44};
@@ -43,6 +44,8 @@ void Init_IMU(void)
 	HAL_TIM_Base_Start_IT(&htim11);
 }
 
+// Function to ensure that the MCU can talk to the gyro. Ensure soldered correctly and able to
+// receive/transmit with gyro.
 void CheckID(void)
 {
 	//who_am_i
@@ -83,4 +86,6 @@ float GetAngle(void)
 	return (yaw*0.01);
 }
 
-
+void resetGyroAngle(void) {
+	angle = 0;
+}

@@ -5,38 +5,28 @@
  ****************************************************************************** */
 
 #include "algorithm.h"
-#include "motors.h"
-#include "adc.h"
-#include "pdT.h"
 
 void rightWallHugger(void)
 {
 	//No right wall -> turn right
 	if (getRightFrontADCValue() <= NO_RIGHT_WALL)
 	{
-		leftMotorPWMChangeForward(125);
-		rightMotorPWMChangeForward(125);
-		HAL_Delay(500);
+		/* Disable interrupt before turning to ensure that
+		 * the turn will not be interrupted by any other process */
+		lockInterruptDisable_TIM3();
 		rightTurn();
-		motorStop();
-	}
-	//Wall on right and no front wall -> go straight
-	else if (getRightFrontADCValue() > NO_RIGHT_WALL && (getLeftADCValue() < 35 && getRightADCValue() < 45))
-	{
-		trackingLeft();
-		trackingRight();
+		lockInterruptEnable_TIM3();
 	}
 	//Wall on right and wall in front -> Turn left
-	else if (getRightFrontADCValue() > NO_RIGHT_WALL && (getLeftADCValue() > 60 && getRightADCValue() > 85))
+	else if (getRightFrontADCValue() > NO_RIGHT_WALL && (getLeftADCValue() > 1200 && getRightADCValue() > 1050))
 	{
+		/* Disable interrupt before turning to ensure that
+		 * the turn will not be interrupted by any other process */
+		lockInterruptDisable_TIM3();
 		leftTurn();
-		motorStop();
-
+		lockInterruptEnable_TIM3();
 	}
-	else{
-		trackingLeft();
-		trackingRight();
-	}
-
+	else advanceTicks(12000);
+	HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_15);
 
 }
