@@ -18,6 +18,12 @@
 #include "lock.h"
 
 #define NO_RIGHT_WALL 210
+#define NO_LEFT_WALL 200
+#define WALL_IN_FRONT_LEFT_SENSOR 1528
+#define WALL_IN_FRONT_RIGHT_SENSOR 1352
+#define LEFT_SENSOR_DEAD_END 1537
+#define RIGHT_SENSOR_DEAD_END 1336
+#define ENCODER_TICKS_ONE_CELL 12000
 
 void rightWallHugger(void);
 
