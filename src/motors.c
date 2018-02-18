@@ -138,7 +138,8 @@ void rightTurn(void)
 	resetGyroAngle();
 	leftMotorPWMChangeForward(450);
 	rightMotorPWMChangeBackward(450);
-	while(angle > -22) {
+	// Decrease absolute value of angle to turn less
+	while(angle > -20) {
 
 	}
 	motorStop();
@@ -149,7 +150,8 @@ void leftTurn(void)
 	resetGyroAngle();
 	rightMotorPWMChangeForward(450);
 	leftMotorPWMChangeBackward(450);
-	while(angle < 28) {
+	// Increase value of angle to turn more
+	while(angle < 5) {
 
 	}
 	motorStop();
