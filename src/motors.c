@@ -138,7 +138,7 @@ void rightTurn(void)
 	resetGyroAngle();
 	leftMotorPWMChangeForward(450);
 	rightMotorPWMChangeBackward(450);
-	while(angle > -28) {
+	while(angle > -22) {
 
 	}
 	motorStop();

@@ -12,8 +12,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
-//extern SPI_HandleTypeDef hspi2;
-
 #define IMU_CS_Pin GPIO_PIN_8
 
 void MX_SPI2_Init(void);

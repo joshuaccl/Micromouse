@@ -12,26 +12,15 @@
 
 void rightWallHugger(void)
 {
-	double i,j;
 	//No right wall -> turn right
-	if (getRightFrontADCValue() < NO_RIGHT_WALL)
+	if (getRightFrontADCValue() <= (NO_RIGHT_WALL-20))
 	{
-		i = getRightEncoderValue();
-		if( i > 25000)
-		{
-			j = i - 25000;
-			while(getRightEncoderValue() > j) {
-				setLeftEncoderValue(TIM2->CNT);
-				setRightEncoderValue(TIM5->CNT);
-			}
-		}
-		else{
-			HAL_Delay(500);
-		}
+		advanceTicks(8000);
 		rightTurn();
+		advanceTicks(5000);
 	}
 	//Wall on right and no front wall -> go straight
-	else if (getRightFrontADCValue() > (NO_RIGHT_WALL-20) && (getLeftADCValue() < 1360 && getRightADCValue() < 1178))
+	else if (getRightFrontADCValue() > (NO_RIGHT_WALL-20) && (getLeftADCValue() <= 1360 && getRightADCValue() <= 1178))
 	{
 		wallTracking();
 	}
@@ -39,12 +28,8 @@ void rightWallHugger(void)
 	else if (getRightFrontADCValue() > (NO_RIGHT_WALL-20) && (getLeftADCValue() > 1360 && getRightADCValue() > 1178))
 	{
 		leftTurn();
-		motorStop();
-
 	}
 	else{
 		wallTracking();
 	}
-
-
 }

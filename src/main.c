@@ -124,7 +124,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	if(htim->Instance==TIM3){
 //		trackingLeft();
 //		trackingRight();
-		wallTracking(); // used to track in the maze
+//		wallTracking(); // used to track in the maze
 		//
 		//
 		//		//
@@ -132,7 +132,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		//		//		motorStop();
 		//		//		HAL_Delay(1000);
 		//		//		HAL_Delay(10000);
-//		rightWallHugger();
+		rightWallHugger();
 	}
 
 	//	//tim 10

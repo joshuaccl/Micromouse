@@ -104,8 +104,8 @@ void velocityBothSides() {
 	// add the corrections together
 	correctionP_R += correctionD_R;
 
-	rightMotorPWMChangeForward((BASE_SPEED - correctionP_L + correctionP_R));
-	leftMotorPWMChangeForward((correctionP_L + BASE_SPEED - correctionP_R));
+	rightMotorPWMChangeForward(BASE_SPEED - correctionP_L + correctionP_R);
+	leftMotorPWMChangeForward(correctionP_L + BASE_SPEED - correctionP_R);
 
 	setVelocityL(error_L);
 	setVelocityR(error_R);

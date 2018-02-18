@@ -47,6 +47,7 @@ float trackingLeft()
 	correctionD = derivative * Kd;
 	correctionP += correctionD;
 	setPositionL(error);
+	// Uncomment the next two lines to test positional controller only
 //	leftMotorPWMChangeForward(correctionP + BASE_SPEED);
 //	rightMotorPWMChangeForward(BASE_SPEED - correctionP);
 	return correctionP;
@@ -66,6 +67,7 @@ float trackingRight()
 	correctionD = derivative * Kd;
 	correctionP += correctionD;
 	setPositionR(error);
+	// Uncomment the next two lines to test positional controller only
 //	rightMotorPWMChangeForward(correctionP + BASE_SPEED);
 //	leftMotorPWMChangeForward(BASE_SPEED - correctionP);
 	return correctionP;
