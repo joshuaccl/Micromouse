@@ -108,8 +108,8 @@ int main(void)
 	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
 	/* Start mouse by waving hand next to left ADC sensor */
 
-	rightMotorPWMChangeForward(100);
-	leftMotorPWMChangeForward(100);
+//	rightMotorPWMChangeForward(100);
+//	leftMotorPWMChangeForward(100);
 
 
 	while(1)
