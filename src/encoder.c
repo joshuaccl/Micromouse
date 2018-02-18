@@ -47,8 +47,6 @@ void advanceTicks(uint32_t ticks) {
 	uint32_t encoder_val = MAX_ENCODER_VALUE;
 	resetLeftEncoder();
 	while(encoder_val > (MAX_ENCODER_VALUE - ticks) ) {
-		rightMotorPWMChangeForward(BASE_SPEED/BASE_SPEED);
-		leftMotorPWMChangeForward(BASE_SPEED/BASE_SPEED);
 		setLeftEncoderValue(TIM2->CNT);
 		encoder_val = getLeftEncoderValue();
 	}

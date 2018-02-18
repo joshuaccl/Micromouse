@@ -11,24 +11,22 @@ void rightWallHugger(void)
 	//No right wall -> turn right
 	if (getRightFrontADCValue() <= NO_RIGHT_WALL)
 	{
-		advanceTicks(8000);
-		motorStop();
+		/* Disable interrupt before turning to ensure that
+		 * the turn will not be interrupted by any other process */
+		lockInterruptDisable_TIM3();
 		rightTurn();
-		advanceTicks(5000);
+		lockInterruptEnable_TIM3();
 	}
 	//Wall on right and wall in front -> Turn left
 	else if (getRightFrontADCValue() > NO_RIGHT_WALL && (getLeftADCValue() > 1200 && getRightADCValue() > 1050))
 	{
-		motorStop();
+		/* Disable interrupt before turning to ensure that
+		 * the turn will not be interrupted by any other process */
+		lockInterruptDisable_TIM3();
 		leftTurn();
-		advanceTicks(5000);
+		lockInterruptEnable_TIM3();
 	}
-	//Wall on right and no front wall -> go straight
-	else if (getRightFrontADCValue() > NO_RIGHT_WALL && (getLeftADCValue() <= 1360 && getRightADCValue() <= 1178))
-	{
-		wallTracking();
-	}
-	else{
-		wallTracking();
-	}
+	else advanceTicks(12000);
+	HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_15);
+
 }

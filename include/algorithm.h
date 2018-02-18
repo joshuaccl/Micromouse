@@ -15,6 +15,7 @@
 #include "pdT.h"
 #include "pdV.h"
 #include "encoder.h"
+#include "lock.h"
 
 #define NO_RIGHT_WALL 210
 

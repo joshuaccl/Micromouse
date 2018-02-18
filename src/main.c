@@ -107,24 +107,29 @@ int main(void)
 	resetLeftEncoder();
 	resetRightEncoder();
 
-//while(1){
-//				setLeftEncoderValue(TIM2->CNT);
-//				setRightEncoderValue(TIM5->CNT);
-//}
+	// Put desired algorithm in this while loop
+	while(1)
+	{
+		rightWallHugger();
+	}
+	//while(1){
+	//				setLeftEncoderValue(TIM2->CNT);
+	//				setRightEncoderValue(TIM5->CNT);
+	//}
 	//			motorStop();
 	//			setLeftEncoderValue(TIM2->CNT);
 	//			setRightEncoderValue(TIM5->CNT);
 	//			HAL_Delay(10000);
 
-//	rightTurn();
+	//	rightTurn();
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance==TIM3){
-//		trackingLeft();
-//		trackingRight();
-//		wallTracking(); // used to track in the maze
+		//		trackingLeft();
+		//		trackingRight();
+		//		wallTracking(); // used to track in the maze
 		//
 		//
 		//		//
@@ -132,7 +137,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		//		//		motorStop();
 		//		//		HAL_Delay(1000);
 		//		//		HAL_Delay(10000);
-		rightWallHugger();
+		wallTracking();
 	}
 
 	//	//tim 10
@@ -146,18 +151,18 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	//		right_velocity = (((float) (right_counts - right_last_counts))/ENCODERCPR) * ENCSAMPLEHZ * DISTPERREV * CMTOM; // m/s
 	//	}
 	// Interrupt timer for gyroscope
-		if (htim->Instance == TIM11)
+	if (htim->Instance == TIM11)
+	{
+		inst_yaw = GetAngle();
+		if(inst_yaw > 5.5)
 		{
-			inst_yaw = GetAngle();
-			if(inst_yaw > 5.5)
-			{
-				angle += (inst_yaw/100*.7);
-			}
-			else if(inst_yaw < -9)
-			{
-				angle += (inst_yaw/100*0.64);
-			}
+			angle += (inst_yaw/100*.7);
 		}
+		else if(inst_yaw < -9)
+		{
+			angle += (inst_yaw/100*0.64);
+		}
+	}
 }
 
 /** System Clock Configuration
