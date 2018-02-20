@@ -108,10 +108,10 @@ int main(void)
 	resetRightEncoder();
 
 	// Put desired algorithm in this while loop
-	while(1)
-	{
-		rightWallHugger();
-	}
+//	while(1)
+//	{
+//		rightWallHugger();
+//	}
 	//while(1){
 	//				setLeftEncoderValue(TIM2->CNT);
 	//				setRightEncoderValue(TIM5->CNT);
@@ -137,7 +137,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		//		//		motorStop();
 		//		//		HAL_Delay(1000);
 		//		//		HAL_Delay(10000);
-		wallTracking();
+//		wallTracking();
 	}
 
 	//	//tim 10
