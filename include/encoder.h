@@ -14,6 +14,7 @@
 #include "tim.h"
 #include "pdT.h"
 #include "pdV.h"
+#include "algorithm.h"
 
 #define MAX_ENCODER_VALUE 4294967295
 

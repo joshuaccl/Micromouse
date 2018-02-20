@@ -50,6 +50,7 @@
 #include "pdT.h"
 #include "pdV.h"
 #include "algorithm.h"
+#include "lock.h"
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -90,6 +91,7 @@ int main(void)
 
 	/* Start mouse by waving hand across L emitter */
 	mouseStartSensorWave();
+	HAL_Delay(1000);
 
 	/* Initially set error for positional PD controller */
 	setPositionL(0);
@@ -108,10 +110,23 @@ int main(void)
 	resetRightEncoder();
 
 	// Put desired algorithm in this while loop
+
 	while(1)
 	{
 		rightWallHugger();
 	}
+	// Calibrate 180 turns
+	//		if(getLeftADCValue() >= (WALL_IN_FRONT_LEFT_SENSOR) &&
+	//				getRightADCValue() >= (WALL_IN_FRONT_RIGHT_SENSOR)) {
+	//			lockInterruptDisable_TIM3();
+	//			backward180Turn();
+	//			lockInterruptEnable_TIM3();
+	//		}
+	//		i++;
+
+	//	lockInterruptDisable_TIM3();
+	//	motorStop();
+
 	//while(1){
 	//				setLeftEncoderValue(TIM2->CNT);
 	//				setRightEncoderValue(TIM5->CNT);
