@@ -143,10 +143,11 @@ void rightTurn(void)
 	leftMotorPWMChangeForward(450);
 	rightMotorPWMChangeBackward(450);
 	// Decrease absolute value of angle to turn less
-	while(angle > -20) {
+	while(angle > -21) {
 
 	}
 	motorStop();
+	HAL_Delay(350);
 	lockInterruptEnable_TIM3();
 }
 
@@ -160,10 +161,11 @@ void leftTurn(void)
 	rightMotorPWMChangeForward(450);
 	leftMotorPWMChangeBackward(450);
 	// Increase value of angle to turn more
-	while(angle < 3.5) {
+	while(angle < 22) {
 
 	}
 	motorStop();
+	HAL_Delay(350);
 	lockInterruptEnable_TIM3();
 }
 void backward180Turn(void)
