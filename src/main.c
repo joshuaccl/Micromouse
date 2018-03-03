@@ -111,10 +111,7 @@ int main(void)
 
 	// Put desired algorithm in this while loop
 
-	while(1)
-	{
-		rightWallHugger();
-	}
+rightTurn();
 	// Calibrate 180 turns
 	//		if(getLeftADCValue() >= (WALL_IN_FRONT_LEFT_SENSOR) &&
 	//				getRightADCValue() >= (WALL_IN_FRONT_RIGHT_SENSOR)) {
@@ -152,7 +149,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		//		//		motorStop();
 		//		//		HAL_Delay(1000);
 		//		//		HAL_Delay(10000);
-		wallTracking();
+//		wallTracking();
 	}
 
 	//	//tim 10

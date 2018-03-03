@@ -140,11 +140,21 @@ void rightTurn(void)
 	lockInterruptDisable_TIM3();
 	motorStop();
 	resetGyroAngle();
-	leftMotorPWMChangeForward(450);
-	rightMotorPWMChangeBackward(450);
+	resetLeftEncoder();
+	leftMotorPWMChangeForward(300);
+	rightMotorPWMChangeBackward(300);
 	// Decrease absolute value of angle to turn less
-	while(angle > -21) {
 
+	uint32_t encoder_value = MAX_ENCODER_VALUE;
+	// old 450, 450 | angle -27.75 | encoder 4250
+//	while(angle > -27.75 || encoder_value > (MAX_ENCODER_VALUE - 4250)) {
+//			setLeftEncoderValue(TIM2->CNT);
+//			encoder_value = getLeftEncoderValue();
+//	}
+	// new 300, 300 | angle -48 | encoder 4850
+	while(angle > -48 || encoder_value > (MAX_ENCODER_VALUE - 4850)) {
+			setLeftEncoderValue(TIM2->CNT);
+			encoder_value = getLeftEncoderValue();
 	}
 	motorStop();
 	HAL_Delay(350);
@@ -158,11 +168,21 @@ void leftTurn(void)
 	lockInterruptDisable_TIM3();
 	motorStop();
 	resetGyroAngle();
-	rightMotorPWMChangeForward(450);
-	leftMotorPWMChangeBackward(450);
-	// Increase value of angle to turn more
-	while(angle < 22) {
+	resetRightEncoder();
+	rightMotorPWMChangeForward(300);
+	leftMotorPWMChangeBackward(300);
 
+	uint32_t encoder_value = MAX_ENCODER_VALUE;
+	// old 450, 450 | angle 21.95 | encoder 4150
+//	while(angle < 21.95 || encoder_value > (MAX_ENCODER_VALUE - 4150)) {
+//				setRightEncoderValue(TIM5->CNT);
+//				encoder_value = getRightEncoderValue();
+//	}
+
+	// new 300, 300 | angle 43 | encoder 4700
+	while(angle < 43 || encoder_value > (MAX_ENCODER_VALUE - 4700)) {
+						setRightEncoderValue(TIM5->CNT);
+						encoder_value = getRightEncoderValue();
 	}
 	motorStop();
 	HAL_Delay(350);
