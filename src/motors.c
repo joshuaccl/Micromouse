@@ -145,12 +145,12 @@ void rightTurn(void)
 	rightMotorPWMChangeBackward(300);
 	uint32_t encoder_value = MAX_ENCODER_VALUE;
 	// Decrease absolute value of angle to turn less
-	while(angle > -28.5 || encoder_value > (MAX_ENCODER_VALUE - 6650)) {
+	while(angle > -28 || encoder_value > (MAX_ENCODER_VALUE - 6550)) {
 		setLeftEncoderValue(TIM2->CNT);
 		encoder_value = getLeftEncoderValue();
 	}
 	motorStop();
-	HAL_Delay(300);
+	HAL_Delay(285);
 	lockInterruptEnable_TIM3();
 }
 
@@ -171,7 +171,7 @@ void leftTurn(void)
 		encoder_value = getRightEncoderValue();
 	}
 	motorStop();
-	HAL_Delay(300);
+	HAL_Delay(285);
 	lockInterruptEnable_TIM3();
 }
 void backward180Turn(void)
@@ -191,7 +191,7 @@ void backward180Turn(void)
 			encoder_value = getLeftEncoderValue();
 		}
 	motorStop();
-	HAL_Delay(300);
+	HAL_Delay(285);
 	lockInterruptEnable_TIM3();
 	/* This delay needed to ensure that the ADC sensors will poll
 	 * after turning */
