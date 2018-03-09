@@ -179,7 +179,7 @@ void leftTurn(void)
 //				encoder_value = getRightEncoderValue();
 //	}
 
-	// new 300, 300 | angle 43 | encoder 4700
+	// new 300, 300 | angle 35.25 | encoder 7500
 	while(angle < 43 || encoder_value > (MAX_ENCODER_VALUE - 4700)) {
 						setRightEncoderValue(TIM5->CNT);
 						encoder_value = getRightEncoderValue();
