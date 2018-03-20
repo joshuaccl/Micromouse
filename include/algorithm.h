@@ -18,8 +18,11 @@
 #include "lock.h"
 
 #define NO_RIGHT_WALL 255
+#define NO_LEFT_WALL 265
+#define RIGHT_WALL 290
 #define LEFT_WALL 300
 #define WALL_IN_FRONT_OPENING_RIGHT 315
+#define WALL_IN_FRONT_OPENING_LEFT 330
 #define WALL_IN_FRONT_LEFT_SENSOR 1115
 // 1200 1050
 #define WALL_IN_FRONT_RIGHT_SENSOR 985
@@ -29,5 +32,6 @@
 // true encoder value 15800
 
 void rightWallHugger(void);
+void leftWallHugger(void);
 
 #endif /* __ALGORITHM_H */

@@ -42,7 +42,7 @@ void ADC_LED_Distance_Tester(void);
 uint32_t startMouseSensor(void);
 
 //Start mouse by waving hand next to left sensor
-void mouseStartSensorWave(void);
+int mouseStartSensorWave(void);
 
 /* Function to print out ADC value reading to the LEDs using blinking to get sensor value */
 void ADC_LED_DEBUG(uint32_t value);

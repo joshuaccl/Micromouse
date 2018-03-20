@@ -68,6 +68,9 @@ int right_counts = 0;
 int right_last_counts = 0;
 float inst_yaw = 0;
 
+// choose which algorithm to use in the beginning of the run
+int algorithm;
+
 /* Main program */
 int main(void)
 {
@@ -90,7 +93,7 @@ int main(void)
 	emitter_Init();
 
 	/* Start mouse by waving hand across L emitter */
-	mouseStartSensorWave();
+	algorithm = mouseStartSensorWave();
 	HAL_Delay(1000);
 
 	/* Initially set error for positional PD controller */
@@ -113,9 +116,19 @@ int main(void)
 
 	// Put desired algorithm in this while loop
 
-	while(1)
+	if(algorithm)
 	{
-		rightWallHugger();
+		while(1)
+		{
+			rightWallHugger();
+		}
+	}
+	else if(!algorithm)
+	{
+		while(1)
+		{
+			leftWallHugger();
+		}
 	}
 	// Calibrate 180 turns
 	//		if(getLeftADCValue() >= (WALL_IN_FRONT_LEFT_SENSOR) &&

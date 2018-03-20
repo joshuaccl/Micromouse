@@ -20,7 +20,8 @@ uint32_t ADC_LF;
 uint32_t ADC_RF;
 uint32_t ADC_R;
 
-uint32_t startupSensor;
+uint32_t startupSensorL;
+uint32_t startupSensorR;
 
 /* ADC1 init function */
 void MX_ADC1_Init(void)
@@ -116,7 +117,8 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 	ADC_LF = IR_values[1];
 	ADC_RF = IR_values[2];
 	ADC_R = IR_values[3];
-	startupSensor = IR_values[0];
+	startupSensorL = IR_values[0];
+	startupSensorR = IR_values[3];
 }
 
 /* Turns on LEDs based on the distance freom the sensor. Used for calibration */
@@ -209,17 +211,22 @@ uint32_t getRightADCValue()
 {
 	return IR_values[3];
 }
-void mouseStartSensorWave(void)
+int mouseStartSensorWave(void)
 {
 	//Turn on left LED
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
-	//Constantly spin until hand is waved
+	//Constantly wait until hand is waved
 	while (1)
 	{
-		if (startMouseSensor() > 1200)
+		if (startupSensorL > 1200)
 		{
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);  //LED
-			break;
+			return 0;
+		}
+		if (startupSensorR > 1200)
+		{
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+			return 1;
 		}
 	}
 }
