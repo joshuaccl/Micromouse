@@ -115,7 +115,7 @@ int main(void)
 
 	while(1)
 	{
-//		rightWallHugger();
+		rightWallHugger();
 	}
 	// Calibrate 180 turns
 	//		if(getLeftADCValue() >= (WALL_IN_FRONT_LEFT_SENSOR) &&

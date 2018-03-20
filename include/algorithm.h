@@ -17,7 +17,7 @@
 #include "encoder.h"
 #include "lock.h"
 
-#define NO_RIGHT_WALL 254
+#define NO_RIGHT_WALL 255
 #define LEFT_WALL 300
 #define WALL_IN_FRONT_OPENING_RIGHT 315
 #define WALL_IN_FRONT_LEFT_SENSOR 1095
