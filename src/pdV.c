@@ -14,13 +14,22 @@ float leftVelocityOldError;
 float rightVelocityOldError;
 float leftIntegral;
 float rightIntegral;
-float Kp=0.8;
-float Kd=0.1;
-float Ki=0.0005;
-// float Kp=0.55;
+//float Kp=0.8;
+//float Kd=0.1;
+//float Ki=0.0005;
+//
+//float Kp=0.55;
 //float Kd=0.15;
 //float Ki=0.0005;
 
+
+//float Kp=0.41;
+//float Kd=0.125;
+//float Ki=0.000025;
+
+float Kp=0.55;
+float Kd=0.15;
+float Ki=0.000025;
 void velocityLeft()
 {
 	// Kp and Kd are both constants for the proportional and derivative
