@@ -96,6 +96,8 @@ int main(void)
 	/* Initially set error for positional PD controller */
 	setPositionL(0);
 	setPositionR(0);
+	setIntegralL(0);
+	setIntegralR(0);
 	leftMotorStart();
 	rightMotorStart();
 
@@ -113,7 +115,7 @@ int main(void)
 
 	while(1)
 	{
-		rightWallHugger();
+//		rightWallHugger();
 	}
 	// Calibrate 180 turns
 	//		if(getLeftADCValue() >= (WALL_IN_FRONT_LEFT_SENSOR) &&

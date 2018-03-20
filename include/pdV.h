@@ -26,6 +26,10 @@ void setVelocityL(float value);
 void setVelocityR(float value);
 void wallTracking(void);
 void velocityBothSides();
+float getIntegralL(void);
+float getIntegralR(void);
+void setIntegralL(float value);
+void setIntegralR(float value);
 
 #endif
 
