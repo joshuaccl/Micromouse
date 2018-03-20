@@ -1,6 +1,6 @@
 /*
  ******************************************************************************
- * File Name          : algorithm.h
+ * File Name          : hugger.h
  * Description        : This file provides code for various algorithms
  ****************************************************************************** */
 
