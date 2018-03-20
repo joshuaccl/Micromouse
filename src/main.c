@@ -49,7 +49,7 @@
 #include "encoder.h"
 #include "pdT.h"
 #include "pdV.h"
-#include "algorithm.h"
+#include "hugger.h"
 #include "lock.h"
 
 /* Private function prototypes -----------------------------------------------*/

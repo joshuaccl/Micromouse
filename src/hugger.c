@@ -4,7 +4,7 @@
  * Description        : This file provides code for various algorithms
  ****************************************************************************** */
 
-#include "algorithm.h"
+#include "hugger.h"
 
 void rightWallHugger(void)
 {

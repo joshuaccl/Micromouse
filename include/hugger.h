@@ -5,8 +5,8 @@
  ****************************************************************************** */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __ALGORITHM_H
-#define __ALGORITHM_H
+#ifndef __HUGGER_H
+#define __HUGGER_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
@@ -34,4 +34,4 @@
 void rightWallHugger(void);
 void leftWallHugger(void);
 
-#endif /* __ALGORITHM_H */
+#endif /* __HUGGER_H */
