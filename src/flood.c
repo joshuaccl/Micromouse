@@ -46,3 +46,8 @@ void push_stack(struct stack* s, struct coor c){
 	s->array[++s->index] = c;
 }
 
+void floodFill(void)
+{
+
+}
+

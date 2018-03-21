@@ -179,16 +179,16 @@ void backward180Turn(void)
 	lockInterruptDisable_TIM3();
 	motorStop();
 	resetGyroAngle();
-	resetLeftEncoder();
-	leftMotorPWMChangeForward(450);
-	rightMotorPWMChangeBackward(450);
+	resetRightEncoder();
+	rightMotorPWMChangeForward(450);
+	leftMotorPWMChangeBackward(450);
 	uint32_t encoder_value = MAX_ENCODER_VALUE;
 	// Decrease absolute value of angle to turn less
 	// angle > -43
 	// encoder_value > (MAX_ENCODER_VALUE - 13750
-	while(angle > -43 || encoder_value > (MAX_ENCODER_VALUE - 10250)) {
-			setLeftEncoderValue(TIM2->CNT);
-			encoder_value = getLeftEncoderValue();
+	while(angle < 43 || encoder_value > (MAX_ENCODER_VALUE - 10250)) {
+			setRightEncoderValue(TIM5->CNT);
+			encoder_value = getRightEncoderValue();
 		}
 	motorStop();
 	HAL_Delay(300);
