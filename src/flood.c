@@ -48,10 +48,10 @@ void init_wall_maze(struct wall_maze* wm)
 	{
 		for(int j=0; j<16 ; j++)
 		{
-			wm->cells[i][j].walls[0] = 0;
-			wm->cells[i][j].walls[1] = 0;
-			wm->cells[i][j].walls[2] = 0;
-			wm->cells[i][j].walls[3] = 0;
+			wm->cells[i][j].walls[NORTH] = 0;
+			wm->cells[i][j].walls[EAST] = 0;
+			wm->cells[i][j].walls[SOUTH] = 0;
+			wm->cells[i][j].walls[WEST] = 0;
 			wm->cells[i][j].visited = 0;
 		}
 	}

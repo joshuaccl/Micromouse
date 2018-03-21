@@ -134,7 +134,7 @@ int main(void)
 		init_wall_maze(&cell_walls_info);
 
 		// set south wall of start cell to true
-		cell_walls_info.cells[0][0].walls[2] = 1;
+		cell_walls_info.cells[0][0].walls[SOUTH] = 1;
 
 		MX_TIM3_Init();  // Software timer for tracking
 		floodFill(&distances, 0, 0, &cell_walls_info);
