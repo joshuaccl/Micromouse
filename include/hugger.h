@@ -1,12 +1,12 @@
 /*
  ******************************************************************************
- * File Name          : algorithm.h
+ * File Name          : hugger.h
  * Description        : This file provides code for various algorithms
  ****************************************************************************** */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __ALGORITHM_H
-#define __ALGORITHM_H
+#ifndef __HUGGER_H
+#define __HUGGER_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
@@ -18,16 +18,20 @@
 #include "lock.h"
 
 #define NO_RIGHT_WALL 255
+#define NO_LEFT_WALL 265
+#define RIGHT_WALL 290
 #define LEFT_WALL 300
 #define WALL_IN_FRONT_OPENING_RIGHT 315
-#define WALL_IN_FRONT_LEFT_SENSOR 1110
+#define WALL_IN_FRONT_OPENING_LEFT 330
+#define WALL_IN_FRONT_LEFT_SENSOR 1115
 // 1200 1050
-#define WALL_IN_FRONT_RIGHT_SENSOR 980
+#define WALL_IN_FRONT_RIGHT_SENSOR 985
 #define NO_WALL_IN_FRONT_LEFT_SENSOR 1300
 #define NO_WALL_IN_FRONT_RIGHT_SENSOR 1200
 #define ENCODER_TICKS_ONE_CELL 15150
 // true encoder value 15800
 
 void rightWallHugger(void);
+void leftWallHugger(void);
 
-#endif /* __ALGORITHM_H */
+#endif /* __HUGGER_H */

@@ -12,17 +12,33 @@
 
 float leftVelocityOldError;
 float rightVelocityOldError;
+float leftIntegral;
+float rightIntegral;
+//float Kp=0.8;
+//float Kd=0.1;
+//float Ki=0.0005;
+//
+//float Kp=0.55;
+//float Kd=0.15;
+//float Ki=0.0005;
 
+
+//float Kp=0.41;
+//float Kd=0.125;
+//float Ki=0.000025;
+
+float Kp=0.55;
+float Kd=0.15;
+float Ki=0.000025;
 void velocityLeft()
 {
 	// Kp and Kd are both constants for the proportional and derivative
 	// control of the pd controller
 	// Kp = 0.85
-	float Kp=0.55;
-	float Kd=0.15;
 	int error; // current error
 	float correctionP; // correction due to P
 	float correctionD; // correction due to D
+	float correctionI; // correction due to I
 	int derivative;
 	// get the current error
 	error = trackingLeft();
@@ -32,8 +48,12 @@ void velocityLeft()
 	correctionP = error * Kp;
 	// get the derivative correction
 	correctionD = derivative * Kd;
+	// get the integral correction
+	correctionI = error + getIntegralL();
+	setIntegralL(correctionI);
+	correctionI *= Ki;
 	// add the corrections together
-	correctionP += correctionD;
+	correctionP += (correctionD + correctionI);
 	// Change speed of motors
 	// BASE_SPEED MACRO is in pdT.h
 	rightMotorPWMChangeForward(BASE_SPEED - correctionP);
@@ -45,11 +65,10 @@ void velocityRight()
 {
 	// Kp and Kd are both constants for the proportional and derivative
 	// control of the pd controller
-	float Kp=0.55;
-	float Kd=0.15;
 	int error; // current error
 	float correctionP; // correction due to P
 	float correctionD; // correction due to D
+	float correctionI; // correction due to I
 	int derivative;
 	// get the current error
 	error = trackingRight();
@@ -59,8 +78,12 @@ void velocityRight()
 	correctionP = error * Kp;
 	// get the derivative correction
 	correctionD = derivative * Kd;
+	// get the integral correction
+	correctionI = error + getIntegralR();
+	setIntegralR(correctionI);
+	correctionI *= Ki;
 	// add the corrections together
-	correctionP += correctionD;
+	correctionP += (correctionD + correctionI);
 	// Change speed of motors
 	rightMotorPWMChangeForward(correctionP + BASE_SPEED);
 	leftMotorPWMChangeForward(BASE_SPEED - correctionP);
@@ -69,17 +92,17 @@ void velocityRight()
 }
 
 void velocityBothSides() {
-	float Kp=0.55;
-	float Kd=0.15;
 
 	int error_L; // current error
 	float correctionP_L; // correction due to P
 	float correctionD_L; // correction due to D
+	float correctionI_L; // correction due to I
 	int derivative_L;
 
 	int error_R; // current error
 	float correctionP_R; // correction due to P
 	float correctionD_R; // correction due to D
+	float correctionI_R; // correction due to I
 	int derivative_R;
 
 	// get the current error
@@ -90,8 +113,12 @@ void velocityBothSides() {
 	correctionP_L = error_L * Kp;
 	// get the derivative correction
 	correctionD_L = derivative_L * Kd;
+	// get the integral correction
+	correctionI_L = error_L + getIntegralL();
+	setIntegralL(correctionI_L);
+	correctionI_L *= Ki;
 	// add the corrections together
-	correctionP_L += correctionD_L;
+	correctionP_L += (correctionD_L + correctionI_L);
 
 	// get the current error
 	error_R = trackingRight();
@@ -101,8 +128,12 @@ void velocityBothSides() {
 	correctionP_R = error_R * Kp;
 	// get the derivative correction
 	correctionD_R = derivative_R * Kd;
+	// get the integral correction
+	correctionI_R = error_R + getIntegralR();
+	setIntegralR(correctionI_R);
+	correctionI_R *= Ki;
 	// add the corrections together
-	correctionP_R += correctionD_R;
+	correctionP_R += (correctionD_R + correctionI_R);
 
 	rightMotorPWMChangeForward(BASE_SPEED - correctionP_L + correctionP_R);
 	leftMotorPWMChangeForward(correctionP_L + BASE_SPEED - correctionP_R);
@@ -125,6 +156,22 @@ void setVelocityL(float value)
 void setVelocityR(float value)
 {
 	rightVelocityOldError = value;
+}
+float getIntegralL(void)
+{
+	return leftIntegral;
+}
+float getIntegralR(void)
+{
+	return rightIntegral;
+}
+void setIntegralL(float value)
+{
+	leftIntegral = value;
+}
+void setIntegralR(float value)
+{
+	rightIntegral = value;
 }
 
 void wallTracking()
