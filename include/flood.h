@@ -17,24 +17,27 @@
 #include "lock.h"
 #include "stdbool.h"
 
+#define NORTH 0
+#define EAST 1
+#define SOUTH 2
+#define WEST 3
+#define UNKNOWN 4
+
 // define structures needed for flood fill
 struct cell_info{
 	// variables for north,east,south,west walls
-	bool n;
-	bool e;
-	bool s;
-	bool w;
+	bool walls[4];
 	bool visited;
 };
 
 // struct to hold cell info
 struct wall_maze{
-	struct cell_info cell[15][15];
+	struct cell_info cells[16][16];
 };
 
 // struct to hold distance info
 struct dist_maze{
-	int distance[15][15];
+	int distance[16][16];
 };
 
 // struct to hold coordinates
@@ -55,10 +58,20 @@ struct stack{
 // center is flag to let us know if we are trying to get to the center
 void init_distance_maze(struct dist_maze* dm, struct coor* c, int center);
 
+// Initalize wall maze to unvisited for all cells
+void init_wall_maze(struct wall_maze* wm);
+
 // Initialize coordinate
 void init_coor(struct coor* c, int x, int y);
 struct coor pop_stack(struct stack* s);
 void push_stack(struct stack* s, struct coor c);
 
-void floodFill(void);
+// Called to flood to a target cell
+void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm);
+
+// Used to check for walls in current cell
+void checkForWalls(struct wall_maze* wm, struct coor* c, int n, int e, int w);
+
+// Check if a neighbor exists with distance one less than current
+int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c, struct stack* s);
 #endif /* FLOOD_H_ */

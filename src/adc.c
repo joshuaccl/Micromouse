@@ -22,6 +22,9 @@ uint32_t ADC_R;
 
 uint32_t startupSensorL;
 uint32_t startupSensorR;
+uint32_t startupSensorRF;
+uint32_t startupSensorLF;
+
 
 /* ADC1 init function */
 void MX_ADC1_Init(void)
@@ -118,6 +121,8 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 	ADC_RF = IR_values[2];
 	ADC_R = IR_values[3];
 	startupSensorL = IR_values[0];
+	startupSensorLF = IR_values[1];
+	startupSensorRF = IR_values[2];
 	startupSensorR = IR_values[3];
 }
 
@@ -218,15 +223,30 @@ int mouseStartSensorWave(void)
 	//Constantly wait until hand is waved
 	while (1)
 	{
+		// LWH
 		if (startupSensorL > 1200)
 		{
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);  //LED
-			return 0;
-		}
-		if (startupSensorR > 1200)
-		{
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
-			return 1;
+			while(startupSensorL > 1200)
+			{
+				// rwh
+				if(startupSensorR > 1200)
+				{
+					HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);  //LED
+					return 1;
+				}
+				// floodfill
+				if(startupSensorRF > 700)
+				{
+					HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);  //LED
+					return 2;
+				}
+				// lwh
+				if(startupSensorLF > 700)
+				{
+					HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);  //LED
+					return 0;
+				}
+			}
 		}
 	}
 }

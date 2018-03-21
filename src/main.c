@@ -51,6 +51,7 @@
 #include "pdV.h"
 #include "hugger.h"
 #include "lock.h"
+#include "flood.h"
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -104,8 +105,6 @@ int main(void)
 	leftMotorStart();
 	rightMotorStart();
 
-	// Have to start Timer3 interrupts after initializing motors
-	MX_TIM3_Init();  // Software timer for algorithims
 	MX_TIM11_Init(); // Software timer for gyro
 	MX_SPI2_Init();  // SPI for gyro
 	Init_IMU();      // Initialize gyro
@@ -116,15 +115,41 @@ int main(void)
 
 	// Put desired algorithm in this while loop
 
-	if(algorithm)
+	// Floodfill
+	if(algorithm == 2)
 	{
+		// initialize all the structs that we need for this to work
+		struct dist_maze distances;
+		struct wall_maze cell_walls_info;
+
+		// change this coordinate for testing of different
+		// targets for floodfill
+		struct coor target;
+		init_coor(&target, 3, 9);
+
+		// to flood to center set third parameter to 1
+		init_distance_maze(&distances, &target, 1);
+
+		// initialize the walls
+		init_wall_maze(&cell_walls_info);
+
+		// set south wall of start cell to true
+		cell_walls_info.cells[0][0].walls[2] = 1;
+
+		MX_TIM3_Init();  // Software timer for tracking
+		floodFill(&distances, 0, 0, &cell_walls_info);
+	}
+	if(algorithm == 1)
+	{
+		MX_TIM3_Init();  // Software timer for tracking
 		while(1)
 		{
 			rightWallHugger();
 		}
 	}
-	else if(!algorithm)
+	if(algorithm == 0)
 	{
+		MX_TIM3_Init();  // Software timer for tracking
 		while(1)
 		{
 			leftWallHugger();
