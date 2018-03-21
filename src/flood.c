@@ -185,11 +185,11 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm)
 void checkForWalls(struct wall_maze* wm, struct coor* c, int n, int e, int w)
 {
 	// check for wall to the west
-	if(getLeftFrontADCValue() > NO_LEFT_WALL) wm->cells[c->x][c->y].walls[w] = 1;
+	if(getLeftFrontADCValue() > LEFT_WALL) wm->cells[c->x][c->y].walls[w] = 1;
 	else wm->cells[c->x][c->y].walls[w] = 0;
 
 	// check for wall to the east
-	if(getRightFrontADCValue() > NO_RIGHT_WALL) wm->cells[c->x][c->y].walls[e] = 1;
+	if(getRightFrontADCValue() > RIGHT_WALL) wm->cells[c->x][c->y].walls[e] = 1;
 	else wm->cells[c->x][c->y].walls[e] = 0;
 
 	// check for wall to the north
