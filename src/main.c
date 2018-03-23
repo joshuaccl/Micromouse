@@ -90,6 +90,7 @@ int main(void)
 
 	/* Start mouse by waving hand across L emitter */
 	mouseStartSensorWave();
+	HAL_Delay(1000);
 
 	/* Initially set error for positional PD controller */
 	setPositionL(0);
