@@ -125,6 +125,8 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm)
 			// while stack is not empty
 			while(update_stack.index!=0)
 			{
+				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
 				// get the cell to test from the stack
 				next = pop_stack(&update_stack);
 				// find a neighbor cell with distance one less than current
@@ -137,33 +139,81 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm)
 		}
 		// Move to next cell
 		// First turn to face the correct direction
-		if(direction != next_move)
+		int difference = direction - next_move;
+		switch(difference)
 		{
-			int difference = direction - next_move;
-			switch(difference)
-			{
-			case -3: leftTurn();
+		case -3:
+			leftTurn();
+			// Enable movement
+			lockInterruptEnable_TIM3();
+			// Move one cell forward
+			advanceTicks(ENCODER_TICKS_ONE_CELL);
+			// Disable interrupts
+			lockInterruptDisable_TIM3();
+			motorStop();
 			break;
-			case -2: backward180Turn();
+		case -2:
+			backward180Turn();
+			// Enable movement
+			lockInterruptEnable_TIM3();
+			// Move one cell forward
+			advanceTicks(ENCODER_TICKS_ONE_CELL-4000);
+			// Disable interrupts
+			lockInterruptDisable_TIM3();
+			motorStop();
 			break;
-			case -1: rightTurn();
+		case -1:
+			rightTurn();
+			// Enable movement
+			lockInterruptEnable_TIM3();
+			// Move one cell forward
+			advanceTicks(ENCODER_TICKS_ONE_CELL);
+			// Disable interrupts
+			lockInterruptDisable_TIM3();
+			motorStop();
 			break;
-			case 1: leftTurn();
+		case 0:
+			// Enable movement
+			lockInterruptEnable_TIM3();
+			// Move one cell forward
+			advanceTicks(ENCODER_TICKS_ONE_CELL);
+			// Disable interrupts
+			lockInterruptDisable_TIM3();
+			motorStop();
 			break;
-			case 2: backward180Turn();
+		case 1:
+			leftTurn();
+			// Enable movement
+			lockInterruptEnable_TIM3();
+			// Move one cell forward
+			advanceTicks(ENCODER_TICKS_ONE_CELL);
+			// Disable interrupts
+			lockInterruptDisable_TIM3();
+			motorStop();
 			break;
-			case 3: rightTurn();
+		case 2:
+			backward180Turn();
+			// Enable movement
+			lockInterruptEnable_TIM3();
+			// Move one cell forward
+			advanceTicks(ENCODER_TICKS_ONE_CELL-4000);
+			// Disable interrupts
+			lockInterruptDisable_TIM3();
+			motorStop();
 			break;
-			}
+		case 3:
+			rightTurn();
+			// Enable movement
+			lockInterruptEnable_TIM3();
+			// Move one cell forward
+			advanceTicks(ENCODER_TICKS_ONE_CELL);
+			// Disable interrupts
+			lockInterruptDisable_TIM3();
+			motorStop();
+			break;
 		}
 
-		// Enable movement
-		lockInterruptEnable_TIM3();
-		// Move one cell forward
-		advanceTicks(ENCODER_TICKS_ONE_CELL);
-		// Disable interrupts
-		lockInterruptDisable_TIM3();
-		motorStop();
+
 		// update variables
 		switch(next_move)
 		{
@@ -184,18 +234,33 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm)
 
 void checkForWalls(struct wall_maze* wm, struct coor* c, int n, int e, int w)
 {
-	// check for wall to the west
-	if(getLeftFrontADCValue() > LEFT_WALL) wm->cells[c->x][c->y].walls[w] = 1;
-	else wm->cells[c->x][c->y].walls[w] = 0;
-
-	// check for wall to the east
-	if(getRightFrontADCValue() > RIGHT_WALL) wm->cells[c->x][c->y].walls[e] = 1;
-	else wm->cells[c->x][c->y].walls[e] = 0;
-
-	// check for wall to the north
+	// If there is a wall in front
 	if(getLeftADCValue() > WALL_IN_FRONT_LEFT_SENSOR &&
-			getRightADCValue() > WALL_IN_FRONT_RIGHT_SENSOR) wm->cells[c->x][c->y].walls[n] = 1;
-	else wm->cells[c->x][c->y].walls[n] = 0;
+			getRightADCValue() > WALL_IN_FRONT_RIGHT_SENSOR)
+	{
+		// Put wall to north
+		wm->cells[c->x][c->y].walls[n] = 1;
+
+		if(getLeftFrontADCValue() < WALL_IN_FRONT_OPENING_LEFT) wm->cells[c->x][c->y].walls[w] = 0;
+		else wm->cells[c->x][c->y].walls[w] = 1;
+
+		// check for wall to the east
+		if(getRightFrontADCValue() < WALL_IN_FRONT_OPENING_RIGHT) wm->cells[c->x][c->y].walls[e] = 0;
+		else wm->cells[c->x][c->y].walls[e] = 1;
+	}
+	else
+	{
+		// check for wall to the west
+		if(getLeftFrontADCValue() > LEFT_WALL) wm->cells[c->x][c->y].walls[w] = 1;
+		else wm->cells[c->x][c->y].walls[w] = 0;
+
+		// check for wall to the east
+		if(getRightFrontADCValue() > RIGHT_WALL) wm->cells[c->x][c->y].walls[e] = 1;
+		else wm->cells[c->x][c->y].walls[e] = 0;
+
+		// Put no wall to north
+		wm->cells[c->x][c->y].walls[n] = 0;
+	}
 }
 
 int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c, struct stack* s)

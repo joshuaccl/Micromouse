@@ -125,7 +125,7 @@ int main(void)
 		// change this coordinate for testing of different
 		// targets for floodfill
 		struct coor target;
-		init_coor(&target, 3, 9);
+		init_coor(&target, 4, 10);
 
 		// to flood to center set third parameter to 1
 		init_distance_maze(&distances, &target, 1);
