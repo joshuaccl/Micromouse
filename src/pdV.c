@@ -8,8 +8,6 @@
 #include "pdV.h"
 //error = target velocity - current velocity
 
-
-
 float leftVelocityOldError;
 float rightVelocityOldError;
 float leftIntegral;
@@ -22,14 +20,14 @@ float rightIntegral;
 //float Kd=0.15;
 //float Ki=0.0005;
 
-
+// Working version with I added
 //float Kp=0.41;
 //float Kd=0.125;
 //float Ki=0.000025;
 
 float Kp=0.55;
 float Kd=0.15;
-float Ki=0.000025;
+float Ki=0.0;
 void velocityLeft()
 {
 	// Kp and Kd are both constants for the proportional and derivative

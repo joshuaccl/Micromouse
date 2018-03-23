@@ -84,6 +84,7 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm)
 {
 	// Disable tracking interrupts because we do not want to move yet
 	lockInterruptDisable_TIM3();
+
 	// store current coordinates into local variable
 	struct coor c;
 	init_coor(&c, x, y);
@@ -105,14 +106,14 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm)
 		// check for surrounding walls
 		switch(direction)
 		{
-		case NORTH: checkForWalls(wm, &c, NORTH, EAST, WEST);
-		break;
-		case EAST: checkForWalls(wm, &c, EAST, SOUTH, NORTH);
-		break;
-		case SOUTH: checkForWalls(wm, &c, SOUTH, WEST, EAST);
-		break;
-		case WEST: checkForWalls(wm, &c, WEST, NORTH, SOUTH);
-		break;
+			case NORTH: checkForWalls(wm, &c, NORTH, EAST, WEST);
+			break;
+			case EAST: checkForWalls(wm, &c, EAST, SOUTH, NORTH);
+			break;
+			case SOUTH: checkForWalls(wm, &c, SOUTH, WEST, EAST);
+			break;
+			case WEST: checkForWalls(wm, &c, WEST, NORTH, SOUTH);
+			break;
 		}
 
 		// check if there is a neighbor with one less distance
@@ -157,7 +158,7 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm)
 			// Enable movement
 			lockInterruptEnable_TIM3();
 			// Move one cell forward
-			advanceTicks(ENCODER_TICKS_ONE_CELL-4000);
+			advanceTicks(ENCODER_TICKS_ONE_CELL);
 			// Disable interrupts
 			lockInterruptDisable_TIM3();
 			motorStop();
@@ -196,7 +197,7 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm)
 			// Enable movement
 			lockInterruptEnable_TIM3();
 			// Move one cell forward
-			advanceTicks(ENCODER_TICKS_ONE_CELL-4000);
+			advanceTicks(ENCODER_TICKS_ONE_CELL);
 			// Disable interrupts
 			lockInterruptDisable_TIM3();
 			motorStop();
@@ -217,14 +218,14 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm)
 		// update variables
 		switch(next_move)
 		{
-		case NORTH: c.y += 1;
-		break;
-		case EAST: c.x += 1;
-		break;
-		case SOUTH: c.y -= 1;
-		break;
-		case WEST: c.x -= 1;
-		break;
+			case NORTH: c.y += 1;
+			break;
+			case EAST: c.x += 1;
+			break;
+			case SOUTH: c.y -= 1;
+			break;
+			case WEST: c.x -= 1;
+			break;
 		}
 
 		// update the direction we are currently facing
@@ -251,12 +252,12 @@ void checkForWalls(struct wall_maze* wm, struct coor* c, int n, int e, int w)
 	else
 	{
 		// check for wall to the west
-		if(getLeftFrontADCValue() > LEFT_WALL) wm->cells[c->x][c->y].walls[w] = 1;
-		else wm->cells[c->x][c->y].walls[w] = 0;
+		if(getLeftFrontADCValue() < NO_LEFT_WALL) wm->cells[c->x][c->y].walls[w] = 0;
+		else wm->cells[c->x][c->y].walls[w] = 1;
 
 		// check for wall to the east
-		if(getRightFrontADCValue() > RIGHT_WALL) wm->cells[c->x][c->y].walls[e] = 1;
-		else wm->cells[c->x][c->y].walls[e] = 0;
+		if(getRightFrontADCValue() < NO_RIGHT_WALL) wm->cells[c->x][c->y].walls[e] = 0;
+		else wm->cells[c->x][c->y].walls[e] = 1;
 
 		// Put no wall to north
 		wm->cells[c->x][c->y].walls[n] = 0;
@@ -326,23 +327,20 @@ int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c,
 			struct coor temp;
 			switch(i)
 			{
-			case NORTH:
-				init_coor(&temp, c->x, c->y + 1);
-				push_stack(s, temp);
-				break;
-			case EAST:
-				init_coor(&temp, c->x + 1, c->y);
-				push_stack(s, temp);
-				break;
-			case SOUTH:
-				init_coor(&temp, c->x, c->y - 1);
-				push_stack(s, temp);
-				break;
-			case WEST:
-				init_coor(&temp, c->x - 1, c->y);
-				push_stack(s, temp);
-				break;
+				case NORTH:
+					init_coor(&temp, c->x, c->y + 1);
+					break;
+				case EAST:
+					init_coor(&temp, c->x + 1, c->y);
+					break;
+				case SOUTH:
+					init_coor(&temp, c->x, c->y - 1);
+					break;
+				case WEST:
+					init_coor(&temp, c->x - 1, c->y);
+					break;
 			}
+			push_stack(s, temp);
 		}
 	}
 	// return unknown
