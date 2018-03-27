@@ -158,7 +158,7 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm)
 			// Enable movement
 			lockInterruptEnable_TIM3();
 			// Move one cell forward
-			advanceTicks(ENCODER_TICKS_ONE_CELL);
+			advanceTicks(ENCODER_TICKS_ONE_CELL-2800);
 			// Disable interrupts
 			lockInterruptDisable_TIM3();
 			motorStop();
@@ -197,7 +197,7 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm)
 			// Enable movement
 			lockInterruptEnable_TIM3();
 			// Move one cell forward
-			advanceTicks(ENCODER_TICKS_ONE_CELL);
+			advanceTicks(ENCODER_TICKS_ONE_CELL-2800);
 			// Disable interrupts
 			lockInterruptDisable_TIM3();
 			motorStop();
