@@ -31,6 +31,7 @@ int getPositionL(void);
 int getPositionR(void);
 void setPositionL(int value);
 void setPositionR(int value);
+void trackingBothSides();
 
 #endif
 
