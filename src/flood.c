@@ -77,8 +77,8 @@ void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* 
 	uint32_t encoder_val = MAX_ENCODER_VALUE;
 	resetLeftEncoder();
 	while(encoder_val > (MAX_ENCODER_VALUE - ticks) ) {
-		if (getLeftADCValue() >= FLOOD_WALL_IN_FRONT_LEFT &&
-				getRightADCValue() >= FLOOD_WALL_IN_FRONT_RIGHT)
+		if (getLeftADCValue() >= WALL_IN_FRONT_LEFT_SENSOR &&
+				getRightADCValue() >= WALL_IN_FRONT_RIGHT_SENSOR)
 		{
 			break;
 		}
@@ -93,6 +93,8 @@ void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* 
 			case SOUTH: checkForWalls(wm, c, WEST, EAST);
 			break;
 			case WEST: checkForWalls(wm, c, NORTH, SOUTH);
+			break;
+			default:
 			break;
 			}
 		}
@@ -139,16 +141,20 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm)
 		break;
 		case WEST: c.x -= 1;
 		break;
+		default:
+		break;
 		}
 
 		// If we haven't visited the next cell
 		if(wm->cells[c.x][c.y].visited == 0)
 		{
 			lockInterruptEnable_TIM3();
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
 			advanceTicksFlood(FLOOD_ONE_CELL, direction, &c, wm);
 			lockInterruptDisable_TIM3();
 			motorAbruptStop();
 			HAL_Delay(300);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
 			// showCoor(c.x, c.y);
 
 			// check for wall straight ahead
@@ -165,6 +171,7 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm)
 		}
 		else
 		{
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
 			// Go forward one cell
 			lockInterruptEnable_TIM3();
 			advanceTicks(FLOOD_ONE_CELL);
@@ -172,6 +179,7 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm)
 			motorAbruptStop();
 			HAL_Delay(300);
 			// showCoor(c.x, c.y);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
 		}
 
 		if (dm->distance[c.x][c.y]==0) break;
@@ -200,6 +208,7 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm)
 			// next_move is actually the direction we need to go next
 			next_move = minusOneNeighbor(dm, wm, &c, &update_stack);
 		}
+
 		// Move to next cell
 		// First turn to face the correct direction
 		int difference = direction - next_move;
@@ -222,6 +231,8 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm)
 			break;
 		case 3:
 			rightStillTurn();
+			break;
+		default:
 			break;
 		}
 
@@ -372,6 +383,13 @@ void showCoor(int x, int y)
 	turnOffCenterLEDS();
 }
 
+void turnOnCenterLEDS()
+{
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+}
 void turnOffCenterLEDS()
 {
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);

@@ -80,6 +80,7 @@ int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c,
 
 void showCoor(int x, int y);
 
+void turnOnCenterLEDS(void);
 void turnOffCenterLEDS(void);
 
 #endif /* FLOOD_H_ */
