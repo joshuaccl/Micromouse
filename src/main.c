@@ -116,6 +116,9 @@ int main(void)
 	// Floodfill
 	if(algorithm == 2)
 	{
+		algorithm = wallFavor();
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
+
 		// initialize all the structs that we need for this to work
 		struct dist_maze distances;
 		struct wall_maze cell_walls_info;
@@ -137,7 +140,7 @@ int main(void)
 		cell_walls_info.cells[0][0].walls[WEST] = 1;
 
 		MX_TIM3_Init();  // Software timer for tracking
-		floodFill(&distances, 0, 0, &cell_walls_info);
+		floodFill(&distances, 0, 0, &cell_walls_info, algorithm);
 
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
@@ -151,7 +154,7 @@ int main(void)
 		// Mouse has made it to center, so flood back to start
 		init_coor(&target, 15, 0);
 		init_distance_maze(&distances, &target, 0);
-		floodFill(&distances, 7, 3, &cell_walls_info);
+		floodFill(&distances, 7, 3, &cell_walls_info, algorithm);
 	}
 	// Right wall hugger
 	if(algorithm == 1)

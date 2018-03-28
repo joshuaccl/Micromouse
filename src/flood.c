@@ -110,7 +110,7 @@ void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* 
  * wm = structure containing information on the cell walls and visitation
  *
  */
-void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm)
+void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a)
 {
 	// Disable tracking interrupts because we do not want to move yet
 	lockInterruptDisable_TIM3();
@@ -186,7 +186,7 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm)
 
 		// check if there is a neighbor with one less distance
 		// next_move is the direction we should move next
-		next_move = minusOneNeighbor(dm, wm, &c, &update_stack);
+		next_move = minusOneNeighbor(dm, wm, &c, &update_stack, a);
 
 		// If we couldn't find a valid cell
 		if(next_move == UNKNOWN)
@@ -199,14 +199,14 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm)
 				// get the cell to test from the stack
 				next = pop_stack(&update_stack);
 				// find a neighbor cell with distance one less than current
-				minusOneNeighbor(dm, wm, &next, &update_stack);
+				minusOneNeighbor(dm, wm, &next, &update_stack, a);
 			}
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
 
 			// get next cell to traverse to
 			// next_move is actually the direction we need to go next
-			next_move = minusOneNeighbor(dm, wm, &c, &update_stack);
+			next_move = minusOneNeighbor(dm, wm, &c, &update_stack, a);
 		}
 
 		// Move to next cell
@@ -260,7 +260,7 @@ void checkForWalls(struct wall_maze* wm, struct coor* c, int e, int w)
 	else HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_RESET);
 }
 
-int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c, struct stack* s)
+int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c, struct stack* s, int a)
 {
 	int i;
 	// minimum distance
@@ -270,16 +270,17 @@ int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c,
 	// check neighbor cells
 	for(i=0; i<4; i++)
 	{
+		int j = (i + a) % 4;
 		// If there is no wall blocking the way
-		if(wm->cells[c->x][c->y].walls[i]==0)
+		if(wm->cells[c->x][c->y].walls[j]==0)
 		{
-			switch(i)
+			switch(j)
 			{
 			case NORTH:
 				if(dm->distance[c->x][c->y+1]==target)
 				{
 					// if the cell exists return the direction we want to move
-					return i;
+					return j;
 				}
 				if(dm->distance[c->x][c->y+1] < md) md = dm->distance[c->x][c->y+1];
 				break;
@@ -287,7 +288,7 @@ int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c,
 				if(dm->distance[c->x+1][c->y]==target)
 				{
 					// if the cell exists return the direction we want to move
-					return i;
+					return j;
 				}
 				if(dm->distance[c->x+1][c->y] < md) md = dm->distance[c->x+1][c->y];
 				break;
@@ -295,7 +296,7 @@ int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c,
 				if(dm->distance[c->x][c->y-1]==target)
 				{
 					// if the cell exists return the direction we want to move
-					return i;
+					return j;
 				}
 				if(dm->distance[c->x][c->y-1] < md) md = dm->distance[c->x][c->y-1];
 				break;
@@ -303,7 +304,7 @@ int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c,
 				if(dm->distance[c->x-1][c->y]==target)
 				{
 					// if the cell exists return the direction we want to move
-					return i;
+					return j;
 				}
 				if(dm->distance[c->x-1][c->y] < md) md = dm->distance[c->x-1][c->y];
 				break;

@@ -70,13 +70,13 @@ void push_stack(struct stack* s, struct coor c);
 void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* wm);
 
 // Called to flood to a target cell
-void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm);
+void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a);
 
 // Used to check for walls in current cell
 void checkForWalls(struct wall_maze* wm, struct coor* c, int e, int w);
 
 // Check if a neighbor exists with distance one less than current
-int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c, struct stack* s);
+int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c, struct stack* s, int a);
 
 void showCoor(int x, int y);
 
