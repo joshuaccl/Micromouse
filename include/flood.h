@@ -22,6 +22,7 @@
 #define SOUTH 2
 #define WEST 3
 #define UNKNOWN 4
+#define FLOOD_ONE_CELL 11500
 
 // define structures needed for flood fill
 struct cell_info{
@@ -66,12 +67,19 @@ void init_coor(struct coor* c, int x, int y);
 struct coor pop_stack(struct stack* s);
 void push_stack(struct stack* s, struct coor c);
 
+void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* wm);
+
 // Called to flood to a target cell
 void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm);
 
 // Used to check for walls in current cell
-void checkForWalls(struct wall_maze* wm, struct coor* c, int n, int e, int w);
+void checkForWalls(struct wall_maze* wm, struct coor* c, int e, int w);
 
 // Check if a neighbor exists with distance one less than current
 int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c, struct stack* s);
+
+void showCoor(int x, int y);
+
+void turnOffCenterLEDS(void);
+
 #endif /* FLOOD_H_ */

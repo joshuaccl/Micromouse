@@ -176,8 +176,6 @@ void wallTracking()
 {
 	int leftWall = getLeftFrontADCValue();
 	int rightWall = getRightFrontADCValue();
-	// Turn off leds
-	turnOffLEDS();
 	// If there is two walls
 	if(leftWall >= LW_THRESHOLD && rightWall >= RW_THRESHOLD)
 	{

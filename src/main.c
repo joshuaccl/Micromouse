@@ -123,7 +123,7 @@ int main(void)
 		// change this coordinate for testing of different
 		// targets for floodfill
 		struct coor target;
-		init_coor(&target, 4, 10);
+		init_coor(&target, 3, 10);
 
 		// to flood to center set third parameter to 1
 		init_distance_maze(&distances, &target, 1);
@@ -131,8 +131,10 @@ int main(void)
 		// initialize the walls
 		init_wall_maze(&cell_walls_info);
 
-		// set south wall of start cell to true
+		// set east, south, west wall of start cell to true
+		cell_walls_info.cells[0][0].walls[EAST] = 1;
 		cell_walls_info.cells[0][0].walls[SOUTH] = 1;
+		cell_walls_info.cells[0][0].walls[WEST] = 1;
 
 		MX_TIM3_Init();  // Software timer for tracking
 		floodFill(&distances, 0, 0, &cell_walls_info);
@@ -140,11 +142,16 @@ int main(void)
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
 
+		HAL_Delay(5000);
+
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
+
 		// ONCE IT REACHES HERE, IT HAS REACHED THE CENTER OF THE MAZE
 		// Mouse has made it to center, so flood back to start
 		init_coor(&target, 15, 0);
 		init_distance_maze(&distances, &target, 0);
-		floodFill(&distances, 7, 7, &cell_walls_info);
+		floodFill(&distances, 7, 3, &cell_walls_info);
 	}
 	// Right wall hugger
 	if(algorithm == 1)

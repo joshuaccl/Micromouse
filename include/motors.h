@@ -28,4 +28,9 @@ void leftSTurn(void);
 void cornerStop(void);
 void motorStop(void);
 
+void rightStillTurn(void);
+void leftStillTurn(void);
+void backward180StillTurn(void);
+void motorAbruptStop(void);
+
 #endif /*__motors_H */

@@ -56,6 +56,7 @@ void advanceTicks(uint32_t ticks) {
 		encoder_val = getLeftEncoderValue();
 	}
 }
+
 void uncontrolledAdvanceTicks(uint32_t ticks) {
 	uint32_t encoder_val = MAX_ENCODER_VALUE;
 	resetLeftEncoder();
