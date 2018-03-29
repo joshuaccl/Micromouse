@@ -33,8 +33,8 @@
 // true encoder value 15800
 
 //FOR RWH FAST
-#define WALL_IN_FRONT_LEFT_SENSOR_RWH_FAST 1040
-#define WALL_IN_FRONT_RIGHT_SENSOR_RWH_FAST 920
+#define WALL_IN_FRONT_LEFT_SENSOR_RWH_FAST 1030
+#define WALL_IN_FRONT_RIGHT_SENSOR_RWH_FAST 915
 
 void rightWallHugger(void);
 void leftWallHugger(void);
