@@ -18,13 +18,12 @@
 #define RW_THRESHOLD 270
 
 // Change this macro to affect the travel speed
-#define BASE_SPEED 40
+#define BASE_SPEED 80
 
 extern int leftPositionOldError;
 extern int rightPositionOldError;
 
 // How sensitive the controller is
-
 float trackingLeft(void);
 float trackingRight(void);
 int getPositionL(void);
