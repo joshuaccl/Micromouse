@@ -24,6 +24,7 @@
 #define WALL_IN_FRONT_OPENING_RIGHT 315
 #define WALL_IN_FRONT_OPENING_LEFT 330
 #define WALL_IN_FRONT_LEFT_SENSOR 1080
+
 // 1200 1050
 #define WALL_IN_FRONT_RIGHT_SENSOR 960
 #define NO_WALL_IN_FRONT_LEFT_SENSOR 1300
@@ -31,7 +32,12 @@
 #define ENCODER_TICKS_ONE_CELL 15150
 // true encoder value 15800
 
+//FOR RWH FAST
+#define WALL_IN_FRONT_LEFT_SENSOR_RWH_FAST 1040
+#define WALL_IN_FRONT_RIGHT_SENSOR_RWH_FAST 920
+
 void rightWallHugger(void);
 void leftWallHugger(void);
+void rightWallHuggerFast(void);
 
 #endif /* __HUGGER_H */

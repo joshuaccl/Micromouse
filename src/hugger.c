@@ -85,3 +85,51 @@ void leftWallHugger(void)
 	}
 	else advanceTicks(ENCODER_TICKS_ONE_CELL);
 }
+
+void rightWallHuggerFast(void)
+{
+	int direction = advanceTicksRWH(ENCODER_TICKS_ONE_CELL);
+
+	while(direction) {
+		switch(direction) {
+		// No front wall
+		case 1:
+			direction = advanceTicksRWH(ENCODER_TICKS_ONE_CELL);
+			break;
+		// No right wall
+		case 2:
+			rightTurn();
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_SET);
+			direction = advanceTicksRWH(ENCODER_TICKS_ONE_CELL-4600);
+			break;
+		// Front wall ahead
+		case 3:
+			// If there is no wall on the right -> turn right
+			if(getRightFrontADCValue() <= WALL_IN_FRONT_OPENING_RIGHT)
+			{
+				rightTurn();
+				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_SET);
+				direction = advanceTicksRWH(ENCODER_TICKS_ONE_CELL-4600);
+			}
+			// Dead end so do 180
+			else if(getLeftFrontADCValue() >= LEFT_WALL )
+			{
+				// Advance further into cell to do the 180
+				backward180Turn();
+				direction = advanceTicksRWH(ENCODER_TICKS_ONE_CELL-2800);
+			}
+			// Turn left
+			else
+			{
+				leftTurn();
+				// If no wall in front after turning left then go forward
+				if(getLeftADCValue() < NO_WALL_IN_FRONT_LEFT_SENSOR &&
+						getRightADCValue() < NO_WALL_IN_FRONT_RIGHT_SENSOR)
+				{
+					direction = advanceTicksRWH(ENCODER_TICKS_ONE_CELL-4600);
+				}
+			}
+			break;
+		}
+	}
+}

@@ -152,7 +152,8 @@ int main(void)
 		MX_TIM3_Init();  // Software timer for tracking
 		while(1)
 		{
-			rightWallHugger();
+//			rightWallHugger();
+			rightWallHuggerFast();
 		}
 	}
 	// Left wall hugger
