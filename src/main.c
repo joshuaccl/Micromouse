@@ -118,6 +118,8 @@ int main(void)
 	{
 		algorithm = wallFavor();
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
+		HAL_Delay(1000);
+
 
 		// initialize all the structs that we need for this to work
 		struct dist_maze distances;
@@ -126,7 +128,7 @@ int main(void)
 		// change this coordinate for testing of different
 		// targets for floodfill
 		struct coor target;
-		init_coor(&target, 0, 6);
+		init_coor(&target, 0, 4);
 
 		// to flood to center set third parameter to 1
 		init_distance_maze(&distances, &target, 0);

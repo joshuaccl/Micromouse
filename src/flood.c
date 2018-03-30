@@ -76,10 +76,10 @@ void push_stack(struct stack* s, struct coor c){
 void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* wm) {
 	uint32_t encoder_val = MAX_ENCODER_VALUE;
 	resetLeftEncoder();
-	leftMotorPWMChangeForward(100);
-	rightMotorPWMChangeForward(100);
+	leftMotorPWMChangeForward(50);
+	rightMotorPWMChangeForward(50);
 	lockInterruptEnable_TIM3();
-	setBaseSpeed(100);
+	setBaseSpeed(50);
 	while(encoder_val > (MAX_ENCODER_VALUE - ticks) ) {
 		if (getLeftADCValue() >= WALL_IN_FRONT_LEFT_SENSOR &&
 				getRightADCValue() >= WALL_IN_FRONT_RIGHT_SENSOR)
@@ -155,6 +155,7 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a)
 	// create stack for update of distances iteratively
 	struct stack update_stack;
 	update_stack.index = 0;
+	int tick_count = FLOOD_ONE_CELL;
 
 	// while we are not at target destination
 	while(1)
@@ -196,7 +197,7 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a)
 			break;
 		}
 
-		advanceTicksFlood(FLOOD_ONE_CELL, direction, &c, wm);
+		advanceTicksFlood(tick_count, direction, &c, wm);
 		// showCoor(c.x, c.y);
 
 		if (dm->distance[c.x][c.y]==0) break;
@@ -240,6 +241,9 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a)
 		case -1:
 			rightStillTurn();
 			break;
+		case 0:
+			tick_count += 1750;
+			break;
 		case 1:
 			leftStillTurn();
 			break;
@@ -252,7 +256,7 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a)
 		default:
 			break;
 		}
-
+		if(difference!=0) tick_count = FLOOD_ONE_CELL;
 		// update the direction we are currently facing
 		direction = next_move;
 	}

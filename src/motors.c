@@ -203,8 +203,8 @@ void rightStillTurn(void)
 	lockInterruptDisable_TIM3();
 	motorStop();
 	resetGyroAngle();
-	leftMotorPWMChangeForward(getBaseSpeed());
-	rightMotorPWMChangeBackward(getBaseSpeed());
+	leftMotorPWMChangeForward(getBaseSpeed()*6);
+	rightMotorPWMChangeBackward(getBaseSpeed()*6);
 	// Decrease absolute value of angle to turn less
 	while(angle > -41 ) {
 	}
@@ -218,8 +218,8 @@ void leftStillTurn(void)
 	lockInterruptDisable_TIM3();
 	motorStop();
 	resetGyroAngle();
-	rightMotorPWMChangeForward(getBaseSpeed());
-	leftMotorPWMChangeBackward(getBaseSpeed());
+	rightMotorPWMChangeForward(getBaseSpeed()*6);
+	leftMotorPWMChangeBackward(getBaseSpeed()*6);
 	// Increase value of angle to turn more
 	while( angle < 42 ) {
 	}
@@ -230,8 +230,8 @@ void backward180StillTurn(void)
 	lockInterruptDisable_TIM3();
 	motorStop();
 	resetGyroAngle();
-	leftMotorPWMChangeForward(getBaseSpeed());
-	rightMotorPWMChangeBackward(getBaseSpeed());
+	leftMotorPWMChangeForward(getBaseSpeed()*6);
+	rightMotorPWMChangeBackward(getBaseSpeed()*6);
 	// Decrease absolute value of angle to turn less
 	// angle > -43
 	// encoder_value > (MAX_ENCODER_VALUE - 13750
