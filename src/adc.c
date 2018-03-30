@@ -58,28 +58,28 @@ void MX_ADC1_Init(void)
 	 */
 	sConfig.Channel = ADC_CHANNEL_8;
 	sConfig.Rank = 1;
-	sConfig.SamplingTime = ADC_SAMPLETIME_56CYCLES;
+	sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
 	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
 	{
 		_Error_Handler(__FILE__, __LINE__);
 	}
 	sConfig.Channel = ADC_CHANNEL_9;
 	sConfig.Rank = 2;
-	sConfig.SamplingTime = ADC_SAMPLETIME_56CYCLES;
+	sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
 	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
 	{
 		_Error_Handler(__FILE__, __LINE__);
 	}
 	sConfig.Channel = ADC_CHANNEL_2;
 	sConfig.Rank = 3;
-	sConfig.SamplingTime = ADC_SAMPLETIME_56CYCLES;
+	sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
 	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
 	{
 		_Error_Handler(__FILE__, __LINE__);
 	}
 	sConfig.Channel = ADC_CHANNEL_3;
 	sConfig.Rank = 4;
-	sConfig.SamplingTime = ADC_SAMPLETIME_56CYCLES;
+	sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
 	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
 	{
 		_Error_Handler(__FILE__, __LINE__);
@@ -248,6 +248,19 @@ int mouseStartSensorWave(void)
 				}
 			}
 		}
+	}
+}
+
+int wallFavor(void)
+{
+	while(1)
+	{
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+		if(startupSensorL > 1200) return 0; // north
+		if(startupSensorLF > 700) return 1; // east
+		if(startupSensorRF > 700) return 2; // south
+		if(startupSensorR > 1200) return 3; // west
+
 	}
 }
 

@@ -15,6 +15,7 @@
 void MX_GPIO_Init(void);
 void emitter_Init(void);
 void emitter_Off(void);
+void turnOnLEDS(void);
 void turnOffLEDS(void);
 
 #endif /*__gpio_H */

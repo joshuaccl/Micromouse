@@ -9,6 +9,7 @@
 
 int leftPositionOldError;
 int rightPositionOldError;
+int base_speed;
 
 int getPositionL()
 {
@@ -48,8 +49,8 @@ float trackingLeft()
 	correctionP += correctionD;
 	setPositionL(error);
 	// Uncomment the next two lines to test positional controller only
-//	leftMotorPWMChangeForward(correctionP + BASE_SPEED);
-//	rightMotorPWMChangeForward(BASE_SPEED - correctionP);
+		rightMotorPWMChangeForward(getBaseSpeed() - correctionP);
+		leftMotorPWMChangeForward(correctionP + getBaseSpeed());
 	return correctionP;
 }
 
@@ -68,7 +69,49 @@ float trackingRight()
 	correctionP += correctionD;
 	setPositionR(error);
 	// Uncomment the next two lines to test positional controller only
-//	rightMotorPWMChangeForward(correctionP + BASE_SPEED);
-//	leftMotorPWMChangeForward(BASE_SPEED - correctionP);
+		rightMotorPWMChangeForward(correctionP + getBaseSpeed());
+		leftMotorPWMChangeForward(getBaseSpeed() - correctionP);
 	return correctionP;
+}
+
+void trackingBothSides()
+{
+	float Kp=0.0625;
+	float Kd=1.4;
+
+	int errorR;
+	float correctionP_R;
+	float correctionD_R;
+	int derivative_R;
+
+	int errorL;
+	float correctionP_L;
+	float correctionD_L;
+	int derivative_L;
+
+	errorR = getRightFrontADCValue() - RIGHT_BASELINE;
+	derivative_R = errorR - getPositionR();
+	correctionP_R = errorR * Kp;
+	correctionD_R = derivative_R * Kd;
+	correctionP_R += correctionD_R;
+	setPositionR(errorR);
+
+	errorL = getLeftFrontADCValue() - LEFT_BASELINE;
+	derivative_L = errorL - getPositionL();
+	correctionP_L = errorL * Kp;
+	correctionD_L = derivative_L * Kd;
+	correctionP_L += correctionD_L;
+	setPositionL(errorL);
+
+	rightMotorPWMChangeForward(getBaseSpeed() - correctionP_L + correctionP_R);
+	leftMotorPWMChangeForward(correctionP_L + getBaseSpeed() - correctionP_R);
+}
+
+int getBaseSpeed(void)
+{
+	return base_speed;
+}
+void setBaseSpeed(int value)
+{
+	base_speed = value;
 }

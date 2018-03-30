@@ -44,6 +44,8 @@ uint32_t startMouseSensor(void);
 //Start mouse by waving hand next to left sensor
 int mouseStartSensorWave(void);
 
+int wallFavor(void);
+
 /* Function to print out ADC value reading to the LEDs using blinking to get sensor value */
 void ADC_LED_DEBUG(uint32_t value);
 

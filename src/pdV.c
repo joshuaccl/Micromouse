@@ -176,25 +176,23 @@ void wallTracking()
 {
 	int leftWall = getLeftFrontADCValue();
 	int rightWall = getRightFrontADCValue();
-	// Turn off leds
-	turnOffLEDS();
 	// If there is two walls
 	if(leftWall >= LW_THRESHOLD && rightWall >= RW_THRESHOLD)
 	{
-		velocityBothSides();
-		//		trackingRight();
+		//		velocityBothSides();
+		trackingBothSides();
 	}
 	// If there is only a right wall
 	else if(leftWall < LW_THRESHOLD && rightWall >= RW_THRESHOLD)
 	{
-		velocityRight();
-		//		trackingRight();
+		//		velocityRight();
+		trackingRight();
 	}
 	// If there is only a left wall
 	else if(leftWall >= LW_THRESHOLD && rightWall < RW_THRESHOLD)
 	{
-		velocityLeft();
-		//		trackingLeft();
+		//		velocityLeft();
+		trackingLeft();
 	}
 	// No walls
 	else
