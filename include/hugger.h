@@ -17,7 +17,7 @@
 #include "encoder.h"
 #include "lock.h"
 
-// GREATER = CLOSER, LESS = FARTHER
+// STOP earlier = lower
 // Regular RWH
 #define NO_RIGHT_WALL 255
 #define NO_LEFT_WALL 265
@@ -35,10 +35,10 @@
 // true encoder value 15800
 
 // Fast RWH
-#define WALL_IN_FRONT_LEFT_SENSOR_RWH_FAST 1020
-#define WALL_IN_FRONT_RIGHT_SENSOR_RWH_FAST 920
-#define NO_RIGHT_WALL_RWH_FAST 245
-#define WALL_IN_FRONT_OPENING_RIGHT_RWH_FAST 305
+#define WALL_IN_FRONT_LEFT_SENSOR_RWH_FAST 980
+#define WALL_IN_FRONT_RIGHT_SENSOR_RWH_FAST 890
+#define NO_RIGHT_WALL_RWH_FAST 250
+#define WALL_IN_FRONT_OPENING_RIGHT_RWH_FAST 310
 #define ENCODER_TICKS_ONE_CELL_RWH_FAST 15100
 
 void rightWallHugger(void);

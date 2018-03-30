@@ -100,7 +100,7 @@ void rightWallHuggerFast(void)
 		case 2:
 			rightTurnRWH();
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_SET);
-			direction = advanceTicksRWH(ENCODER_TICKS_ONE_CELL_RWH_FAST-4000);
+			direction = advanceTicksRWH(ENCODER_TICKS_ONE_CELL_RWH_FAST-6000);
 			break;
 		// Front wall ahead
 		case 3:
@@ -109,14 +109,14 @@ void rightWallHuggerFast(void)
 			{
 				rightTurnRWH();
 				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_SET);
-				direction = advanceTicksRWH(ENCODER_TICKS_ONE_CELL_RWH_FAST-4000);
+				direction = advanceTicksRWH(ENCODER_TICKS_ONE_CELL_RWH_FAST-3000);
 			}
 			// Dead end so do 180
 			else if(getLeftFrontADCValue() >= LEFT_WALL)
 			{
 				// Advance further into cell to do the 180
 				backward180TurnRWH();
-				direction = advanceTicksRWH(ENCODER_TICKS_ONE_CELL_RWH_FAST -6000);
+				direction = advanceTicksRWH(ENCODER_TICKS_ONE_CELL_RWH_FAST -5500);
 			}
 			// Turn left
 			else
