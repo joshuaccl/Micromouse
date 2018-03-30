@@ -210,8 +210,9 @@ void rightStillTurn(void)
 	while(angle > -41 ) {
 	}
 	motorStop();
-	HAL_Delay(300);
+	custom_delay(300);
 	lockInterruptEnable_TIM3();
+	resetLeftEncoder();
 }
 
 void leftStillTurn(void)
@@ -228,8 +229,9 @@ void leftStillTurn(void)
 	while( angle < 42 ) {
 	}
 	motorStop();
-	HAL_Delay(300);
+	custom_delay(300);
 	lockInterruptEnable_TIM3();
+	resetLeftEncoder();
 }
 void backward180StillTurn(void)
 {
@@ -245,8 +247,9 @@ void backward180StillTurn(void)
 	while(angle > -55 ) {
 	}
 	motorStop();
-	HAL_Delay(300);
+	custom_delay(300);
 	lockInterruptEnable_TIM3();
+	resetLeftEncoder();
 	/* This delay needed to ensure that the ADC sensors will poll
 	 * after turning */
 }

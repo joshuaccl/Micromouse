@@ -11,7 +11,11 @@ TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
+TIM_HandleTypeDef htim10;
 TIM_HandleTypeDef htim11;
+
+int delay_flag;
+int time_of_delay;
 
 /* Motors on TIM4
  *
@@ -200,6 +204,32 @@ void MX_TIM11_Init(void)
     {
         Error_Handler();
     }
+}
+
+void MX_TIM10_Init(void)
+{
+    htim10.Instance = TIM10;
+    htim10.Init.Prescaler = 15;
+    htim10.Init.CounterMode = TIM_COUNTERMODE_UP;
+    // Sample 1000 Hz
+    htim10.Init.Period = 1000;
+    htim10.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+
+    if (HAL_TIM_Base_Init(&htim10) != HAL_OK)
+    {
+        Error_Handler();
+    }
+    HAL_TIM_Base_Start_IT(&htim10);
+}
+
+void custom_delay(int milliseconds)
+{
+	time_of_delay = 0;
+	while(time_of_delay < milliseconds)
+	{
+		resetLeftEncoder();
+	}
+
 }
 void leftMotorStart(void)
 {

@@ -77,11 +77,6 @@ void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* 
 	uint32_t encoder_val = MAX_ENCODER_VALUE;
 	resetLeftEncoder();
 	while(encoder_val > (MAX_ENCODER_VALUE - ticks) ) {
-		if (getLeftADCValue() >= WALL_IN_FRONT_LEFT_SENSOR &&
-				getRightADCValue() >= WALL_IN_FRONT_RIGHT_SENSOR)
-		{
-			break;
-		}
 		if (encoder_val < (MAX_ENCODER_VALUE - (ticks / 2 ) ) )
 		{
 			switch(d)
@@ -95,12 +90,13 @@ void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* 
 			case WEST: checkForWalls(wm, c, NORTH, SOUTH);
 			break;
 			default:
-			break;
+				break;
 			}
 		}
 		setLeftEncoderValue(TIM2->CNT);
 		encoder_val = getLeftEncoderValue();
 	}
+	resetLeftEncoder();
 }
 
 /* Parameters
@@ -142,19 +138,13 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a)
 		case WEST: c.x -= 1;
 		break;
 		default:
-		break;
+			break;
 		}
 
 		// If we haven't visited the next cell
 		if(wm->cells[c.x][c.y].visited == 0)
 		{
-			lockInterruptEnable_TIM3();
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
-			advanceTicksFlood(FLOOD_ONE_CELL, direction, &c, wm);
-			lockInterruptDisable_TIM3();
-			motorAbruptStop();
-			HAL_Delay(300);
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
+			advanceOneCell(direction, &c, wm);
 			// showCoor(c.x, c.y);
 
 			// check for wall straight ahead
@@ -171,15 +161,7 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a)
 		}
 		else
 		{
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
-			// Go forward one cell
-			lockInterruptEnable_TIM3();
-			advanceTicks(FLOOD_ONE_CELL);
-			lockInterruptDisable_TIM3();
-			motorAbruptStop();
-			HAL_Delay(300);
-			// showCoor(c.x, c.y);
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+			advanceOneCellVisited();
 		}
 
 		if (dm->distance[c.x][c.y]==0) break;
@@ -397,4 +379,30 @@ void turnOffCenterLEDS()
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+}
+
+void advanceOneCell(int direction, struct coor* c, struct wall_maze* wm)
+{
+	lockInterruptEnable_TIM3();
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+	advanceTicksFlood(FLOOD_ONE_CELL, direction, c, wm);
+	lockInterruptDisable_TIM3();
+	motorStop();
+	custom_delay(300);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
+	resetLeftEncoder();
+}
+
+void advanceOneCellVisited()
+{
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+	// Go forward one cell
+	lockInterruptEnable_TIM3();
+	advanceTicks(FLOOD_ONE_CELL);
+	lockInterruptDisable_TIM3();
+	motorStop();
+	custom_delay(300);
+	// showCoor(c.x, c.y);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+	resetLeftEncoder();
 }

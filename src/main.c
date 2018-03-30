@@ -87,7 +87,7 @@ int main(void)
 	MX_TIM2_Init();  // Init L encoder
 	MX_TIM4_Init();  // Init motors
 	MX_TIM5_Init();  // Init R encoder
-
+	MX_TIM10_Init();
 	MX_DMA_Init();   // Init ADC DMA
 
 	/* Enable IR Emitter pins when mouse powers on */
@@ -95,7 +95,7 @@ int main(void)
 
 	/* Start mouse by waving hand across L emitter */
 	algorithm = mouseStartSensorWave();
-	HAL_Delay(1000);
+	custom_delay(1000);
 
 	/* Initially set error for positional PD controller */
 	setPositionL(0);
@@ -145,7 +145,7 @@ int main(void)
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
 
-		HAL_Delay(5000);
+		custom_delay(5000);
 
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
@@ -237,6 +237,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			angle += (inst_yaw/100*0.64);
 		}
 	}
+	if (htim->Instance == TIM10)
+		{
+			time_of_delay++;
+		}
 }
 
 /** System Clock Configuration

@@ -83,4 +83,7 @@ void showCoor(int x, int y);
 void turnOnCenterLEDS(void);
 void turnOffCenterLEDS(void);
 
+void advanceOneCell(int direction, struct coor* c, struct wall_maze* wm);
+void advanceOneCellVisited(void);
+
 #endif /* FLOOD_H_ */
