@@ -33,6 +33,7 @@ extern uint32_t IR_values[4];
 extern uint32_t startupSensor;
 
 void MX_ADC1_Init(void);
+void MX_ADC1_Init_RWH_FAST(void);
 void ADC_IRQHandler(void);
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle);
 //void ADC_LED_Distance_Tester(uint32_t IR_values[]);
