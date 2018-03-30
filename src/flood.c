@@ -76,7 +76,33 @@ void push_stack(struct stack* s, struct coor c){
 void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* wm) {
 	uint32_t encoder_val = MAX_ENCODER_VALUE;
 	resetLeftEncoder();
+	switch(d)
+	{
+	case NORTH:
+		wm->cells[c->x][c->y].walls[WEST] = 1;
+		wm->cells[c->x][c->y].walls[EAST] = 1;
+		break;
+	case EAST:
+		wm->cells[c->x][c->y].walls[NORTH] = 1;
+		wm->cells[c->x][c->y].walls[SOUTH] = 1;
+		break;
+	case SOUTH:
+		wm->cells[c->x][c->y].walls[WEST] = 1;
+		wm->cells[c->x][c->y].walls[EAST] = 1;
+		break;
+	case WEST:
+		wm->cells[c->x][c->y].walls[NORTH] = 1;
+		wm->cells[c->x][c->y].walls[SOUTH] = 1;
+		break;
+	default:
+		break;
+	}
 	while(encoder_val > (MAX_ENCODER_VALUE - ticks) ) {
+//		if (getLeftADCValue() >= WALL_IN_FRONT_LEFT_SENSOR &&
+//				getRightADCValue() >= WALL_IN_FRONT_RIGHT_SENSOR)
+//		{
+//			break;
+//		}
 		if (encoder_val < (MAX_ENCODER_VALUE - (ticks / 2 ) ) )
 		{
 			switch(d)
@@ -123,6 +149,7 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a)
 	struct stack update_stack;
 	update_stack.index = 0;
 
+	setBaseSpeed(40);
 	// while we are not at target destination
 	while(1)
 	{
@@ -148,8 +175,8 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a)
 			// showCoor(c.x, c.y);
 
 			// check for wall straight ahead
-			if(getLeftADCValue() >= WALL_IN_FRONT_LEFT_SENSOR &&
-					getRightADCValue() >= WALL_IN_FRONT_RIGHT_SENSOR)
+			if(getLeftADCValue() >= FLOOD_WALL_IN_FRONT_LEFT &&
+					getRightADCValue() >= FLOOD_WALL_IN_FRONT_RIGHT)
 			{
 				wm->cells[c.x][c.y].walls[direction] = 1;
 				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
@@ -198,21 +225,25 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a)
 		{
 		case -3:
 			leftStillTurn();
+			advanceTicks(750);
 			break;
 		case -2:
 			backward180StillTurn();
 			break;
 		case -1:
 			rightStillTurn();
+			advanceTicks(750);
 			break;
 		case 1:
 			leftStillTurn();
+			advanceTicks(750);
 			break;
 		case 2:
 			backward180StillTurn();
 			break;
 		case 3:
 			rightStillTurn();
+			advanceTicks(750);
 			break;
 		default:
 			break;
@@ -225,21 +256,26 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a)
 
 void checkForWalls(struct wall_maze* wm, struct coor* c, int e, int w)
 {
-	// check for wall to the west
-	if(getLeftFrontADCValue() > NO_LEFT_WALL )
+	if(wm->cells[c->x][c->y].walls[w]==1)
 	{
-		wm->cells[c->x][c->y].walls[w] = 1;
-		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_SET);
+		// check for wall to the west
+		if(getLeftFrontADCValue() < FLOOD_LEFT_WALL )
+		{
+			wm->cells[c->x][c->y].walls[w] = 0;
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_RESET);
+		}
+		else HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_SET);
 	}
-	else HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_RESET);
-
-	// check for wall to the east
-	if(getRightFrontADCValue() > NO_RIGHT_WALL)
+	if(wm->cells[c->x][c->y].walls[e]==1)
 	{
-		wm->cells[c->x][c->y].walls[e] = 1;
-		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_SET);
+		// check for wall to the east
+		if(getRightFrontADCValue() < FLOOD_RIGHT_WALL)
+		{
+			wm->cells[c->x][c->y].walls[e] = 0;
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_RESET);
+		}
+		else HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_SET);
 	}
-	else HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_RESET);
 }
 
 int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c, struct stack* s, int a)
@@ -388,7 +424,7 @@ void advanceOneCell(int direction, struct coor* c, struct wall_maze* wm)
 	advanceTicksFlood(FLOOD_ONE_CELL, direction, c, wm);
 	lockInterruptDisable_TIM3();
 	motorStop();
-	custom_delay(300);
+	custom_delay(500);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
 	resetLeftEncoder();
 }
@@ -401,7 +437,7 @@ void advanceOneCellVisited()
 	advanceTicks(FLOOD_ONE_CELL);
 	lockInterruptDisable_TIM3();
 	motorStop();
-	custom_delay(300);
+	custom_delay(500);
 	// showCoor(c.x, c.y);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
 	resetLeftEncoder();

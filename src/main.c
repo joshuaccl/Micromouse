@@ -119,6 +119,7 @@ int main(void)
 		algorithm = wallFavor();
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
 
+		HAL_Delay(1000);
 		// initialize all the structs that we need for this to work
 		struct dist_maze distances;
 		struct wall_maze cell_walls_info;

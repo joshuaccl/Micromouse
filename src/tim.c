@@ -74,7 +74,7 @@ void MX_TIM3_Init(void)
 	htim3.Instance = TIM3;
 	htim3.Init.Prescaler = 8399;
 	htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim3.Init.Period = 5;
+	htim3.Init.Period = 3;
 	htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	htim3.Init.RepetitionCounter = 0;
 	if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
@@ -197,7 +197,7 @@ void MX_TIM11_Init(void)
     htim11.Init.Prescaler = 83;
     htim11.Init.CounterMode = TIM_COUNTERMODE_UP;
     // Sample 1000 Hz
-    htim11.Init.Period = 1000;
+    htim11.Init.Period = 25;
     htim11.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 
     if (HAL_TIM_Base_Init(&htim11) != HAL_OK)

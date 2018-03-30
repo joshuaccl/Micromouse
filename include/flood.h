@@ -22,7 +22,7 @@
 #define SOUTH 2
 #define WEST 3
 #define UNKNOWN 4
-#define FLOOD_ONE_CELL 11500
+#define FLOOD_ONE_CELL 9375
 
 // define structures needed for flood fill
 struct cell_info{
