@@ -76,31 +76,60 @@ void push_stack(struct stack* s, struct coor c){
 void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* wm) {
 	uint32_t encoder_val = MAX_ENCODER_VALUE;
 	resetLeftEncoder();
+	leftMotorPWMChangeForward(100);
+	rightMotorPWMChangeForward(100);
+	lockInterruptEnable_TIM3();
+	setBaseSpeed(100);
 	while(encoder_val > (MAX_ENCODER_VALUE - ticks) ) {
 		if (getLeftADCValue() >= WALL_IN_FRONT_LEFT_SENSOR &&
 				getRightADCValue() >= WALL_IN_FRONT_RIGHT_SENSOR)
 		{
-			break;
-		}
-		if (encoder_val < (MAX_ENCODER_VALUE - (ticks / 2 ) ) )
-		{
-			switch(d)
+			lockInterruptDisable_TIM3();
+			motorStop();
+			// check for wall straight ahead
+			if(getLeftADCValue() >= WALL_IN_FRONT_LEFT_SENSOR &&
+					getRightADCValue() >= WALL_IN_FRONT_RIGHT_SENSOR)
 			{
-			case NORTH: checkForWalls(wm, c, EAST, WEST);
-			break;
-			case EAST: checkForWalls(wm, c, SOUTH, NORTH);
-			break;
-			case SOUTH: checkForWalls(wm, c, WEST, EAST);
-			break;
-			case WEST: checkForWalls(wm, c, NORTH, SOUTH);
-			break;
-			default:
-			break;
+				wm->cells[c->x][c->y].walls[d] = 1;
+				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
 			}
+			else HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
+			wm->cells[c->x][c->y].visited=1;
+			break;
 		}
-		setLeftEncoderValue(TIM2->CNT);
-		encoder_val = getLeftEncoderValue();
+		if(wm->cells[c->x][c->y].visited==0)
+		{
+			if (encoder_val < (MAX_ENCODER_VALUE - (ticks / 2 ) ) )
+			{
+				switch(d)
+				{
+				case NORTH: checkForWalls(wm, c, EAST, WEST);
+				break;
+				case EAST: checkForWalls(wm, c, SOUTH, NORTH);
+				break;
+				case SOUTH: checkForWalls(wm, c, WEST, EAST);
+				break;
+				case WEST: checkForWalls(wm, c, NORTH, SOUTH);
+				break;
+				default:
+					break;
+				}
+			}
+			setLeftEncoderValue(TIM2->CNT);
+			encoder_val = getLeftEncoderValue();
+		}
 	}
+	lockInterruptDisable_TIM3();
+	motorStop();
+	// check for wall straight ahead
+	if(getLeftADCValue() >= WALL_IN_FRONT_LEFT_SENSOR &&
+			getRightADCValue() >= WALL_IN_FRONT_RIGHT_SENSOR)
+	{
+		wm->cells[c->x][c->y].walls[d] = 1;
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+	}
+	else HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
+	wm->cells[c->x][c->y].visited=1;
 }
 
 /* Parameters
@@ -142,45 +171,33 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a)
 		case WEST: c.x -= 1;
 		break;
 		default:
-		break;
+			break;
 		}
 
-		// If we haven't visited the next cell
-		if(wm->cells[c.x][c.y].visited == 0)
+		switch(direction)
 		{
-			lockInterruptEnable_TIM3();
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
-			advanceTicksFlood(FLOOD_ONE_CELL, direction, &c, wm);
-			lockInterruptDisable_TIM3();
-			motorAbruptStop();
-			HAL_Delay(300);
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
-			// showCoor(c.x, c.y);
-
-			// check for wall straight ahead
-			if(getLeftADCValue() >= WALL_IN_FRONT_LEFT_SENSOR &&
-					getRightADCValue() >= WALL_IN_FRONT_RIGHT_SENSOR)
-			{
-				wm->cells[c.x][c.y].walls[direction] = 1;
-				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
-			}
-			else HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
-			// update the current cell as visited
-			wm->cells[c.x][c.y].visited = 1;
-
+		case NORTH:
+			wm->cells[c.x][c.y].walls[EAST] = 1;
+			wm->cells[c.x][c.y].walls[WEST] = 1;
+			break;
+		case EAST:
+			wm->cells[c.x][c.y].walls[SOUTH] = 1;
+			wm->cells[c.x][c.y].walls[NORTH] = 1;
+			break;
+		case SOUTH:
+			wm->cells[c.x][c.y].walls[WEST] = 1;
+			wm->cells[c.x][c.y].walls[EAST] = 1;
+			break;
+		case WEST:
+			wm->cells[c.x][c.y].walls[NORTH] = 1;
+			wm->cells[c.x][c.y].walls[SOUTH] = 1;
+			break;
+		default:
+			break;
 		}
-		else
-		{
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
-			// Go forward one cell
-			lockInterruptEnable_TIM3();
-			advanceTicks(FLOOD_ONE_CELL);
-			lockInterruptDisable_TIM3();
-			motorAbruptStop();
-			HAL_Delay(300);
-			// showCoor(c.x, c.y);
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
-		}
+
+		advanceTicksFlood(FLOOD_ONE_CELL, direction, &c, wm);
+		// showCoor(c.x, c.y);
 
 		if (dm->distance[c.x][c.y]==0) break;
 
@@ -243,21 +260,27 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a)
 
 void checkForWalls(struct wall_maze* wm, struct coor* c, int e, int w)
 {
-	// check for wall to the west
-	if(getLeftFrontADCValue() > NO_LEFT_WALL )
+	if(wm->cells[c->x][c->y].walls[w] == 1)
 	{
-		wm->cells[c->x][c->y].walls[w] = 1;
-		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_SET);
+		// check for wall to the west
+		if(getLeftFrontADCValue() < NO_LEFT_WALL )
+		{
+			wm->cells[c->x][c->y].walls[w] = 0;
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_SET);
+		}
+		else HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_RESET);
 	}
-	else HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_RESET);
 
-	// check for wall to the east
-	if(getRightFrontADCValue() > NO_RIGHT_WALL)
+	if(wm->cells[c->x][c->y].walls[e] == 1)
 	{
-		wm->cells[c->x][c->y].walls[e] = 1;
-		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_SET);
+		// check for wall to the east
+		if(getRightFrontADCValue() < NO_RIGHT_WALL)
+		{
+			wm->cells[c->x][c->y].walls[e] = 0;
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_SET);
+		}
+		else HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_RESET);
 	}
-	else HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_RESET);
 }
 
 int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c, struct stack* s, int a)
