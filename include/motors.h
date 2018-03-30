@@ -30,4 +30,10 @@ void rightTurnRWH(void);
 void leftTurnRWH(void);
 void backward180TurnRWH(void);
 
+// FOR FLOOD FILL
+void rightStillTurn(void);
+void leftStillTurn(void);
+void backward180StillTurn(void);
+void motorAbruptStop(void);
+
 #endif /*__motors_H */

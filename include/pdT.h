@@ -22,6 +22,7 @@
 
 extern int leftPositionOldError;
 extern int rightPositionOldError;
+extern int base_speed;
 
 // How sensitive the controller is
 float trackingLeft(void);
@@ -31,6 +32,8 @@ int getPositionR(void);
 void setPositionL(int value);
 void setPositionR(int value);
 void trackingBothSides();
+int getBaseSpeed(void);
+void setBaseSpeed(int value);
 
 #endif
 
