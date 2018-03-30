@@ -74,7 +74,7 @@ int advanceTicksRWH(uint32_t ticks) {
 			return 3;
 		}
 		// No right wall ahead -> turn right
-		if (getRightFrontADCValue() <= NO_RIGHT_WALL)
+		if (getRightFrontADCValue() <= NO_RIGHT_WALL_RWH_FAST)
 		{
 			direction = 2;
 		}

@@ -208,7 +208,7 @@ void rightTurnRWH(void)
 	leftMotorPWMChangeForward(300);
 	rightMotorPWMChangeBackward(300);
 	// Decrease absolute value of angle to turn less
-	while(angle > -25) {
+	while(angle > -24) {
 	}
 	motorStop();
 	HAL_Delay(100);
@@ -226,7 +226,7 @@ void leftTurnRWH(void)
 	rightMotorPWMChangeForward(300);
 	leftMotorPWMChangeBackward(300);
 	// Increase value of angle to turn more
-	while(angle < 28) {
+	while(angle < 26) {
 	}
 	motorStop();
 	HAL_Delay(100);
@@ -243,7 +243,7 @@ void backward180TurnRWH(void)
 	// Decrease absolute value of angle to turn less
 	// angle > -43
 	// encoder_value > (MAX_ENCODER_VALUE - 13750
-	while(angle > -38) {
+	while(angle > -35) {
 	}
 	motorStop();
 	HAL_Delay(100);
