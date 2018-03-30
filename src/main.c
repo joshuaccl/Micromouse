@@ -162,9 +162,11 @@ int main(void)
 	if(algorithm == 1)
 	{
 		MX_TIM3_Init();  // Software timer for tracking
+		MX_ADC1_Init_RWH_FAST();
 		while(1)
 		{
-			rightWallHugger();
+//			rightWallHugger();
+			rightWallHuggerFast();
 		}
 	}
 	// Left wall hugger
