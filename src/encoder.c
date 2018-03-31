@@ -47,11 +47,11 @@ void advanceTicks(uint32_t ticks) {
 	uint32_t encoder_val = MAX_ENCODER_VALUE;
 	resetLeftEncoder();
 	while(encoder_val > (MAX_ENCODER_VALUE - ticks) ) {
-//		if (getLeftADCValue() >= WALL_IN_FRONT_LEFT_SENSOR &&
-//				getRightADCValue() >= WALL_IN_FRONT_RIGHT_SENSOR)
-//		{
-//			break;
-//		}
+		if (getLeftADCValue() >= WALL_IN_FRONT_LEFT_SENSOR &&
+				getRightADCValue() >= WALL_IN_FRONT_RIGHT_SENSOR)
+		{
+			break;
+		}
 		setLeftEncoderValue(TIM2->CNT);
 		encoder_val = getLeftEncoderValue();
 	}

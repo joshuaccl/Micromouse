@@ -74,6 +74,7 @@ void MX_TIM3_Init(void)
 	htim3.Instance = TIM3;
 	htim3.Init.Prescaler = 8399;
 	htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+	// 5 for right wall hugger. 3 for flood fill
 	htim3.Init.Period = 3;
 	htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	htim3.Init.RepetitionCounter = 0;

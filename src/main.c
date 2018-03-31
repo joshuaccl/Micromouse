@@ -140,22 +140,22 @@ int main(void)
 		cell_walls_info.cells[0][0].walls[SOUTH] = 1;
 		cell_walls_info.cells[0][0].walls[WEST] = 1;
 
+		struct coor c;
+		init_coor(&c, 0, 0);
+
 		MX_TIM3_Init();  // Software timer for tracking
-		floodFill(&distances, 0, 0, &cell_walls_info, algorithm);
+		int direction = NORTH;
+		direction = floodFill(&distances, &c, &cell_walls_info, algorithm, direction);
 
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
-
-		custom_delay(5000);
-
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
-
+		direction = centerMovement(&cell_walls_info, &c, direction);
 		// ONCE IT REACHES HERE, IT HAS REACHED THE CENTER OF THE MAZE
 		// Mouse has made it to center, so flood back to start
-		init_coor(&target, 15, 0);
+		init_coor(&target, 0, 0);
 		init_distance_maze(&distances, &target, 0);
-		floodFill(&distances, 7, 3, &cell_walls_info, algorithm);
+		floodFill(&distances, &c, &cell_walls_info, algorithm, direction);
+		motorStop();
+		turnOnLEDS();
+		HAL_Delay(3000);
 	}
 	// Right wall hugger
 	if(algorithm == 1)
@@ -163,6 +163,7 @@ int main(void)
 		MX_TIM3_Init();  // Software timer for tracking
 		while(1)
 		{
+			setBaseSpeed(40);
 			rightWallHugger();
 		}
 	}
@@ -172,6 +173,7 @@ int main(void)
 		MX_TIM3_Init();  // Software timer for tracking
 		while(1)
 		{
+			setBaseSpeed(40);
 			leftWallHugger();
 		}
 	}
@@ -239,9 +241,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		}
 	}
 	if (htim->Instance == TIM10)
-		{
-			time_of_delay++;
-		}
+	{
+		time_of_delay++;
+	}
 }
 
 /** System Clock Configuration

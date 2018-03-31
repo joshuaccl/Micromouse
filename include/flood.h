@@ -22,7 +22,7 @@
 #define SOUTH 2
 #define WEST 3
 #define UNKNOWN 4
-#define FLOOD_ONE_CELL 9375
+#define FLOOD_ONE_CELL 9000
 
 // define structures needed for flood fill
 struct cell_info{
@@ -70,7 +70,7 @@ void push_stack(struct stack* s, struct coor c);
 void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* wm);
 
 // Called to flood to a target cell
-void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a);
+int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a, int direction);
 
 // Used to check for walls in current cell
 void checkForWalls(struct wall_maze* wm, struct coor* c, int e, int w);
@@ -85,5 +85,7 @@ void turnOffCenterLEDS(void);
 
 void advanceOneCell(int direction, struct coor* c, struct wall_maze* wm);
 void advanceOneCellVisited(void);
+
+int centerMovement(struct wall_maze* wm, struct coor* c, int direction);
 
 #endif /* FLOOD_H_ */

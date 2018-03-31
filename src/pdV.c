@@ -180,19 +180,19 @@ void wallTracking()
 	if(leftWall >= LW_THRESHOLD && rightWall >= RW_THRESHOLD)
 	{
 		velocityBothSides();
-		// trackingBothSides();
+//		 trackingBothSides();
 	}
 	// If there is only a right wall
 	else if(leftWall < LW_THRESHOLD && rightWall >= RW_THRESHOLD)
 	{
 		velocityRight();
-		//trackingRight();
+//		trackingRight();
 	}
 	// If there is only a left wall
 	else if(leftWall >= LW_THRESHOLD && rightWall < RW_THRESHOLD)
 	{
 		velocityLeft();
-		//trackingLeft();
+//		trackingLeft();
 	}
 	// No walls
 	else

@@ -98,11 +98,11 @@ void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* 
 		break;
 	}
 	while(encoder_val > (MAX_ENCODER_VALUE - ticks) ) {
-//		if (getLeftADCValue() >= WALL_IN_FRONT_LEFT_SENSOR &&
-//				getRightADCValue() >= WALL_IN_FRONT_RIGHT_SENSOR)
-//		{
-//			break;
-//		}
+		//		if (getLeftADCValue() >= WALL_IN_FRONT_LEFT_SENSOR &&
+		//				getRightADCValue() >= WALL_IN_FRONT_RIGHT_SENSOR)
+		//		{
+		//			break;
+		//		}
 		if (encoder_val < (MAX_ENCODER_VALUE - (ticks / 2 ) ) )
 		{
 			switch(d)
@@ -132,19 +132,14 @@ void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* 
  * wm = structure containing information on the cell walls and visitation
  *
  */
-void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a)
+int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a, int direction)
 {
 	// Disable tracking interrupts because we do not want to move yet
 	lockInterruptDisable_TIM3();
 
-	// store current coordinates into local variable
-	struct coor c;
-	init_coor(&c, x, y);
 	// coordinate for future use in popping stack
 	int next_move;
 	struct coor next;
-	// direction we are facing
-	int direction = NORTH;
 	// create stack for update of distances iteratively
 	struct stack update_stack;
 	update_stack.index = 0;
@@ -156,34 +151,34 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a)
 		// update coordinates for next cell we are going to visit
 		switch(direction)
 		{
-		case NORTH: c.y += 1;
+		case NORTH: c->y += 1;
 		break;
-		case EAST: c.x += 1;
+		case EAST: c->x += 1;
 		break;
-		case SOUTH: c.y -= 1;
+		case SOUTH: c->y -= 1;
 		break;
-		case WEST: c.x -= 1;
+		case WEST: c->x -= 1;
 		break;
 		default:
 			break;
 		}
 
 		// If we haven't visited the next cell
-		if(wm->cells[c.x][c.y].visited == 0)
+		if(wm->cells[c->x][c->y].visited == 0)
 		{
-			advanceOneCell(direction, &c, wm);
+			advanceOneCell(direction, c, wm);
 			// showCoor(c.x, c.y);
 
 			// check for wall straight ahead
 			if(getLeftADCValue() >= FLOOD_WALL_IN_FRONT_LEFT &&
 					getRightADCValue() >= FLOOD_WALL_IN_FRONT_RIGHT)
 			{
-				wm->cells[c.x][c.y].walls[direction] = 1;
+				wm->cells[c->x][c->y].walls[direction] = 1;
 				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
 			}
 			else HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
 			// update the current cell as visited
-			wm->cells[c.x][c.y].visited = 1;
+			wm->cells[c->x][c->y].visited = 1;
 
 		}
 		else
@@ -191,11 +186,16 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a)
 			advanceOneCellVisited();
 		}
 
-		if (dm->distance[c.x][c.y]==0) break;
+		if (dm->distance[c->x][c->y]==0)
+		{
+			lockInterruptDisable_TIM3();
+			return direction;
+			break;
+		}
 
 		// check if there is a neighbor with one less distance
 		// next_move is the direction we should move next
-		next_move = minusOneNeighbor(dm, wm, &c, &update_stack, a);
+		next_move = minusOneNeighbor(dm, wm, c, &update_stack, a);
 
 		// If we couldn't find a valid cell
 		if(next_move == UNKNOWN)
@@ -215,7 +215,7 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a)
 
 			// get next cell to traverse to
 			// next_move is actually the direction we need to go next
-			next_move = minusOneNeighbor(dm, wm, &c, &update_stack, a);
+			next_move = minusOneNeighbor(dm, wm, c, &update_stack, a);
 		}
 
 		// Move to next cell
@@ -225,25 +225,45 @@ void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm, int a)
 		{
 		case -3:
 			leftStillTurn();
-			advanceTicks(750);
+			uncontrolledAdvanceTicks(500);
 			break;
 		case -2:
 			backward180StillTurn();
+			if(wm->cells[c->x][c->y].walls[direction]==1)
+			{
+				lockInterruptDisable_TIM3();
+				leftMotorPWMChangeBackward(200);
+				rightMotorPWMChangeBackward(200);
+				custom_delay(2000);
+				motorStop();
+				lockInterruptEnable_TIM3();
+				uncontrolledAdvanceTicks(3000);
+			}
 			break;
 		case -1:
 			rightStillTurn();
-			advanceTicks(750);
+			uncontrolledAdvanceTicks(500);
 			break;
 		case 1:
 			leftStillTurn();
-			advanceTicks(750);
+			uncontrolledAdvanceTicks(500);
 			break;
 		case 2:
 			backward180StillTurn();
+			if(wm->cells[c->x][c->y].walls[direction]==1)
+			{
+				lockInterruptDisable_TIM3();
+				leftMotorPWMChangeBackward(200);
+				rightMotorPWMChangeBackward(200);
+				custom_delay(2000);
+				motorStop();
+				lockInterruptEnable_TIM3();
+				uncontrolledAdvanceTicks(3000);
+			}
 			break;
 		case 3:
 			rightStillTurn();
-			advanceTicks(750);
+			uncontrolledAdvanceTicks(500);
 			break;
 		default:
 			break;
@@ -434,11 +454,202 @@ void advanceOneCellVisited()
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
 	// Go forward one cell
 	lockInterruptEnable_TIM3();
-	advanceTicks(FLOOD_ONE_CELL);
+	uncontrolledAdvanceTicks(FLOOD_ONE_CELL);
 	lockInterruptDisable_TIM3();
 	motorStop();
 	custom_delay(500);
 	// showCoor(c.x, c.y);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
 	resetLeftEncoder();
+}
+
+int centerMovement(struct wall_maze* wm, struct coor* c, int d)
+{
+	// 1 for turn right. 0 for turn left
+	int turn = 0;
+	//	switch(d)
+	//	{
+	//	case NORTH:
+	//		if(c->x==7 && c->y==7) turn = 1;
+	//		break;
+	//	case EAST:
+	//		if(c->x==7 && c->y==8) turn = 1;
+	//		break;
+	//	case SOUTH:
+	//		if(c->x==8 && c->y==8) turn = 1;
+	//		break;
+	//	case WEST:
+	//		if(c->x==8 && c->y==7) turn = 1;
+	//		break;
+	//	}
+	//
+	//	for(int i=0 ; i<4 ; i++)
+	//	{
+	//		switch(d)
+	//		{
+	//		case NORTH: c->y += 1;
+	//		break;
+	//		case EAST: c->x += 1;
+	//		break;
+	//		case SOUTH: c->y -= 1;
+	//		break;
+	//		case WEST: c->x -= 1;
+	//		break;
+	//		default:
+	//			break;
+	//		}
+	//
+	//		advanceOneCell(d, c, wm);
+	//		// showCoor(c.x, c.y);
+	//
+	//		// check for wall straight ahead
+	//		if(getLeftADCValue() >= FLOOD_WALL_IN_FRONT_LEFT &&
+	//				getRightADCValue() >= FLOOD_WALL_IN_FRONT_RIGHT)
+	//		{
+	//			wm->cells[c->x][c->y].walls[d] = 1;
+	//			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+	//		}
+	//		else HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
+	//		// update the current cell as visited
+	//		wm->cells[c->x][c->y].visited = 1;
+	//
+	//		if(turn)
+	//		{
+	//			rightStillTurn();
+	//			switch(d)
+	//			{
+	//			case NORTH: d = EAST;
+	//			break;
+	//			case EAST: d = SOUTH;
+	//			break;
+	//			case SOUTH: d = WEST;
+	//			break;
+	//			case WEST: d = NORTH;
+	//			break;
+	//			default:
+	//				break;
+	//			}
+	//		}
+	//		else
+	//		{
+	//			leftStillTurn();
+	//			switch(d)
+	//			{
+	//			case NORTH: d = WEST;
+	//			break;
+	//			case EAST: d = NORTH;
+	//			break;
+	//			case SOUTH: d = EAST;
+	//			break;
+	//			case WEST: d = SOUTH;
+	//			break;
+	//			default:
+	//				break;
+	//			}
+	//		}
+	//	}
+	//	return d;
+	int direction;
+	switch(d)
+	{
+	case NORTH:
+		if(c->x==7 && c->y==7)
+		{
+			wm->cells[c->x+1][c->y].walls[SOUTH] = 1;
+			wm->cells[c->x+1][c->y].walls[EAST] = 1;
+			wm->cells[c->x][c->y+1].walls[NORTH] = 1;
+			wm->cells[c->x][c->y+1].walls[WEST] = 1;
+			wm->cells[c->x+1][c->y+1].walls[NORTH] = 1;
+			wm->cells[c->x+1][c->y+1].walls[EAST] = 1;
+		}
+		else
+		{
+			wm->cells[c->x-1][c->y].walls[SOUTH] = 1;
+			wm->cells[c->x-1][c->y].walls[WEST] = 1;
+			wm->cells[c->x][c->y+1].walls[NORTH] = 1;
+			wm->cells[c->x][c->y+1].walls[EAST] = 1;
+			wm->cells[c->x-1][c->y+1].walls[NORTH] = 1;
+			wm->cells[c->x-1][c->y+1].walls[WEST] = 1;
+		}
+		direction = SOUTH;
+		break;
+	case EAST:
+		if(c->x==7 && c->y==7)
+		{
+			wm->cells[c->x+1][c->y].walls[SOUTH] = 1;
+			wm->cells[c->x+1][c->y].walls[EAST] = 1;
+			wm->cells[c->x][c->y+1].walls[NORTH] = 1;
+			wm->cells[c->x][c->y+1].walls[WEST] = 1;
+			wm->cells[c->x+1][c->y+1].walls[NORTH] = 1;
+			wm->cells[c->x+1][c->y+1].walls[EAST] = 1;
+		}
+		else
+		{
+			wm->cells[c->x+1][c->y].walls[NORTH] = 1;
+			wm->cells[c->x+1][c->y].walls[EAST] = 1;
+			wm->cells[c->x][c->y-1].walls[SOUTH] = 1;
+			wm->cells[c->x][c->y-1].walls[WEST] = 1;
+			wm->cells[c->x+1][c->y-1].walls[SOUTH] = 1;
+			wm->cells[c->x+1][c->y-1].walls[EAST] = 1;
+		}
+		direction = WEST;
+		break;
+	case SOUTH:
+		if(c->x==7 && c->y==8)
+		{
+			wm->cells[c->x+1][c->y].walls[NORTH] = 1;
+			wm->cells[c->x+1][c->y].walls[EAST] = 1;
+			wm->cells[c->x][c->y-1].walls[SOUTH] = 1;
+			wm->cells[c->x][c->y-1].walls[WEST] = 1;
+			wm->cells[c->x+1][c->y-1].walls[SOUTH] = 1;
+			wm->cells[c->x+1][c->y-1].walls[EAST] = 1;
+		}
+		else
+		{
+			wm->cells[c->x-1][c->y].walls[NORTH] = 1;
+			wm->cells[c->x-1][c->y].walls[WEST] = 1;
+			wm->cells[c->x][c->y-1].walls[SOUTH] = 1;
+			wm->cells[c->x][c->y-1].walls[EAST] = 1;
+			wm->cells[c->x-1][c->y-1].walls[SOUTH] = 1;
+			wm->cells[c->x-1][c->y-1].walls[WEST] = 1;
+		}
+		direction = NORTH;
+		break;
+	case WEST:
+		if(c->x==8 && c->y==8)
+		{
+			wm->cells[c->x-1][c->y].walls[NORTH] = 1;
+			wm->cells[c->x-1][c->y].walls[WEST] = 1;
+			wm->cells[c->x][c->y-1].walls[SOUTH] = 1;
+			wm->cells[c->x][c->y-1].walls[EAST] = 1;
+			wm->cells[c->x-1][c->y-1].walls[SOUTH] = 1;
+			wm->cells[c->x-1][c->y-1].walls[WEST] = 1;
+		}
+		else
+		{
+			wm->cells[c->x-1][c->y].walls[SOUTH] = 1;
+			wm->cells[c->x-1][c->y].walls[WEST] = 1;
+			wm->cells[c->x][c->y+1].walls[NORTH] = 1;
+			wm->cells[c->x][c->y+1].walls[EAST] = 1;
+			wm->cells[c->x-1][c->y+1].walls[NORTH] = 1;
+			wm->cells[c->x-1][c->y+1].walls[WEST] = 1;
+		}
+		direction = EAST;
+		break;
+	}
+	wm->cells[7][7].visited=1;
+	wm->cells[7][8].visited=1;
+	wm->cells[8][7].visited=1;
+	wm->cells[8][8].visited=1;
+	advanceOneCellVisited();
+	backward180StillTurn();
+	lockInterruptDisable_TIM3();
+	leftMotorPWMChangeBackward(200);
+	rightMotorPWMChangeBackward(200);
+	custom_delay(2000);
+	motorStop();
+	lockInterruptEnable_TIM3();
+	uncontrolledAdvanceTicks(3000);
+	advanceOneCellVisited();
+	return direction;
 }
