@@ -111,7 +111,7 @@ int main(void)
 	// Put desired algorithm in this while loop
 	while(1)
 	{
-		rightWallHugger();
+//		rightWallHugger();
 	}
 	//while(1){
 	//				setLeftEncoderValue(TIM2->CNT);
