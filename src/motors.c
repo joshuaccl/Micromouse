@@ -207,7 +207,7 @@ void rightStillTurn(void)
 	leftMotorPWMChangeForward(300);
 	rightMotorPWMChangeBackward(300);
 	// Decrease absolute value of angle to turn less
-	while(angle > -1265 ) {
+	while(angle > -1240 ) {
 	}
 	motorStop();
 	custom_delay(500);
@@ -225,7 +225,7 @@ void leftStillTurn(void)
 	rightMotorPWMChangeForward(300);
 	leftMotorPWMChangeBackward(300);
 	// Increase value of angle to turn more
-	while( angle < 1345 ) {
+	while( angle < 1360 ) {
 	}
 	motorStop();
 	custom_delay(500);

@@ -74,6 +74,7 @@ int algorithm;
 struct dist_maze distances;
 struct wall_maze cell_walls_info;
 struct stack update_stack;
+struct stack move_queue;
 
 /* Main program */
 int main(void)
@@ -131,7 +132,7 @@ int main(void)
 		init_coor(&target, 8, 7);
 
 		// to flood to center set third parameter to 1
-		init_distance_maze(&distances, &target, 0);
+		init_distance_maze(&distances, &target, 1);
 
 		// initialize the walls
 		init_wall_maze(&cell_walls_info);
@@ -154,7 +155,52 @@ int main(void)
 		// Mouse has made it to center, so flood back to start
 		init_coor(&target, 0, 0);
 		init_distance_maze(&distances, &target, 0);
-		floodFill(&distances, &c, &cell_walls_info, algorithm, direction, &update_stack);
+
+		// center to start
+		logicalFlood(&distances, &c, &cell_walls_info, direction, direction, &update_stack);
+		direction = floodFill(&distances, &c, &cell_walls_info, direction, direction, &update_stack);
+
+		int difference = direction - NORTH;
+		switch(difference)
+		{
+		case -3:
+			leftStillTurn();
+			break;
+		case -2:
+			backward180StillTurn();
+			break;
+		case -1:
+			rightStillTurn();
+			break;
+		case 0:
+			break;
+		case 1:
+			leftStillTurn();
+			break;
+		case 2:
+			backward180StillTurn();
+			break;
+		case 3:
+			rightStillTurn();
+			break;
+		default:
+			turnOnLEDS();
+			break;
+		}
+		direction = NORTH;
+
+		// start to center in "shortest path"
+		init_distance_maze(&distances, &c, 1);
+		logicalFlood(&distances, &c, &cell_walls_info, direction, direction, &update_stack);
+		lockInterruptDisable_TIM3();
+		leftMotorPWMChangeBackward(200);
+		rightMotorPWMChangeBackward(200);
+		custom_delay(2000);
+		motorStop();
+		lockInterruptEnable_TIM3();
+		uncontrolledAdvanceTicks(3000);
+		floodFill(&distances, &c, &cell_walls_info, direction, direction, &update_stack);
+
 		motorStop();
 		turnOnLEDS();
 		HAL_Delay(3000);

@@ -156,9 +156,9 @@ int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a,
 	// coordinate for future use in popping stack
 	int next_move;
 	struct coor next;
-	// create stack for update of distances iteratively
 
 	setBaseSpeed(40);
+
 	// while we are not at target destination
 	while(1)
 	{
@@ -535,6 +535,7 @@ void advanceOneCellVisited()
 
 int centerMovement(struct wall_maze* wm, struct coor* c, int d)
 {
+	// Only coded for north 7,7 and east 7,7
 	// 1 for turn right. 0 for turn left
 	int turn = 0;
 	//	switch(d)
@@ -627,10 +628,16 @@ int centerMovement(struct wall_maze* wm, struct coor* c, int d)
 		{
 			wm->cells[c->x+1][c->y].walls[SOUTH] = 1;
 			wm->cells[c->x+1][c->y].walls[EAST] = 1;
+			wm->cells[c->x+1][c->y-1].walls[NORTH] = 1;
+			wm->cells[c->x+2][c->y].walls[WEST] = 1;
 			wm->cells[c->x][c->y+1].walls[NORTH] = 1;
 			wm->cells[c->x][c->y+1].walls[WEST] = 1;
+			wm->cells[c->x][c->y+2].walls[SOUTH] = 1;
+			wm->cells[c->x-1][c->y+1].walls[EAST] = 1;
 			wm->cells[c->x+1][c->y+1].walls[NORTH] = 1;
 			wm->cells[c->x+1][c->y+1].walls[EAST] = 1;
+			wm->cells[c->x+1][c->y+2].walls[SOUTH] = 1;
+			wm->cells[c->x+2][c->y+1].walls[WEST] = 1;
 		}
 		else
 		{
@@ -648,10 +655,16 @@ int centerMovement(struct wall_maze* wm, struct coor* c, int d)
 		{
 			wm->cells[c->x+1][c->y].walls[SOUTH] = 1;
 			wm->cells[c->x+1][c->y].walls[EAST] = 1;
+			wm->cells[c->x-1][c->y+1].walls[EAST] = 1;
+			wm->cells[c->x][c->y+2].walls[SOUTH] = 1;
 			wm->cells[c->x][c->y+1].walls[NORTH] = 1;
 			wm->cells[c->x][c->y+1].walls[WEST] = 1;
+			wm->cells[c->x+1][c->y-1].walls[NORTH] = 1;
+			wm->cells[c->x+2][c->y].walls[EAST] = 1;
 			wm->cells[c->x+1][c->y+1].walls[NORTH] = 1;
 			wm->cells[c->x+1][c->y+1].walls[EAST] = 1;
+			wm->cells[c->x+1][c->y+2].walls[SOUTH] = 1;
+			wm->cells[c->x+2][c->y+1].walls[EAST] = 1;
 		}
 		else
 		{
@@ -722,4 +735,77 @@ int centerMovement(struct wall_maze* wm, struct coor* c, int d)
 	uncontrolledAdvanceTicks(3000);
 	advanceOneCellVisited();
 	return direction;
+}
+
+int logicalFlood(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a, int direction, struct stack* upst)
+{
+	// Disable tracking interrupts because we do not want to move yet
+	lockInterruptDisable_TIM3();
+	int next_move;
+	struct coor next;
+	int x = c->x;
+	int y = c->y;
+	// while we are not at target destination
+	while(1)
+	{
+		// update coordinates for next cell we are going to visit
+		switch(direction)
+		{
+		case NORTH: c->y += 1;
+		break;
+		case EAST: c->x += 1;
+		break;
+		case SOUTH: c->y -= 1;
+		break;
+		case WEST: c->x -= 1;
+		break;
+		default:
+			break;
+		}
+
+		if (dm->distance[c->x][c->y]==0)
+		{
+			lockInterruptDisable_TIM3();
+			c->x = x;
+			c->y = y;
+			return direction;
+			break;
+		}
+
+		// check if there is a neighbor with one less distance
+		// next_move is the direction we should move next
+		next_move = minusOneNeighbor(dm, wm, c, upst, a);
+
+		// If we couldn't find a valid cell
+		if(next_move == UNKNOWN)
+		{
+			// while stack is not empty
+			lockInterruptDisable_Gyro_Delay();
+			while(upst->index!=0)
+			{
+				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+				// get the cell to test from the stack
+				next = pop_stack(upst);
+				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+				// find a neighbor cell with distance one less than current
+				minusOneNeighbor(dm, wm, &next, upst, a);
+				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+			}
+			// get next cell to traverse to
+			// next_move is actually the direction we need to go next
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
+			next_move = minusOneNeighbor(dm, wm, c, upst, a);
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
+		}
+		lockInterruptEnable_Gyro_Delay();
+
+		// update the direction we are currently facing
+		direction = next_move;
+	}
+}
+
+void shortestPath(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a, int direction, struct stack* upst, struct stack* mq)
+{
+
 }

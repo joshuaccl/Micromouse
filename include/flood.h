@@ -50,7 +50,7 @@ struct coor{
 
 // stack for iterative floodfill
 struct stack{
-	struct coor array[1000];
+	struct coor array[256];
 	int index;
 };
 
@@ -89,4 +89,7 @@ void advanceOneCellVisited(void);
 
 int centerMovement(struct wall_maze* wm, struct coor* c, int direction);
 
+int logicalFlood(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a, int direction, struct stack* upst);
+
+void shortestPath(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a, int direction, struct stack* upst, struct stack* mq);
 #endif /* FLOOD_H_ */
