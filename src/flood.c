@@ -53,6 +53,10 @@ void init_wall_maze(struct wall_maze* wm)
 			wm->cells[i][j].walls[SOUTH] = 0;
 			wm->cells[i][j].walls[WEST] = 0;
 			wm->cells[i][j].visited = 0;
+			if(i==0) wm->cells[i][j].walls[WEST] = 1;
+			if(j==0) wm->cells[i][j].walls[SOUTH] = 1;
+			if(i==15) wm->cells[i][j].walls[EAST] = 1;
+			if(j==15) wm->cells[i][j].walls[NORTH] = 1;
 		}
 	}
 }
@@ -65,13 +69,17 @@ void init_coor(struct coor* c, int x, int y){
 
 // Pop top of stack
 struct coor pop_stack(struct stack* s){
-	return s->array[s->index--];
+	s->index = s->index -1;
+	return s->array[s->index + 1];
 }
 
 // Push to top of stack
 void push_stack(struct stack* s, struct coor c){
-	s->array[++s->index] = c;
+	s->index = s->index +1;
+	s->array[s->index] = c;
 }
+
+
 
 void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* wm) {
 	uint32_t encoder_val = MAX_ENCODER_VALUE;
@@ -81,18 +89,26 @@ void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* 
 	case NORTH:
 		wm->cells[c->x][c->y].walls[WEST] = 1;
 		wm->cells[c->x][c->y].walls[EAST] = 1;
+		if(c->x > 0) wm->cells[c->x-1][c->y].walls[EAST] = 1;
+		if(c->x < 15) wm->cells[c->x+1][c->y].walls[WEST] = 1;
 		break;
 	case EAST:
 		wm->cells[c->x][c->y].walls[NORTH] = 1;
 		wm->cells[c->x][c->y].walls[SOUTH] = 1;
+		if(c->y > 0) wm->cells[c->x][c->y-1].walls[NORTH] = 1;
+		if(c->y < 15) wm->cells[c->x][c->y+1].walls[SOUTH] = 1;
 		break;
 	case SOUTH:
 		wm->cells[c->x][c->y].walls[WEST] = 1;
 		wm->cells[c->x][c->y].walls[EAST] = 1;
+		if(c->x > 0) wm->cells[c->x-1][c->y].walls[EAST] = 1;
+		if(c->x < 15) wm->cells[c->x+1][c->y].walls[WEST] = 1;
 		break;
 	case WEST:
 		wm->cells[c->x][c->y].walls[NORTH] = 1;
 		wm->cells[c->x][c->y].walls[SOUTH] = 1;
+		if(c->y > 0) wm->cells[c->x][c->y-1].walls[NORTH] = 1;
+		if(c->y < 15) wm->cells[c->x][c->y+1].walls[SOUTH] = 1;
 		break;
 	default:
 		break;
@@ -107,13 +123,13 @@ void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* 
 		{
 			switch(d)
 			{
-			case NORTH: checkForWalls(wm, c, EAST, WEST);
+			case NORTH: checkForWalls(wm, c, d, NORTH, EAST, SOUTH, WEST);
 			break;
-			case EAST: checkForWalls(wm, c, SOUTH, NORTH);
+			case EAST: checkForWalls(wm, c, d, EAST, SOUTH, WEST, NORTH);
 			break;
-			case SOUTH: checkForWalls(wm, c, WEST, EAST);
+			case SOUTH: checkForWalls(wm, c, d, SOUTH, WEST, NORTH, EAST);
 			break;
-			case WEST: checkForWalls(wm, c, NORTH, SOUTH);
+			case WEST: checkForWalls(wm, c, d, WEST, NORTH, EAST, SOUTH);
 			break;
 			default:
 				break;
@@ -132,7 +148,7 @@ void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* 
  * wm = structure containing information on the cell walls and visitation
  *
  */
-int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a, int direction)
+int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a, int direction, struct stack* upst)
 {
 	// Disable tracking interrupts because we do not want to move yet
 	lockInterruptDisable_TIM3();
@@ -141,8 +157,6 @@ int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a,
 	int next_move;
 	struct coor next;
 	// create stack for update of distances iteratively
-	struct stack update_stack;
-	update_stack.index = 0;
 
 	setBaseSpeed(40);
 	// while we are not at target destination
@@ -174,6 +188,21 @@ int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a,
 					getRightADCValue() >= FLOOD_WALL_IN_FRONT_RIGHT)
 			{
 				wm->cells[c->x][c->y].walls[direction] = 1;
+				switch(direction)
+				{
+				case NORTH:
+					if(c->y+1 < 16) wm->cells[c->x][c->y+1].walls[SOUTH] = 1;
+					break;
+				case EAST:
+					if(c->x+1 < 16) wm->cells[c->x+1][c->y].walls[WEST] = 1;
+					break;
+				case SOUTH:
+					if(c->y-1 > -1) wm->cells[c->x][c->y-1].walls[NORTH] = 1;
+					break;
+				case WEST:
+					if(c->x-1 > -1) wm->cells[c->x-1][c->y].walls[EAST] = 1;
+					break;
+				}
 				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
 			}
 			else HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
@@ -195,29 +224,31 @@ int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a,
 
 		// check if there is a neighbor with one less distance
 		// next_move is the direction we should move next
-		next_move = minusOneNeighbor(dm, wm, c, &update_stack, a);
+		next_move = minusOneNeighbor(dm, wm, c, upst, a);
 
 		// If we couldn't find a valid cell
 		if(next_move == UNKNOWN)
 		{
 			// while stack is not empty
-			while(update_stack.index!=0)
+			lockInterruptDisable_Gyro_Delay();
+			while(upst->index!=0)
 			{
 				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
 				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
 				// get the cell to test from the stack
-				next = pop_stack(&update_stack);
+				next = pop_stack(upst);
+				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 				// find a neighbor cell with distance one less than current
-				minusOneNeighbor(dm, wm, &next, &update_stack, a);
+				minusOneNeighbor(dm, wm, &next, upst, a);
+				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
 			}
-			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
-
 			// get next cell to traverse to
 			// next_move is actually the direction we need to go next
-			next_move = minusOneNeighbor(dm, wm, c, &update_stack, a);
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
+			next_move = minusOneNeighbor(dm, wm, c, upst, a);
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
 		}
-
+		lockInterruptEnable_Gyro_Delay();
 		// Move to next cell
 		// First turn to face the correct direction
 		int difference = direction - next_move;
@@ -225,7 +256,7 @@ int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a,
 		{
 		case -3:
 			leftStillTurn();
-			uncontrolledAdvanceTicks(500);
+			uncontrolledAdvanceTicks(450);
 			break;
 		case -2:
 			backward180StillTurn();
@@ -242,11 +273,13 @@ int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a,
 			break;
 		case -1:
 			rightStillTurn();
-			uncontrolledAdvanceTicks(500);
+			uncontrolledAdvanceTicks(450);
+			break;
+		case 0:
 			break;
 		case 1:
 			leftStillTurn();
-			uncontrolledAdvanceTicks(500);
+			uncontrolledAdvanceTicks(450);
 			break;
 		case 2:
 			backward180StillTurn();
@@ -263,9 +296,10 @@ int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a,
 			break;
 		case 3:
 			rightStillTurn();
-			uncontrolledAdvanceTicks(500);
+			uncontrolledAdvanceTicks(450);
 			break;
 		default:
+			turnOnLEDS();
 			break;
 		}
 
@@ -274,7 +308,7 @@ int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a,
 	}
 }
 
-void checkForWalls(struct wall_maze* wm, struct coor* c, int e, int w)
+void checkForWalls(struct wall_maze* wm, struct coor* c, int direction, int n, int e, int s, int w)
 {
 	if(wm->cells[c->x][c->y].walls[w]==1)
 	{
@@ -282,6 +316,21 @@ void checkForWalls(struct wall_maze* wm, struct coor* c, int e, int w)
 		if(getLeftFrontADCValue() < FLOOD_LEFT_WALL )
 		{
 			wm->cells[c->x][c->y].walls[w] = 0;
+			switch(direction)
+			{
+			case NORTH:
+				if(c->x-1 > -1) wm->cells[c->x-1][c->y].walls[EAST] = 0;
+				break;
+			case EAST:
+				if(c->y+1 < 16) wm->cells[c->x][c->y+1].walls[SOUTH] = 0;
+				break;
+			case SOUTH:
+				if(c->x+1 < 16)wm->cells[c->x+1][c->y].walls[WEST] = 0;
+				break;
+			case WEST:
+				if(c->y-1 > -1) wm->cells[c->x][c->y-1].walls[NORTH] = 0;
+				break;
+			}
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_RESET);
 		}
 		else HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_SET);
@@ -292,6 +341,21 @@ void checkForWalls(struct wall_maze* wm, struct coor* c, int e, int w)
 		if(getRightFrontADCValue() < FLOOD_RIGHT_WALL)
 		{
 			wm->cells[c->x][c->y].walls[e] = 0;
+			switch(direction)
+			{
+			case NORTH:
+				if(c->x+1 < 16)wm->cells[c->x+1][c->y].walls[WEST] = 0;
+				break;
+			case EAST:
+				if(c->y-1 > -1) wm->cells[c->x][c->y-1].walls[NORTH] = 0;
+				break;
+			case SOUTH:
+				if(c->x-1 > -1) wm->cells[c->x-1][c->y].walls[EAST] = 0;
+				break;
+			case WEST:
+				if(c->y+1 < 16) wm->cells[c->x][c->y+1].walls[SOUTH] = 0;
+				break;
+			}
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_RESET);
 		}
 		else HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_SET);
@@ -346,6 +410,9 @@ int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c,
 				}
 				if(dm->distance[c->x-1][c->y] < md) md = dm->distance[c->x-1][c->y];
 				break;
+			default:
+
+				break;
 			}
 		}
 	}
@@ -356,11 +423,12 @@ int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c,
 	// Since we did not find a cell we push onto the stack
 	for(i=0; i<4; i++)
 	{
+		int j = (i + a) % 4;
 		// If there is no wall blocking the way
-		if(wm->cells[c->x][c->y].walls[i]==0)
+		if(wm->cells[c->x][c->y].walls[j]==0)
 		{
 			struct coor temp;
-			switch(i)
+			switch(j)
 			{
 			case NORTH:
 				init_coor(&temp, c->x, c->y + 1);
@@ -375,7 +443,9 @@ int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c,
 				init_coor(&temp, c->x - 1, c->y);
 				break;
 			}
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
 			push_stack(s, temp);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);
 		}
 	}
 	// return unknown

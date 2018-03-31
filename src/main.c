@@ -71,6 +71,9 @@ float inst_yaw = 0;
 
 // choose which algorithm to use in the beginning of the run
 int algorithm;
+struct dist_maze distances;
+struct wall_maze cell_walls_info;
+struct stack update_stack;
 
 /* Main program */
 int main(void)
@@ -121,16 +124,14 @@ int main(void)
 
 		HAL_Delay(1000);
 		// initialize all the structs that we need for this to work
-		struct dist_maze distances;
-		struct wall_maze cell_walls_info;
 
 		// change this coordinate for testing of different
 		// targets for floodfill
 		struct coor target;
-		init_coor(&target, 3, 10);
+		init_coor(&target, 8, 7);
 
 		// to flood to center set third parameter to 1
-		init_distance_maze(&distances, &target, 1);
+		init_distance_maze(&distances, &target, 0);
 
 		// initialize the walls
 		init_wall_maze(&cell_walls_info);
@@ -145,14 +146,15 @@ int main(void)
 
 		MX_TIM3_Init();  // Software timer for tracking
 		int direction = NORTH;
-		direction = floodFill(&distances, &c, &cell_walls_info, algorithm, direction);
+		update_stack.index = 0;
+		direction = floodFill(&distances, &c, &cell_walls_info, algorithm, direction, &update_stack);
 
 		direction = centerMovement(&cell_walls_info, &c, direction);
 		// ONCE IT REACHES HERE, IT HAS REACHED THE CENTER OF THE MAZE
 		// Mouse has made it to center, so flood back to start
 		init_coor(&target, 0, 0);
 		init_distance_maze(&distances, &target, 0);
-		floodFill(&distances, &c, &cell_walls_info, algorithm, direction);
+		floodFill(&distances, &c, &cell_walls_info, algorithm, direction, &update_stack);
 		motorStop();
 		turnOnLEDS();
 		HAL_Delay(3000);
