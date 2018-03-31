@@ -58,28 +58,28 @@ void MX_ADC1_Init(void)
 	 */
 	sConfig.Channel = ADC_CHANNEL_8;
 	sConfig.Rank = 1;
-	sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+	sConfig.SamplingTime = ADC_SAMPLETIME_56CYCLES;
 	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
 	{
 		_Error_Handler(__FILE__, __LINE__);
 	}
 	sConfig.Channel = ADC_CHANNEL_9;
 	sConfig.Rank = 2;
-	sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+	sConfig.SamplingTime = ADC_SAMPLETIME_56CYCLES;
 	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
 	{
 		_Error_Handler(__FILE__, __LINE__);
 	}
 	sConfig.Channel = ADC_CHANNEL_2;
 	sConfig.Rank = 3;
-	sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+	sConfig.SamplingTime = ADC_SAMPLETIME_56CYCLES;
 	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
 	{
 		_Error_Handler(__FILE__, __LINE__);
 	}
 	sConfig.Channel = ADC_CHANNEL_3;
 	sConfig.Rank = 4;
-	sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+	sConfig.SamplingTime = ADC_SAMPLETIME_56CYCLES;
 	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
 	{
 		_Error_Handler(__FILE__, __LINE__);

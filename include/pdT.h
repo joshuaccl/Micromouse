@@ -18,7 +18,7 @@
 #define RW_THRESHOLD 270
 
 // Change this macro to affect the travel speed
-#define BASE_SPEED 80
+#define BASE_SPEED 40
 
 extern int leftPositionOldError;
 extern int rightPositionOldError;

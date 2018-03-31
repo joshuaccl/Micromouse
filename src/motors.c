@@ -150,7 +150,7 @@ void rightTurn(void)
 		encoder_value = getLeftEncoderValue();
 	}
 	motorStop();
-	HAL_Delay(50);
+	HAL_Delay(300);
 	lockInterruptEnable_TIM3();
 }
 
@@ -171,7 +171,7 @@ void leftTurn(void)
 		encoder_value = getRightEncoderValue();
 	}
 	motorStop();
-	HAL_Delay(50);
+	HAL_Delay(300);
 	lockInterruptEnable_TIM3();
 }
 void backward180Turn(void)
@@ -191,7 +191,7 @@ void backward180Turn(void)
 		encoder_value = getLeftEncoderValue();
 	}
 	motorStop();
-	HAL_Delay(50);
+	HAL_Delay(300);
 	lockInterruptEnable_TIM3();
 	/* This delay needed to ensure that the ADC sensors will poll
 	 * after turning */

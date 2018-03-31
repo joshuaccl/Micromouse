@@ -161,12 +161,13 @@ int main(void)
 	// Right wall hugger
 	if(algorithm == 1)
 	{
+		setBaseSpeed(40);
 		MX_TIM3_Init();  // Software timer for tracking
-		MX_ADC1_Init_RWH_FAST();
+//		MX_ADC1_Init_RWH_FAST();
 		while(1)
 		{
-//			rightWallHugger();
-			rightWallHuggerFast();
+			rightWallHugger();
+//			rightWallHuggerFast();
 		}
 	}
 	// Left wall hugger
