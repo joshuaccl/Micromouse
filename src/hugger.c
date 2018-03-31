@@ -19,7 +19,7 @@ void rightWallHugger(void)
 	else if(getLeftADCValue() >= WALL_IN_FRONT_LEFT_SENSOR &&
 			getRightADCValue() >= WALL_IN_FRONT_RIGHT_SENSOR) {
 
-		// If there is no wall on the right -> turn right
+		// If there is wall on the right -> turn right
 		if(getRightFrontADCValue() <= WALL_IN_FRONT_OPENING_RIGHT)
 		{
 			rightTurn();

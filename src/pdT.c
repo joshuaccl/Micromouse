@@ -49,8 +49,8 @@ float trackingLeft()
 	correctionP += correctionD;
 	setPositionL(error);
 	// Uncomment the next two lines to test positional controller only
-		rightMotorPWMChangeForward(getBaseSpeed() - correctionP);
-		leftMotorPWMChangeForward(correctionP + getBaseSpeed());
+		rightMotorPWMChangeForward(BASE_SPEED - correctionP);
+		leftMotorPWMChangeForward(correctionP + BASE_SPEED);
 	return correctionP;
 }
 
@@ -69,8 +69,8 @@ float trackingRight()
 	correctionP += correctionD;
 	setPositionR(error);
 	// Uncomment the next two lines to test positional controller only
-		rightMotorPWMChangeForward(correctionP + getBaseSpeed());
-		leftMotorPWMChangeForward(getBaseSpeed() - correctionP);
+		rightMotorPWMChangeForward(correctionP + BASE_SPEED);
+		leftMotorPWMChangeForward(BASE_SPEED - correctionP);
 	return correctionP;
 }
 
@@ -104,8 +104,8 @@ void trackingBothSides()
 	setPositionL(errorL);
 
 	// Uncomment the next two lines to test positional controller only
-	rightMotorPWMChangeForward(getBaseSpeed() - correctionP_L + correctionP_R);
-	leftMotorPWMChangeForward(correctionP_L + getBaseSpeed() - correctionP_R);
+	rightMotorPWMChangeForward(BASE_SPEED - correctionP_L + correctionP_R);
+	leftMotorPWMChangeForward(correctionP_L + BASE_SPEED - correctionP_R);
 }
 
 int getBaseSpeed(void)
