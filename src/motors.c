@@ -143,11 +143,8 @@ void rightTurn(void)
 	resetLeftEncoder();
 	leftMotorPWMChangeForward(300);
 	rightMotorPWMChangeBackward(300);
-	uint32_t encoder_value = MAX_ENCODER_VALUE;
 	// Decrease absolute value of angle to turn less
-	while(angle > -28.5 || encoder_value > (MAX_ENCODER_VALUE - 6650)) {
-		setLeftEncoderValue(TIM2->CNT);
-		encoder_value = getLeftEncoderValue();
+	while(angle > -34.5) {
 	}
 	motorStop();
 	HAL_Delay(300);
@@ -164,11 +161,8 @@ void leftTurn(void)
 	resetRightEncoder();
 	rightMotorPWMChangeForward(300);
 	leftMotorPWMChangeBackward(300);
-	uint32_t encoder_value = MAX_ENCODER_VALUE;
 	// Increase value of angle to turn more
-	while( angle < 32.5 || encoder_value > (MAX_ENCODER_VALUE - 6700) ) {
-		setRightEncoderValue(TIM5->CNT);
-		encoder_value = getRightEncoderValue();
+	while( angle < 41) {
 	}
 	motorStop();
 	HAL_Delay(300);
@@ -182,13 +176,10 @@ void backward180Turn(void)
 	resetLeftEncoder();
 	leftMotorPWMChangeForward(450);
 	rightMotorPWMChangeBackward(450);
-	uint32_t encoder_value = MAX_ENCODER_VALUE;
 	// Decrease absolute value of angle to turn less
 	// angle > -43
 	// encoder_value > (MAX_ENCODER_VALUE - 13750
-	while(angle > -43 || encoder_value > (MAX_ENCODER_VALUE - 10250)) {
-		setLeftEncoderValue(TIM2->CNT);
-		encoder_value = getLeftEncoderValue();
+	while(angle > -49) {
 	}
 	motorStop();
 	HAL_Delay(300);
@@ -238,61 +229,6 @@ void backward180StillTurn(void)
 	// encoder_value > (MAX_ENCODER_VALUE - 13750
 	while(angle > -55 ) {
 	}
-	lockInterruptEnable_TIM3();
-	/* This delay needed to ensure that the ADC sensors will poll
-	 * after turning */
-}
-
-void rightTurnRWH(void)
-{
-	/* Disable interrupt before turning to ensure that
-	 * the turn will not be interrupted by any other process */
-	lockInterruptDisable_TIM3();
-	motorStop();
-	resetGyroAngle();
-	resetLeftEncoder();
-	leftMotorPWMChangeForward(300);
-	rightMotorPWMChangeBackward(300);
-	// Decrease absolute value of angle to turn less
-	while(angle > -24) {
-	}
-	motorStop();
-	HAL_Delay(100);
-	lockInterruptEnable_TIM3();
-}
-
-void leftTurnRWH(void)
-{
-	/* Disable interrupt before turning to ensure that
-	 * the turn will not be interrupted by any other process */
-	lockInterruptDisable_TIM3();
-	motorStop();
-	resetGyroAngle();
-	resetRightEncoder();
-	rightMotorPWMChangeForward(300);
-	leftMotorPWMChangeBackward(300);
-	// Increase value of angle to turn more
-	while(angle < 26) {
-	}
-	motorStop();
-	HAL_Delay(100);
-	lockInterruptEnable_TIM3();
-}
-void backward180TurnRWH(void)
-{
-	lockInterruptDisable_TIM3();
-	motorStop();
-	resetGyroAngle();
-	resetLeftEncoder();
-	leftMotorPWMChangeForward(450);
-	rightMotorPWMChangeBackward(450);
-	// Decrease absolute value of angle to turn less
-	// angle > -43
-	// encoder_value > (MAX_ENCODER_VALUE - 13750
-	while(angle > -35) {
-	}
-	motorStop();
-	HAL_Delay(100);
 	lockInterruptEnable_TIM3();
 	/* This delay needed to ensure that the ADC sensors will poll
 	 * after turning */

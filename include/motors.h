@@ -25,11 +25,6 @@ void leftTurn(void);
 void backward180Turn(void);
 void motorStop(void);
 
-// FOR FAST RWH
-void rightTurnRWH(void);
-void leftTurnRWH(void);
-void backward180TurnRWH(void);
-
 // FOR FLOOD FILL
 void rightStillTurn(void);
 void leftStillTurn(void);

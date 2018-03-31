@@ -26,7 +26,6 @@ void setRightEncoderValue(uint32_t value);
 void resetLeftEncoder(void);
 void resetRightEncoder(void);
 void advanceTicks(uint32_t ticks);
-int advanceTicksRWH(uint32_t ticks);
 void uncontrolledAdvanceTicks(uint32_t ticks);
 // left and right encoder values
 extern uint32_t leftEncoderValue;

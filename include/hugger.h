@@ -17,14 +17,15 @@
 #include "encoder.h"
 #include "lock.h"
 
+// Stop earlier = lower
 #define NO_RIGHT_WALL 255
 #define NO_LEFT_WALL 265
 #define RIGHT_WALL 240
 #define LEFT_WALL 260
 #define WALL_IN_FRONT_OPENING_RIGHT 315
 #define WALL_IN_FRONT_OPENING_LEFT 330
-#define WALL_IN_FRONT_RIGHT_SENSOR 960
-#define WALL_IN_FRONT_LEFT_SENSOR 1080
+#define WALL_IN_FRONT_RIGHT_SENSOR 890
+#define WALL_IN_FRONT_LEFT_SENSOR 990
 
 // 1200 1050
 #define NO_WALL_IN_FRONT_RIGHT_SENSOR 1200
@@ -34,15 +35,7 @@
 #define ENCODER_TICKS_ONE_CELL 15150
 // true encoder value 15800
 
-//FOR RWH FAST
-#define WALL_IN_FRONT_LEFT_SENSOR_RWH_FAST 1030
-#define WALL_IN_FRONT_RIGHT_SENSOR_RWH_FAST 915
-#define NO_RIGHT_WALL_RWH_FAST 245
-#define WALL_IN_FRONT_OPENING_RIGHT_RWH_FAST 305
-#define ENCODER_TICKS_ONE_CELL_RWH_FAST 15100
-
 void rightWallHugger(void);
 void leftWallHugger(void);
-void rightWallHuggerFast(void);
 
 #endif /* __HUGGER_H */

@@ -57,34 +57,6 @@ void advanceTicks(uint32_t ticks) {
 	}
 }
 
-// Detects wall status one cell ahead
-int advanceTicksRWH(uint32_t ticks) {
-	/* direction 1 - no front wall
-	 * 			 2 - no right wall
-	 * 			 3 - front wall
-	 */
-	int direction = 1;
-	uint32_t encoder_val = MAX_ENCODER_VALUE;
-	resetLeftEncoder();
-	while(encoder_val > (MAX_ENCODER_VALUE - ticks) ) {
-		// Wall in front
-		if (getLeftADCValue() >= WALL_IN_FRONT_LEFT_SENSOR_RWH_FAST &&
-				getRightADCValue() >= WALL_IN_FRONT_RIGHT_SENSOR_RWH_FAST)
-		{
-			// Immediately break
-			return 3;
-		}
-		// No right wall ahead -> turn right
-		if (getRightFrontADCValue() <= NO_RIGHT_WALL_RWH_FAST)
-		{
-			direction = 2;
-		}
-		setLeftEncoderValue(TIM2->CNT);
-		encoder_val = getLeftEncoderValue();
-	}
-	return direction;
-}
-
 void uncontrolledAdvanceTicks(uint32_t ticks) {
 	uint32_t encoder_val = MAX_ENCODER_VALUE;
 	resetLeftEncoder();
