@@ -162,7 +162,7 @@ int main(void)
 	if(algorithm == 1)
 	{
 		MX_TIM3_Init();  // Software timer for tracking
-		setBaseSpeed(40);
+		setBaseSpeed(35);
 		while(1)
 		{
 			rightWallHugger();

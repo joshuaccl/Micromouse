@@ -30,7 +30,7 @@ void rightWallHugger(void)
 		{
 			// Advance further into cell to do the 180
 			backward180Turn();
-			advanceTicks(ENCODER_TICKS_ONE_CELL-2800);
+			advanceTicks(ENCODER_TICKS_ONE_CELL-1500);
 		}
 		else // Turn left
 		{

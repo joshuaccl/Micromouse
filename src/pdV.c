@@ -197,7 +197,7 @@ void wallTracking()
 	// No walls
 	else
 	{
-		leftMotorPWMChangeForward(BASE_SPEED);
-		rightMotorPWMChangeForward(BASE_SPEED);
+		leftMotorPWMChangeForward(getBaseSpeed());
+		rightMotorPWMChangeForward(getBaseSpeed());
 	}
 }

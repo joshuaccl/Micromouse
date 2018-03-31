@@ -144,7 +144,7 @@ void rightTurn(void)
 	leftMotorPWMChangeForward(300);
 	rightMotorPWMChangeBackward(300);
 	// Decrease absolute value of angle to turn less
-	while(angle > -34.5) {
+	while(angle > -38) {
 	}
 	motorStop();
 	HAL_Delay(300);
