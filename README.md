@@ -39,6 +39,9 @@ WARNING: When the code is generated, it will replacd everything inside the speci
 
 ## Debugging branches
 `cube` - When generating new CubeMX pin configurations use this branch then `git diff` with current branch
+
 `ADC_calibration` - When testing ADC values, open up STMStudio 
+
 `gyro_encoder_cal` - Branch for testing gyro or encoder values
+
 `diagonals` - For testing wall tracking tracking 
