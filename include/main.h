@@ -53,25 +53,7 @@
 
 #include "spi.h"
 
-//#define QEI_VELOCITY_TIM_LABEL TIM10
-//#define IMU_TIM_LABEL TIM11
-
-extern int left_counts;
-extern int right_counts;
-extern float left_velocity;
-extern float right_velocity;
 extern float angle;
-
-// QEI
-#define LEFTQEI			TIM5
-#define RIGHTQEI		TIM2
-#define ENCODERCPR		1024
-#define ENCSAMPLEHZ		1000
-#define DISTPERREV		2.309
-#define CMTOM			0.01
-#define CELLTOTICKS 	7982.68*2
-
-
 
 /* ########################## Assert Selection ############################## */
 /**
