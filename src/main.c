@@ -211,7 +211,7 @@ int main(void)
 	if(algorithm == 1)
 	{
 		MX_TIM3_Init();  // Software timer for tracking
-		MX_ADC1_Init_RWH_FAST();
+		MX_ADC1_Init_RWH_FAST();  // Re-init ADC settings
 		while(1)
 		{
 			setBaseSpeed(40);
@@ -228,56 +228,16 @@ int main(void)
 			leftWallHugger();
 		}
 	}
-	// Calibrate 180 turns
-	//		if(getLeftADCValue() >= (WALL_IN_FRONT_LEFT_SENSOR) &&
-	//				getRightADCValue() >= (WALL_IN_FRONT_RIGHT_SENSOR)) {
-	//			lockInterruptDisable_TIM3();
-	//			backward180Turn();
-	//			lockInterruptEnable_TIM3();
-	//		}
-	//		i++;
-
-	//	lockInterruptDisable_TIM3();
-	//	motorStop();
-
-	//while(1){
-	//				setLeftEncoderValue(TIM2->CNT);
-	//				setRightEncoderValue(TIM5->CNT);
-	//}
-	//			motorStop();
-	//			setLeftEncoderValue(TIM2->CNT);
-	//			setRightEncoderValue(TIM5->CNT);
-	//			HAL_Delay(10000);
-
-	//	rightTurn();
 }
 
+// Timers are automatically called when mouse is on according to the polling rate set for each timer
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
+	// Timer for wall tracking
 	if(htim->Instance==TIM3){
-		//		trackingLeft();
-		//		trackingRight();
-		//		wallTracking(); // used to track in the maze
-		//
-		//
-		//		//
-		//		//		rightTurn();
-		//		//		motorStop();
-		//		//		HAL_Delay(1000);
-		//		//		HAL_Delay(10000);
+		// Track off walls of maze to keep mouse in center and prevent crashing into walls
 		wallTracking();
 	}
-
-	//	//tim 10
-	//	else if (htim->Instance == QEI_VELOCITY_TIM_LABEL)
-	//	{
-	//		left_last_counts = left_counts;
-	//		left_counts = QEI_Left_Read();
-	//		left_velocity = (((float) (left_counts - left_last_counts))/ENCODERCPR) * ENCSAMPLEHZ * DISTPERREV * CMTOM; // m/s
-	//		right_last_counts = right_counts;
-	//		right_counts = QEI_Right_Read();
-	//		right_velocity = (((float) (right_counts - right_last_counts))/ENCODERCPR) * ENCSAMPLEHZ * DISTPERREV * CMTOM; // m/s
-	//	}
 	// Interrupt timer for gyroscope
 	if (htim->Instance == TIM11)
 	{
@@ -291,6 +251,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			angle += (inst_yaw/100*0.64);
 		}
 	}
+	// Custom delay
 	if (htim->Instance == TIM10)
 	{
 		time_of_delay++;

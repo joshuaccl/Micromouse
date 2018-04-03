@@ -26,13 +26,15 @@ void rightWallHugger(void)
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_SET);
 			advanceTicks(ENCODER_TICKS_ONE_CELL-4600);
 		}
+		// Dead end
 		else if(getLeftFrontADCValue() >= LEFT_WALL )
 		{
 			// Advance further into cell to do the 180
 			backward180Turn();
 			advanceTicks(ENCODER_TICKS_ONE_CELL-2800);
 		}
-		else // Turn left
+		// Turn left
+		else
 		{
 			leftTurn();
 			// If no wall in front after turning left then go forward
