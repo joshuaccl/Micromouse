@@ -113,8 +113,6 @@ int main(void)
 	resetLeftEncoder();
 	resetRightEncoder();
 
-	// Put desired algorithm in this while loop
-
 	// Floodfill
 	if(algorithm == 2)
 	{
@@ -138,7 +136,17 @@ int main(void)
 
 		MX_TIM3_Init();  // Software timer for tracking
 		floodFill(&distances, 0, 0, &cell_walls_info);
+
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+
+		// ONCE IT REACHES HERE, IT HAS REACHED THE CENTER OF THE MAZE
+		// Mouse has made it to center, so flood back to start
+		init_coor(&target, 15, 0);
+		init_distance_maze(&distances, &target, 0);
+		floodFill(&distances, 7, 7, &cell_walls_info);
 	}
+	// Right wall hugger
 	if(algorithm == 1)
 	{
 		MX_TIM3_Init();  // Software timer for tracking
@@ -147,6 +155,7 @@ int main(void)
 			rightWallHugger();
 		}
 	}
+	// Left wall hugger
 	if(algorithm == 0)
 	{
 		MX_TIM3_Init();  // Software timer for tracking
