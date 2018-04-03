@@ -45,7 +45,7 @@ extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim5;
-extern TIM_HandleTypeDef htim10;
+
 extern TIM_HandleTypeDef htim11;
 extern TIM_HandleTypeDef htim14;
 
@@ -280,11 +280,6 @@ void TIM1_TRG_COM_TIM11_IRQHandler(void)
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
 
   /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
-}
-
-void TIM1_UP_TIM10_IRQHandler(void)
-{
-	HAL_TIM_IRQHandler(&htim10);
 }
 
 /**

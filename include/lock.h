@@ -13,7 +13,5 @@
 
 void lockInterruptDisable_TIM3();
 void lockInterruptEnable_TIM3();
-void lockInterruptDisable_Gyro_Delay();
-void lockInterruptEnable_Gyro_Delay();
 
 #endif /* __LOCK_H */

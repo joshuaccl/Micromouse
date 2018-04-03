@@ -11,11 +11,7 @@ TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
-TIM_HandleTypeDef htim10;
 TIM_HandleTypeDef htim11;
-
-int delay_flag;
-int time_of_delay;
 
 /* Motors on TIM4
  *
@@ -74,8 +70,7 @@ void MX_TIM3_Init(void)
 	htim3.Instance = TIM3;
 	htim3.Init.Prescaler = 8399;
 	htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-	// 5 for right wall hugger. 3 for flood fill
-	htim3.Init.Period = 3;
+	htim3.Init.Period = 5;
 	htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	htim3.Init.RepetitionCounter = 0;
 	if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
@@ -198,39 +193,13 @@ void MX_TIM11_Init(void)
     htim11.Init.Prescaler = 83;
     htim11.Init.CounterMode = TIM_COUNTERMODE_UP;
     // Sample 1000 Hz
-    htim11.Init.Period = 25;
+    htim11.Init.Period = 1000;
     htim11.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 
     if (HAL_TIM_Base_Init(&htim11) != HAL_OK)
     {
         Error_Handler();
     }
-}
-
-void MX_TIM10_Init(void)
-{
-    htim10.Instance = TIM10;
-    htim10.Init.Prescaler = 15;
-    htim10.Init.CounterMode = TIM_COUNTERMODE_UP;
-    // Sample 1000 Hz
-    htim10.Init.Period = 1000;
-    htim10.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-
-    if (HAL_TIM_Base_Init(&htim10) != HAL_OK)
-    {
-        Error_Handler();
-    }
-    HAL_TIM_Base_Start_IT(&htim10);
-}
-
-void custom_delay(int milliseconds)
-{
-	time_of_delay = 0;
-	while(time_of_delay < milliseconds)
-	{
-		resetLeftEncoder();
-	}
-
 }
 void leftMotorStart(void)
 {

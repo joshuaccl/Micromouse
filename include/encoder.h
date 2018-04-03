@@ -16,7 +16,7 @@
 #include "pdV.h"
 #include "hugger.h"
 
-#define MAX_ENCODER_VALUE 2147483648
+#define MAX_ENCODER_VALUE 4294967295
 
 void encoderStart(void);
 uint32_t getLeftEncoderValue(void);
