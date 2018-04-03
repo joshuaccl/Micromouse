@@ -91,6 +91,7 @@ void ADC_IRQHandler(void)
 	HAL_ADC_IRQHandler(&hadc1);
 }
 
+// Code in this function runs automatically in the background according to a specified rate
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 {
 	int i,j,l=0,lf=0,rf=0,r=0;
@@ -216,6 +217,22 @@ uint32_t getRightADCValue()
 {
 	return IR_values[3];
 }
+
+/* Wave hand across ADC sensors to start mouse
+ *
+ *            LF           RF
+ * L                                  R
+ *
+ * Always hold L then choose either LF, RF, or R for the algorithim choice
+ *
+ * Left hugger  - L + LF
+ * Floodfill    - L + RF then L  - North priority
+ * 					 		  LF - East priority
+ * 					 		  RF - South priority
+ * 							  R  - West priority
+ * Right hugger - L + R
+ *
+ */
 int mouseStartSensorWave(void)
 {
 	//Turn on left LED
@@ -251,6 +268,7 @@ int mouseStartSensorWave(void)
 	}
 }
 
+// Used to choose floodfill wall direction priority
 int wallFavor(void)
 {
 	while(1)

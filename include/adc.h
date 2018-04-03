@@ -35,18 +35,18 @@ extern uint32_t startupSensor;
 void MX_ADC1_Init(void);
 void ADC_IRQHandler(void);
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle);
-//void ADC_LED_Distance_Tester(uint32_t IR_values[]);
 void ADC_LED_Distance_Tester(void);
 
-//Get sensor reading of ADC left sensor to start mouse
+// Get sensor reading of ADC left sensor to start mouse
 uint32_t startMouseSensor(void);
 
-//Start mouse by waving hand next to left sensor
+// Start mouse by waving hand next to left sensor
 int mouseStartSensorWave(void);
 
+// Used to choose floodfill wall direction priority
 int wallFavor(void);
 
-/* Function to print out ADC value reading to the LEDs using blinking to get sensor value */
+// Function to print out ADC value reading to the LEDs using blinking to get sensor value
 void ADC_LED_DEBUG(uint32_t value);
 
 uint32_t getLeftADCValue(void);
