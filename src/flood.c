@@ -288,9 +288,6 @@ int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a,
 			break;
 		case 0:
 			break;
-		case 0:
-			tick_count += 1750;
-			break;
 		case 1:
 			leftStillTurn();
 			uncontrolledAdvanceTicks(450);
@@ -316,7 +313,6 @@ int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a,
 			turnOnLEDS();
 			break;
 		}
-		if(difference!=0) tick_count = FLOOD_ONE_CELL;
 		// update the direction we are currently facing
 		direction = next_move;
 	}
