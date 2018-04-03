@@ -10,6 +10,7 @@
 void init_distance_maze(struct dist_maze* dm, struct coor* c, int center)
 {
 	// If we are trying to get to the center
+	// Initialize the distance maze with the center four cells as zero
 	if(center == 1)
 	{
 		for(int i=0; i<16; i++)
@@ -23,7 +24,7 @@ void init_distance_maze(struct dist_maze* dm, struct coor* c, int center)
 			}
 		}
 	}
-	// Generalized floodfill
+	// Generalized floodfill for any other cell
 	else
 	{
 		for(int i=0; i<16; i++)
@@ -53,6 +54,7 @@ void init_wall_maze(struct wall_maze* wm)
 			wm->cells[i][j].walls[SOUTH] = 0;
 			wm->cells[i][j].walls[WEST] = 0;
 			wm->cells[i][j].visited = 0;
+			// put the walls surrounding the maze
 			if(i==0) wm->cells[i][j].walls[WEST] = 1;
 			if(j==0) wm->cells[i][j].walls[SOUTH] = 1;
 			if(i==15) wm->cells[i][j].walls[EAST] = 1;
@@ -80,15 +82,18 @@ void push_stack(struct stack* s, struct coor c){
 }
 
 
-
+// move one cell forward and also poll adc for wall values
 void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* wm) {
 	uint32_t encoder_val = MAX_ENCODER_VALUE;
 	resetLeftEncoder();
+	// put walls up for the cell we are moving to. For each direction put a wall to the
+	// east and the west.
 	switch(d)
 	{
 	case NORTH:
 		wm->cells[c->x][c->y].walls[WEST] = 1;
 		wm->cells[c->x][c->y].walls[EAST] = 1;
+		// checks for out of bounds
 		if(c->x > 0) wm->cells[c->x-1][c->y].walls[EAST] = 1;
 		if(c->x < 15) wm->cells[c->x+1][c->y].walls[WEST] = 1;
 		break;
@@ -113,14 +118,12 @@ void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* 
 	default:
 		break;
 	}
+	// while we have not finished moving one cell length
 	while(encoder_val > (MAX_ENCODER_VALUE - ticks) ) {
-		//		if (getLeftADCValue() >= WALL_IN_FRONT_LEFT_SENSOR &&
-		//				getRightADCValue() >= WALL_IN_FRONT_RIGHT_SENSOR)
-		//		{
-		//			break;
-		//		}
+		// if we have moved half of a cell length
 		if (encoder_val < (MAX_ENCODER_VALUE - (ticks / 2 ) ) )
 		{
+			// check for walls to the east and the west
 			switch(d)
 			{
 			case NORTH: checkForWalls(wm, c, d, NORTH, EAST, SOUTH, WEST);
@@ -157,6 +160,7 @@ int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a,
 	int next_move;
 	struct coor next;
 
+	// set the base speed of traversal
 	setBaseSpeed(40);
 
 	// while we are not at target destination
@@ -180,16 +184,18 @@ int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a,
 		// If we haven't visited the next cell
 		if(wm->cells[c->x][c->y].visited == 0)
 		{
+			// advance one cell
 			advanceOneCell(direction, c, wm);
-			// showCoor(c.x, c.y);
 
 			// check for wall straight ahead
 			if(getLeftADCValue() >= FLOOD_WALL_IN_FRONT_LEFT &&
 					getRightADCValue() >= FLOOD_WALL_IN_FRONT_RIGHT)
 			{
+				// put wall ahead of us
 				wm->cells[c->x][c->y].walls[direction] = 1;
 				switch(direction)
 				{
+				// put wall ahead of us in the cell ahead of us
 				case NORTH:
 					if(c->y+1 < 16) wm->cells[c->x][c->y+1].walls[SOUTH] = 1;
 					break;
@@ -212,9 +218,11 @@ int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a,
 		}
 		else
 		{
+			// advance one cell without scanning for walls
 			advanceOneCellVisited();
 		}
 
+		// if we are at target destination
 		if (dm->distance[c->x][c->y]==0)
 		{
 			lockInterruptDisable_TIM3();
@@ -256,10 +264,12 @@ int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a,
 		{
 		case -3:
 			leftStillTurn();
+			// calibration because left turn backs up mouse a little bit
 			uncontrolledAdvanceTicks(450);
 			break;
 		case -2:
 			backward180StillTurn();
+			// calibration by backing into wall behind us
 			if(wm->cells[c->x][c->y].walls[direction]==1)
 			{
 				lockInterruptDisable_TIM3();
@@ -310,14 +320,17 @@ int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a,
 
 void checkForWalls(struct wall_maze* wm, struct coor* c, int direction, int n, int e, int s, int w)
 {
+	// if there is a wall in memory
 	if(wm->cells[c->x][c->y].walls[w]==1)
 	{
 		// check for wall to the west
+		// if at anytime the value drops below that means there is no wall
 		if(getLeftFrontADCValue() < FLOOD_LEFT_WALL )
 		{
 			wm->cells[c->x][c->y].walls[w] = 0;
 			switch(direction)
 			{
+			// also put walls in the other adjacent cells
 			case NORTH:
 				if(c->x-1 > -1) wm->cells[c->x-1][c->y].walls[EAST] = 0;
 				break;
@@ -372,6 +385,7 @@ int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c,
 	// check neighbor cells
 	for(i=0; i<4; i++)
 	{
+		// choice of direction preference
 		int j = (i + a) % 4;
 		// If there is no wall blocking the way
 		if(wm->cells[c->x][c->y].walls[j]==0)
@@ -423,6 +437,7 @@ int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c,
 	// Since we did not find a cell we push onto the stack
 	for(i=0; i<4; i++)
 	{
+		// choice of direction preference
 		int j = (i + a) % 4;
 		// If there is no wall blocking the way
 		if(wm->cells[c->x][c->y].walls[j]==0)
@@ -455,11 +470,13 @@ int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c,
 // Show the coordinates
 void showCoor(int x, int y)
 {
+	// initialize coordinates binary representation
 	int binaryx[4];
 	int binaryy[4];
 	int xcoor = x;
 	int ycoor = y;
 
+	// get the binary values
 	for(int i = 3; i>-1; i--)
 	{
 		if(xcoor - (1 << i) >= 0)
@@ -477,6 +494,7 @@ void showCoor(int x, int y)
 		else binaryy[i] = 0;
 	}
 
+	// blink leds to show binary values
 	turnOffCenterLEDS();
 	if(binaryx[3]) HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
 	if(binaryx[2]) HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
@@ -509,6 +527,7 @@ void turnOffCenterLEDS()
 
 void advanceOneCell(int direction, struct coor* c, struct wall_maze* wm)
 {
+	// go forward one cell
 	lockInterruptEnable_TIM3();
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
 	advanceTicksFlood(FLOOD_ONE_CELL, direction, c, wm);
@@ -535,7 +554,6 @@ void advanceOneCellVisited()
 
 int centerMovement(struct wall_maze* wm, struct coor* c, int d)
 {
-	// Only coded for north 7,7 and east 7,7
 	// 1 for turn right. 0 for turn left
 	int turn = 0;
 	//	switch(d)
@@ -621,6 +639,8 @@ int centerMovement(struct wall_maze* wm, struct coor* c, int d)
 	//	}
 	//	return d;
 	int direction;
+	// put down all the walls in the center depending on which cell we entered
+	// and also the direction we are currently facing
 	switch(d)
 	{
 	case NORTH:
@@ -720,10 +740,12 @@ int centerMovement(struct wall_maze* wm, struct coor* c, int d)
 		direction = EAST;
 		break;
 	}
+	// all center cells are visited
 	wm->cells[7][7].visited=1;
 	wm->cells[7][8].visited=1;
 	wm->cells[8][7].visited=1;
 	wm->cells[8][8].visited=1;
+	// recalibrate on center wall, then drive out
 	advanceOneCellVisited();
 	backward180StillTurn();
 	lockInterruptDisable_TIM3();
@@ -763,9 +785,11 @@ int logicalFlood(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int
 			break;
 		}
 
+		// return if we have reached our target
 		if (dm->distance[c->x][c->y]==0)
 		{
 			lockInterruptDisable_TIM3();
+			// reassign the previous coordinates before logical flood
 			c->x = x;
 			c->y = y;
 			return direction;
@@ -805,7 +829,168 @@ int logicalFlood(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int
 	}
 }
 
-void shortestPath(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a, int direction, struct stack* upst, struct stack* mq)
+void shortestPath(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a, int direction, struct stack* upst)
 {
+	// Disable tracking interrupts because we do not want to move yet
+	lockInterruptDisable_TIM3();
 
+	// coordinate for future use in popping stack
+	int next_move;
+	int d;
+	d = direction;
+
+	// set the base traversal speed
+	setBaseSpeed(40);
+
+	// while not at target destination
+	while(1)
+	{
+		// update coordinates
+		switch(d)
+		{
+		case NORTH: c->y += 1;
+		break;
+		case EAST: c->x += 1;
+		break;
+		case SOUTH: c->y -= 1;
+		break;
+		case WEST: c->x -= 1;
+		break;
+		default:
+			break;
+		}
+		// move forward one cell
+		advanceOneCellVisited();
+
+		// if we are at the center exit function
+		if (c->x==7 && c->y==7)
+		{
+			lockInterruptDisable_TIM3();
+			break;
+		}
+		if (c->x==7 && c->y==8)
+		{
+			lockInterruptDisable_TIM3();
+			break;
+		}
+		if (c->x==8 && c->y==7)
+		{
+			lockInterruptDisable_TIM3();
+			break;
+		}
+		if (c->x==8 && c->y==8)
+		{
+			lockInterruptDisable_TIM3();
+			break;
+		}
+
+		// find the target which is the distance of current cell plus one
+		int target = dm->distance[c->x][c->y] + 1;
+
+		// check neighbor cells
+		for(int i=0; i<4; i++)
+		{
+			switch(i)
+			{
+			case NORTH:
+				if(c->y+1<16)
+				{
+					if(dm->distance[c->x][c->y+1]==target)
+					{
+						// if the cell exists return the direction we want to move
+						next_move = i;
+					}
+				}
+				break;
+			case EAST:
+				if(c->x+1<16)
+				{
+					if(dm->distance[c->x+1][c->y]==target)
+					{
+						// if the cell exists return the direction we want to move
+						next_move = i;
+					}
+				}
+				break;
+			case SOUTH:
+				if(c->y-1>-1)
+				{
+					if(dm->distance[c->x][c->y-1]==target)
+					{
+						// if the cell exists return the direction we want to move
+						next_move = i;
+					}
+				}
+				break;
+			case WEST:
+				if(c->x-1>-1)
+				{
+					if(dm->distance[c->x-1][c->y]==target)
+					{
+						// if the cell exists return the direction we want to move
+						next_move = i;
+					}
+				}
+				break;
+			default:
+				break;
+			}
+		}
+
+		// find the direction we must turn to
+		int difference = d - next_move;
+		switch(difference)
+		{
+		case -3:
+			leftStillTurn();
+			uncontrolledAdvanceTicks(450);
+			break;
+		case -2:
+			backward180StillTurn();
+			if(wm->cells[c->x][c->y].walls[d]==1)
+			{
+				lockInterruptDisable_TIM3();
+				leftMotorPWMChangeBackward(200);
+				rightMotorPWMChangeBackward(200);
+				custom_delay(2000);
+				motorStop();
+				lockInterruptEnable_TIM3();
+				uncontrolledAdvanceTicks(3000);
+			}
+			break;
+		case -1:
+			rightStillTurn();
+			uncontrolledAdvanceTicks(450);
+			break;
+		case 0:
+			break;
+		case 1:
+			leftStillTurn();
+			uncontrolledAdvanceTicks(450);
+			break;
+		case 2:
+			backward180StillTurn();
+			if(wm->cells[c->x][c->y].walls[d]==1)
+			{
+				lockInterruptDisable_TIM3();
+				leftMotorPWMChangeBackward(200);
+				rightMotorPWMChangeBackward(200);
+				custom_delay(2000);
+				motorStop();
+				lockInterruptEnable_TIM3();
+				uncontrolledAdvanceTicks(3000);
+			}
+			break;
+		case 3:
+			rightStillTurn();
+			uncontrolledAdvanceTicks(450);
+			break;
+		default:
+			turnOnLEDS();
+			break;
+		}
+
+		// update the direction we are currently facing
+		d = next_move;
+	}
 }

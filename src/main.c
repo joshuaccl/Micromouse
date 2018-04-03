@@ -197,10 +197,9 @@ int main(void)
 		rightMotorPWMChangeBackward(200);
 		custom_delay(2000);
 		motorStop();
-		lockInterruptEnable_TIM3();
-		uncontrolledAdvanceTicks(3000);
-		floodFill(&distances, &c, &cell_walls_info, direction, direction, &update_stack);
-
+		wallFavor();
+		custom_delay(1000);
+		void shortestPath(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a, int direction, struct stack* upst);
 		motorStop();
 		turnOnLEDS();
 		HAL_Delay(3000);

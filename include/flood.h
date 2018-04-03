@@ -79,17 +79,25 @@ void checkForWalls(struct wall_maze* wm, struct coor* c, int direction, int n, i
 // Check if a neighbor exists with distance one less than current
 int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c, struct stack* s, int a);
 
+// show coordinates currently at
 void showCoor(int x, int y);
 
+// turn on/off 4 center leds
 void turnOnCenterLEDS(void);
 void turnOffCenterLEDS(void);
 
+// move one cell forward and also sense for walls
 void advanceOneCell(int direction, struct coor* c, struct wall_maze* wm);
+
+// move one cell forward
 void advanceOneCellVisited(void);
 
+// movement after reaching the center
 int centerMovement(struct wall_maze* wm, struct coor* c, int direction);
 
+// flood in program without actually physically moving
 int logicalFlood(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a, int direction, struct stack* upst);
 
-void shortestPath(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a, int direction, struct stack* upst, struct stack* mq);
+// go to the center taking the shortest path
+void shortestPath(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a, int direction, struct stack* upst);
 #endif /* FLOOD_H_ */
