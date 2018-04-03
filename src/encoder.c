@@ -55,6 +55,7 @@ void advanceTicks(uint32_t ticks) {
 		setLeftEncoderValue(TIM2->CNT);
 		encoder_val = getLeftEncoderValue();
 	}
+	resetLeftEncoder();
 }
 
 // Detects wall status one cell ahead
