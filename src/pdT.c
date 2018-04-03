@@ -32,6 +32,7 @@ void setPositionR( int value )
 	rightPositionOldError = value;
 }
 
+// No wall on right so only track off left wall
 float trackingLeft()
 {
 	// kp = .0625, kd=1.4
@@ -48,12 +49,15 @@ float trackingLeft()
 	correctionD = derivative * Kd;
 	correctionP += correctionD;
 	setPositionL(error);
+	/* ************************************************************ */
 	// Uncomment the next two lines to test positional controller only
 //		rightMotorPWMChangeForward(getBaseSpeed() - correctionP);
 //		leftMotorPWMChangeForward(correctionP + getBaseSpeed());
+	/* ************************************************************ */
 	return correctionP;
 }
 
+// No wall on left so only track off right wall
 float trackingRight()
 {
 	float Kp=0.0625;
@@ -68,12 +72,15 @@ float trackingRight()
 	correctionD = derivative * Kd;
 	correctionP += correctionD;
 	setPositionR(error);
+	/* ************************************************************ */
 	// Uncomment the next two lines to test positional controller only
 //		rightMotorPWMChangeForward(correctionP + getBaseSpeed());
 //		leftMotorPWMChangeForward(getBaseSpeed() - correctionP);
+	/* ************************************************************ */
 	return correctionP;
 }
 
+// Track off both walls
 void trackingBothSides()
 {
 	float Kp=0.0625;
@@ -103,8 +110,10 @@ void trackingBothSides()
 	correctionP_L += correctionD_L;
 	setPositionL(errorL);
 
+	/* ************************************************************ */
 //	rightMotorPWMChangeForward(getBaseSpeed() - correctionP_L + correctionP_R);
 //	leftMotorPWMChangeForward(correctionP_L + getBaseSpeed() - correctionP_R);
+	/* ************************************************************ */
 }
 
 int getBaseSpeed(void)
