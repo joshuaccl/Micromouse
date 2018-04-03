@@ -137,9 +137,9 @@ void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* 
 			default:
 				break;
 			}
+			setLeftEncoderValue(TIM2->CNT);
+			encoder_val = getLeftEncoderValue();
 		}
-		setLeftEncoderValue(TIM2->CNT);
-		encoder_val = getLeftEncoderValue();
 	}
 	resetLeftEncoder();
 }
@@ -229,6 +229,7 @@ int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a,
 			return direction;
 			break;
 		}
+		
 
 		// check if there is a neighbor with one less distance
 		// next_move is the direction we should move next
@@ -287,6 +288,9 @@ int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a,
 			break;
 		case 0:
 			break;
+		case 0:
+			tick_count += 1750;
+			break;
 		case 1:
 			leftStillTurn();
 			uncontrolledAdvanceTicks(450);
@@ -312,7 +316,7 @@ int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a,
 			turnOnLEDS();
 			break;
 		}
-
+		if(difference!=0) tick_count = FLOOD_ONE_CELL;
 		// update the direction we are currently facing
 		direction = next_move;
 	}

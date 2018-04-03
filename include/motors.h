@@ -15,7 +15,6 @@
 #define RIGHT_TURN_TICKS 3300
 #define LEFT_TURN_TICKS 3300
 
-
 void leftMotorPWMChangeForward(float value);
 void rightMotorPWMChangeForward(float value);
 void leftMotorPWMChangeBackward(float value);
@@ -24,10 +23,14 @@ void rightMotorPWMChangeBackward(float value);
 void rightTurn(void);
 void leftTurn(void);
 void backward180Turn(void);
-void leftSTurn(void);
-void cornerStop(void);
 void motorStop(void);
 
+// FOR FAST RWH
+void rightTurnRWH(void);
+void leftTurnRWH(void);
+void backward180TurnRWH(void);
+
+// FOR FLOOD FILL
 void rightStillTurn(void);
 void leftStillTurn(void);
 void backward180StillTurn(void);

@@ -122,6 +122,8 @@ int main(void)
 	{
 		algorithm = wallFavor();
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
+		HAL_Delay(1000);
+
 
 		HAL_Delay(1000);
 		// initialize all the structs that we need for this to work
@@ -131,8 +133,9 @@ int main(void)
 		struct coor target;
 		init_coor(&target, 8, 7);
 
+
 		// to flood to center set third parameter to 1
-		init_distance_maze(&distances, &target, 1);
+		init_distance_maze(&distances, &target, 0);
 
 		// initialize the walls
 		init_wall_maze(&cell_walls_info);
@@ -208,6 +211,7 @@ int main(void)
 	if(algorithm == 1)
 	{
 		MX_TIM3_Init();  // Software timer for tracking
+		MX_ADC1_Init_RWH_FAST();
 		while(1)
 		{
 			setBaseSpeed(40);
