@@ -60,14 +60,19 @@ struct stack{
 // center is flag to let us know if we are trying to get to the center
 void init_distance_maze(struct dist_maze* dm, struct coor* c, int center);
 
-// Initalize wall maze to unvisited for all cells
+// Initialize wall maze to unvisited for all cells
 void init_wall_maze(struct wall_maze* wm);
 
 // Initialize coordinate
 void init_coor(struct coor* c, int x, int y);
+
+// Pop coordinates from stack
 struct coor pop_stack(struct stack* s);
+
+// Push coordinates into stack
 void push_stack(struct stack* s, struct coor c);
 
+// Advances one cell forward and checks walls
 void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* wm);
 
 // Called to flood to a target cell
@@ -100,4 +105,5 @@ int logicalFlood(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int
 
 // go to the center taking the shortest path
 void shortestPath(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a, int direction, struct stack* upst);
+
 #endif /* FLOOD_H_ */
