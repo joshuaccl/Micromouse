@@ -1,6 +1,15 @@
-# Micromouse 2018
+# Micromouse
+
+``` 
+Demo video. Floodfill mapping and solving
+```
+
+[![Micromouse Video](doc/video.JPG)](https://www.youtube.com/watch?v=v6TXTJd9zPE&feature=youtu.be "Micromouse Floodfill algorithm - Click to Watch!")
+
 
 A Micromouse is a small robotic vehicle designed to navigate its way through an unknown maze. It is an autonomous, battery-operated, and self-contained robot that utilizes maze-solving algorithms to find the optimal route with the shortest run time to the center of the maze. The main challenge is to equip the electro-mechanical device with adaptive intelligence which enables the exploration of different maze configurations. In addition, the mouse must reliability navigate through the maze at accelerated speeds without crashing into the maze walls. The three main subsystems consist of the drive system, control system, and sensors. The drive system includes a mechanical chassis, a set of motors, gears, and wheels which enables the mouse to maneuver within the constraints of the maze. The control system utilizes a maze-solving algorithm based on sensor readings to calculate the fastest possible path. The final subsystem is the sensors which relays the current state of the surroundings and assists in wall detection. By combining these components, an autonomous mouse capable of navigating through a maze was designed, built, and programmed. 
+
+![](doc/micromouse.JPG)
 
 # Developers Guide
 ## Environment Setup
