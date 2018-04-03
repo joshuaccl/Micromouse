@@ -53,9 +53,9 @@ void velocityLeft()
 	// add the corrections together
 	correctionP += (correctionD + correctionI);
 	// Change speed of motors
-	// BASE_SPEED MACRO is in pdT.h
-	rightMotorPWMChangeForward(BASE_SPEED - correctionP);
-	leftMotorPWMChangeForward(correctionP + BASE_SPEED);
+	// getBaseSpeed() MACRO is in pdT.h
+	rightMotorPWMChangeForward(getBaseSpeed() - correctionP);
+	leftMotorPWMChangeForward(correctionP + getBaseSpeed());
 	// save current error value
 	setVelocityL(error);
 }
@@ -83,8 +83,8 @@ void velocityRight()
 	// add the corrections together
 	correctionP += (correctionD + correctionI);
 	// Change speed of motors
-	rightMotorPWMChangeForward(correctionP + BASE_SPEED);
-	leftMotorPWMChangeForward(BASE_SPEED - correctionP);
+	rightMotorPWMChangeForward(correctionP + getBaseSpeed());
+	leftMotorPWMChangeForward(getBaseSpeed() - correctionP);
 	// save current error value
 	setVelocityR(error);
 }
@@ -133,8 +133,8 @@ void velocityBothSides() {
 	// add the corrections together
 	correctionP_R += (correctionD_R + correctionI_R);
 
-	rightMotorPWMChangeForward(BASE_SPEED - correctionP_L + correctionP_R);
-	leftMotorPWMChangeForward(correctionP_L + BASE_SPEED - correctionP_R);
+	rightMotorPWMChangeForward(getBaseSpeed() - correctionP_L + correctionP_R);
+	leftMotorPWMChangeForward(correctionP_L + getBaseSpeed() - correctionP_R);
 
 	setVelocityL(error_L);
 	setVelocityR(error_R);
@@ -176,30 +176,28 @@ void wallTracking()
 {
 	int leftWall = getLeftFrontADCValue();
 	int rightWall = getRightFrontADCValue();
-	// Turn off leds
-	turnOffLEDS();
 	// If there is two walls
 	if(leftWall >= LW_THRESHOLD && rightWall >= RW_THRESHOLD)
 	{
-		//		velocityBothSides();
-		trackingBothSides();
+		velocityBothSides();
+//		 trackingBothSides();
 	}
 	// If there is only a right wall
 	else if(leftWall < LW_THRESHOLD && rightWall >= RW_THRESHOLD)
 	{
-		//		velocityRight();
-		trackingRight();
+		velocityRight();
+//		trackingRight();
 	}
 	// If there is only a left wall
 	else if(leftWall >= LW_THRESHOLD && rightWall < RW_THRESHOLD)
 	{
-		//		velocityLeft();
-		trackingLeft();
+		velocityLeft();
+//		trackingLeft();
 	}
 	// No walls
 	else
 	{
-		leftMotorPWMChangeForward(BASE_SPEED);
-		rightMotorPWMChangeForward(BASE_SPEED);
+		leftMotorPWMChangeForward(getBaseSpeed());
+		rightMotorPWMChangeForward(getBaseSpeed());
 	}
 }

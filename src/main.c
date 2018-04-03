@@ -71,6 +71,10 @@ float inst_yaw = 0;
 
 // choose which algorithm to use in the beginning of the run
 int algorithm;
+struct dist_maze distances;
+struct wall_maze cell_walls_info;
+struct stack update_stack;
+struct stack move_queue;
 
 /* Main program */
 int main(void)
@@ -87,7 +91,7 @@ int main(void)
 	MX_TIM2_Init();  // Init L encoder
 	MX_TIM4_Init();  // Init motors
 	MX_TIM5_Init();  // Init R encoder
-
+	MX_TIM10_Init();
 	MX_DMA_Init();   // Init ADC DMA
 
 	/* Enable IR Emitter pins when mouse powers on */
@@ -95,7 +99,7 @@ int main(void)
 
 	/* Start mouse by waving hand across L emitter */
 	algorithm = mouseStartSensorWave();
-	HAL_Delay(1000);
+	custom_delay(1000);
 
 	/* Initially set error for positional PD controller */
 	setPositionL(0);
@@ -116,14 +120,16 @@ int main(void)
 	// Floodfill
 	if(algorithm == 2)
 	{
+		algorithm = wallFavor();
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
+
+		HAL_Delay(1000);
 		// initialize all the structs that we need for this to work
-		struct dist_maze distances;
-		struct wall_maze cell_walls_info;
 
 		// change this coordinate for testing of different
 		// targets for floodfill
 		struct coor target;
-		init_coor(&target, 4, 10);
+		init_coor(&target, 8, 7);
 
 		// to flood to center set third parameter to 1
 		init_distance_maze(&distances, &target, 1);
@@ -131,20 +137,72 @@ int main(void)
 		// initialize the walls
 		init_wall_maze(&cell_walls_info);
 
-		// set south wall of start cell to true
+		// set east, south, west wall of start cell to true
+		cell_walls_info.cells[0][0].walls[EAST] = 1;
 		cell_walls_info.cells[0][0].walls[SOUTH] = 1;
+		cell_walls_info.cells[0][0].walls[WEST] = 1;
+
+		struct coor c;
+		init_coor(&c, 0, 0);
 
 		MX_TIM3_Init();  // Software timer for tracking
-		floodFill(&distances, 0, 0, &cell_walls_info);
+		int direction = NORTH;
+		update_stack.index = 0;
+		direction = floodFill(&distances, &c, &cell_walls_info, algorithm, direction, &update_stack);
 
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
-
+		direction = centerMovement(&cell_walls_info, &c, direction);
 		// ONCE IT REACHES HERE, IT HAS REACHED THE CENTER OF THE MAZE
 		// Mouse has made it to center, so flood back to start
-		init_coor(&target, 15, 0);
+		init_coor(&target, 0, 0);
 		init_distance_maze(&distances, &target, 0);
-		floodFill(&distances, 7, 7, &cell_walls_info);
+
+		// center to start
+		logicalFlood(&distances, &c, &cell_walls_info, direction, direction, &update_stack);
+		direction = floodFill(&distances, &c, &cell_walls_info, direction, direction, &update_stack);
+
+		int difference = direction - NORTH;
+		switch(difference)
+		{
+		case -3:
+			leftStillTurn();
+			break;
+		case -2:
+			backward180StillTurn();
+			break;
+		case -1:
+			rightStillTurn();
+			break;
+		case 0:
+			break;
+		case 1:
+			leftStillTurn();
+			break;
+		case 2:
+			backward180StillTurn();
+			break;
+		case 3:
+			rightStillTurn();
+			break;
+		default:
+			turnOnLEDS();
+			break;
+		}
+		direction = NORTH;
+
+		// start to center in "shortest path"
+		init_distance_maze(&distances, &c, 1);
+		logicalFlood(&distances, &c, &cell_walls_info, direction, direction, &update_stack);
+		lockInterruptDisable_TIM3();
+		leftMotorPWMChangeBackward(200);
+		rightMotorPWMChangeBackward(200);
+		custom_delay(2000);
+		motorStop();
+		wallFavor();
+		custom_delay(1000);
+		void shortestPath(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a, int direction, struct stack* upst);
+		motorStop();
+		turnOnLEDS();
+		HAL_Delay(3000);
 	}
 	// Right wall hugger
 	if(algorithm == 1)
@@ -152,6 +210,7 @@ int main(void)
 		MX_TIM3_Init();  // Software timer for tracking
 		while(1)
 		{
+			setBaseSpeed(40);
 			rightWallHugger();
 		}
 	}
@@ -161,6 +220,7 @@ int main(void)
 		MX_TIM3_Init();  // Software timer for tracking
 		while(1)
 		{
+			setBaseSpeed(40);
 			leftWallHugger();
 		}
 	}
@@ -226,6 +286,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		{
 			angle += (inst_yaw/100*0.64);
 		}
+	}
+	if (htim->Instance == TIM10)
+	{
+		time_of_delay++;
 	}
 }
 

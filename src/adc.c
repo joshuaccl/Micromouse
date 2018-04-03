@@ -251,6 +251,19 @@ int mouseStartSensorWave(void)
 	}
 }
 
+int wallFavor(void)
+{
+	while(1)
+	{
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+		if(startupSensorL > 1200) return 0; // north
+		if(startupSensorLF > 700) return 1; // east
+		if(startupSensorRF > 700) return 2; // south
+		if(startupSensorR > 1200) return 3; // west
+
+	}
+}
+
 uint32_t startMouseSensor(void)
 {
 	return startupSensor;

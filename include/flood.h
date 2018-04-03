@@ -16,12 +16,14 @@
 #include "encoder.h"
 #include "lock.h"
 #include "stdbool.h"
+#include "hugger.h"
 
 #define NORTH 0
 #define EAST 1
 #define SOUTH 2
 #define WEST 3
 #define UNKNOWN 4
+#define FLOOD_ONE_CELL 9050
 
 // define structures needed for flood fill
 struct cell_info{
@@ -66,12 +68,36 @@ void init_coor(struct coor* c, int x, int y);
 struct coor pop_stack(struct stack* s);
 void push_stack(struct stack* s, struct coor c);
 
+void advanceTicksFlood(uint32_t ticks, int d, struct coor* c, struct wall_maze* wm);
+
 // Called to flood to a target cell
-void floodFill(struct dist_maze* dm, int x, int y, struct wall_maze* wm);
+int floodFill(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a, int direction, struct stack* upst);
 
 // Used to check for walls in current cell
-void checkForWalls(struct wall_maze* wm, struct coor* c, int n, int e, int w);
+void checkForWalls(struct wall_maze* wm, struct coor* c, int direction, int n, int e, int s, int w);
 
 // Check if a neighbor exists with distance one less than current
-int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c, struct stack* s);
+int minusOneNeighbor(struct dist_maze* dm, struct wall_maze* wm, struct coor* c, struct stack* s, int a);
+
+// show coordinates currently at
+void showCoor(int x, int y);
+
+// turn on/off 4 center leds
+void turnOnCenterLEDS(void);
+void turnOffCenterLEDS(void);
+
+// move one cell forward and also sense for walls
+void advanceOneCell(int direction, struct coor* c, struct wall_maze* wm);
+
+// move one cell forward
+void advanceOneCellVisited(void);
+
+// movement after reaching the center
+int centerMovement(struct wall_maze* wm, struct coor* c, int direction);
+
+// flood in program without actually physically moving
+int logicalFlood(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a, int direction, struct stack* upst);
+
+// go to the center taking the shortest path
+void shortestPath(struct dist_maze* dm, struct coor* c, struct wall_maze* wm, int a, int direction, struct stack* upst);
 #endif /* FLOOD_H_ */

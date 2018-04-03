@@ -187,12 +187,68 @@ void backward180Turn(void)
 	// angle > -43
 	// encoder_value > (MAX_ENCODER_VALUE - 13750
 	while(angle > -43 || encoder_value > (MAX_ENCODER_VALUE - 10250)) {
-			setLeftEncoderValue(TIM2->CNT);
-			encoder_value = getLeftEncoderValue();
-		}
+		setLeftEncoderValue(TIM2->CNT);
+		encoder_value = getLeftEncoderValue();
+	}
 	motorStop();
 	HAL_Delay(300);
 	lockInterruptEnable_TIM3();
+	/* This delay needed to ensure that the ADC sensors will poll
+	 * after turning */
+}
+void rightStillTurn(void)
+{
+	/* Disable interrupt before turning to ensure that
+	 * the turn will not be interrupted by any other process */
+	lockInterruptDisable_TIM3();
+	motorStop();
+	resetGyroAngle();
+	resetLeftEncoder();
+	leftMotorPWMChangeForward(300);
+	rightMotorPWMChangeBackward(300);
+	// Decrease absolute value of angle to turn less
+	while(angle > -1320 ) {
+	}
+	motorStop();
+	custom_delay(500);
+	lockInterruptEnable_TIM3();
+	resetLeftEncoder();
+}
+
+void leftStillTurn(void)
+{
+	/* Disable interrupt before turning to ensure that
+	 * the turn will not be interrupted by any other process */
+	lockInterruptDisable_TIM3();
+	motorStop();
+	resetGyroAngle();
+	rightMotorPWMChangeForward(300);
+	leftMotorPWMChangeBackward(300);
+	// Increase value of angle to turn more
+	while( angle < 1420 ) {
+	}
+	motorStop();
+	custom_delay(500);
+	lockInterruptEnable_TIM3();
+	resetLeftEncoder();
+}
+void backward180StillTurn(void)
+{
+	lockInterruptDisable_TIM3();
+	motorStop();
+	resetGyroAngle();
+	resetLeftEncoder();
+	leftMotorPWMChangeForward(450);
+	rightMotorPWMChangeBackward(450);
+	// Decrease absolute value of angle to turn less
+	// angle > -43
+	// encoder_value > (MAX_ENCODER_VALUE - 13750
+	while(angle > -1800 ) {
+	}
+	motorStop();
+	custom_delay(500);
+	lockInterruptEnable_TIM3();
+	resetLeftEncoder();
 	/* This delay needed to ensure that the ADC sensors will poll
 	 * after turning */
 }
@@ -220,4 +276,10 @@ void motorStop(void)
 	leftMotorPWMChangeBackward(0);
 	rightMotorPWMChangeForward(0);
 	leftMotorPWMChangeForward(0);
+}
+void motorAbruptStop(void)
+{
+	rightMotorPWMChangeBackward(1000);
+	leftMotorPWMChangeBackward(1000);
+	motorStop();
 }
